@@ -13,16 +13,16 @@
       <!--用户数据-->
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="设备厂商" prop="userName">
-            <el-input v-model="queryParams.userName" placeholder="请输入设备厂商名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备编号" prop="deviceNO">
+            <el-input v-model="queryParams.deviceNO" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备类型" prop="status">
-            <el-select v-model="queryParams.status" placeholder="请选择设备类型" clearable size="small" style="width: 240px">
-              <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
-            </el-select>
+          <el-form-item label="设备名称" prop="deviceName">
+            <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备型号" prop="phonenumber">
-            <el-input v-model="queryParams.phonenumber" placeholder="请输入设备型号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="状态" prop="status">
+              <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">
+                <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+              </el-select>
           </el-form-item>
           
           <el-form-item label="创建时间">
@@ -54,26 +54,25 @@
         </el-row>
 
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="模版编号" align="center" prop="userId" />
-          <el-table-column label="设备厂商" align="center" prop="userName" :show-overflow-tooltip="true" />
-          <el-table-column label="设备类型" align="center" prop="nickName" :show-overflow-tooltip="true" />
-          <el-table-column label="设备型号" align="center" prop="deviceType" :show-overflow-tooltip="true" />
-          <!-- <el-table-column label="手机号码" align="center" prop="phonenumber" width="120" /> -->
+          
+           <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="设备编号" align="center" prop="equipmentID" />
+          <el-table-column label="设备名称" align="center" prop="equipmentName" :show-overflow-tooltip="true" />
+          <el-table-column label="负责人" align="center" prop="people" :show-overflow-tooltip="true" />
           <el-table-column label="状态" align="center">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" width="160">
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
+          <el-table-column label="出厂时间" align="center" prop="proTime" width="160">
+            
           </el-table-column>
+          
+          
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
-              <el-button  size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">删除</el-button>
+              <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">绑定模版</el-button>
+              <el-button  size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">解绑</el-button>
               <!-- <el-button size="mini" type="text" icon="el-icon-key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置</el-button> -->
             </template>
           </el-table-column>
@@ -88,158 +87,79 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="180px">
         <el-row>
 
-            <el-col :span="12">
-                <el-form-item  label="设备厂商" prop="userName">
-                    <el-input v-model="form.userName" placeholder="请输入设备厂商名称" />
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="设备类型">
-                    <el-select v-model="form.nickName" placeholder="请选择设备类型">
-                        <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备编号" prop="equipmentID">
+              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备名称" prop="equipmentName">
+              <el-input v-model="form.equipmentName" placeholder="设备名称" maxlength="50" />
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="设备型号" prop="deviceType">
-              <el-input v-model="form.deviceType" placeholder="请输入设备型号" />
+            <el-col :span="12">
+            <el-form-item label="负责人" prop="people">
+              <el-input v-model="form.people" placeholder="请输入负责人名称" />
             </el-form-item>
           </el-col>
           
+          <el-col :span="12">
+            <el-form-item label="出厂时间" prop="proTime">
+              <el-input v-model="form.proTime" placeholder="请输入出厂时间" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="模板">
+                <el-select v-model="form.template" placeholder="请选择模板" @change="selectTemplate">
+                    <el-option v-for="dict in templateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
+                </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
         <!--起重机-->
         <!-- 高度，倾斜度、风速、重量、速度、载重量-->
-        <div v-if="form.nickName=='起重机'">
+        <div v-if="form.template!==undefined">
             <el-row >
             <el-col :span="12">
-                <el-form-item label="高度(height)" prop="height">
-                <el-input v-model="form.height" placeholder="请输入高度" />
+                <el-form-item label="设备厂商" prop="deviceName">
+                <el-input v-model="form.deviceName" placeholder="请输入设备厂商" />
                 </el-form-item>
             </el-col>
             <el-col :span="12">
-                <el-form-item label="倾斜度(slope)" prop="slope">
-                <el-input v-model="form.slope" placeholder="请输入倾斜度"  />
+                <el-form-item label="设备类型" prop="deviceType">
+                <el-input v-model="form.deviceType" placeholder="请输入设备类型"  />
                 </el-form-item>
             </el-col>
             </el-row>
             <el-row >
             <el-col :span="12">
-                <el-form-item label="风速(wind)" prop="wind">
-                <el-input v-model="form.wind" placeholder="请输入风速"  />
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">
-                <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  />
+                <el-form-item label="设备型号" prop="deviceModel">
+                <el-input v-model="form.deviceModel" placeholder="请输入设备型号"  />
                 </el-form-item>
             </el-col>
             </el-row>
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="速度(speed)" prop="speed">
-                <el-input v-model="form.speed" placeholder="请输入速度"  />
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="载重量(weight)" prop="weight">
-                <el-input v-model="form.weight" placeholder="请输入载重量"  />
-                </el-form-item>
-            </el-col>
-            </el-row>
+            
         </div>
         
 
-        <!-- 塔吊-->
-        <div v-else-if="form.nickName=='塔吊'">
-            <el-row >
-                <el-col :span="12">
-                    <el-form-item label="高度(height)" prop="height">
-                    <el-input v-model="form.height" placeholder="请输入高度" />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="倾斜度(slope)" prop="slope">
-                    <el-input v-model="form.slope" placeholder="请输入倾斜度"  />
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row >
-                <el-col :span="12">
-                    <el-form-item label="回转速度(rotaRate)" prop="rotaRate">
-                    <el-input v-model="form.rotaRate" placeholder="请输入回转速度"  />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="最大重量(maxWeight)" prop="maxWeight">
-                    <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  />
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row >
-                <el-col :span="12">
-                    <el-form-item label="速度(speed)" prop="speed">
-                    <el-input v-model="form.speed" placeholder="请输入速度"  />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="起重力矩(knm)" prop="knm">
-                    <el-input v-model="form.knm" placeholder="请输入起重力矩"  />
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
+       
         
 
 
         <!-- 其他-->
-        <div v-else-if="form.nickName!==undefined">
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="高度(height)" prop="height">
-                <el-input v-model="form.height" placeholder="请输入高度" />
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="倾斜度(slope)" prop="slope">
-                <el-input v-model="form.slope" placeholder="请输入倾斜度"  />
-                </el-form-item>
-            </el-col>
-            </el-row>
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="重量(weight)" prop="weight">
-                <el-input v-model="form.weight" placeholder="请输入重量"  />
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">
-                <el-input v-model="form.weight" placeholder="请输入最大载重量"  />
-                </el-form-item>
-            </el-col>
-            </el-row>
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="速度(speed)" prop="speed">
-                <el-input v-model="form.speed" placeholder="请输入速度"  />
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="幅度(range)" prop="range">
-                <el-input v-model="form.range" placeholder="请输入幅度"  />
-                </el-form-item>
-            </el-col>
-            </el-row>
-        </div>
         
-        <el-row >
+        
+        <!-- <el-row >
           <el-col :span="24">
             <el-form-item label="备注">
               <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -306,74 +226,70 @@ export default {
       // 用户表格数据
       userList: null,
       dataList: [{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-25 10:33:00",
-          userId: 1,
-          userName: "山西百脉建筑机械有限公司",
-          nickName: "塔吊",
-          deviceType: "TC6024",
-          status: "0",
-          phonenumber: "15888888888",
-          email: "zkrt@163.com",
-          height: 300,
-          slope: 20,
-          rotaRate: 0.3,
-          maxWeight: 10,
-          speed: 1.2,
-          knm: 2
-      },{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-25 11:35:00",
-          userId: 2,
-          userName: "中联重科股份有限公司",
-          nickName: "起重机",
-          deviceType: "TC7036",
-          status: "0",
-          phonenumber: "15000000000",
-          email: "zkrt@163.com",
-          height: 100,
-          slope: 12,
-          wind: 5,
-          maxWeight: 10,
-          speed: 1.3,
-          weight: 6
-      },{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-25 14:35:00",
-          userId: 3,
-          userName: "利勃海尔机械服务(上海)有限公司",
-          nickName: "升降机",
-          deviceType: "TC5516",
-          status: "1",
-          phonenumber: "15111111111",
-          email: "zkrt@163.com",
-          height: 100,
-          slope: 8,
-          weight: 5,
-          maxWeight: 12,
-          speed: 5,
-          range: 1.2
-      },{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-26 10:28:00",
-          userId: 4,
-          userName: "科尼起重机设备(上海)有限公司",
-          nickName: "水质检测设备",
-          deviceType: "TC5513",
-          status: "0",
-          phonenumber: "15111111111",
-          email: "zkrt@163.com",
-          height: 100,
-          slope: 8,
-          weight: 5,
-          maxWeight: 12,
-          speed: 5,
-          range: 1.2
-      }],
+            equipmentID: '2357857',
+            equipmentName: '塔吊1型号',
+            people: '张强',
+            transfer: '模板一',
+            proTime: '2016-05-23 19:30:23',
+            status: "0"
+          },{
+            equipmentID: '3579078',
+            equipmentName: '塔吊2型号',
+            people: '李四',
+            transfer: '模板二',
+            proTime: '2016-06-23 20:30:43',
+            status: "0"
+          },{
+            equipmentID: '4564549',
+            equipmentName: '塔吊3型号',
+            people: '李四',
+            transfer: '模板三',
+            proTime: '2016-06-23 20:30:43',
+            status: "0"
+          },{
+            equipmentID: '1238089',
+            equipmentName: '起重机1型号',
+            people: '张叁',
+            transfer: '模板四',
+            proTime: '2015-11-03 07:33:43',
+            status: "0"
+          },{
+            equipmentID: '4322321',
+            equipmentName: '起重机2型号',
+            people: '王芳',
+            transfer: '模板五',
+            proTime: '2015-02-12 09:05:56',
+            status: "0"
+          },{
+            equipmentID: '8907554',
+            equipmentName: '起重机3型号',
+            people: '张爽',
+            transfer: '模板六',
+            proTime: '2014-06-13 12:23:23',
+            status: "0"
+          },{
+            equipmentID: '6748543',
+            equipmentName: '升降机1型号',
+            people: '刘东',
+            transfer: '模板七',
+            proTime: '2016-12-12 12:12:23',
+            status: 1
+          },{
+            equipmentID: '7893215',
+            equipmentName: '升降机2型号',
+            people: '王大强',
+            transfer: '模板八',
+            proTime: '2012-10-13 14:34:54',
+            status: "0"
+          },{
+            equipmentID: '9086757',
+            equipmentName: '升降机3型号',
+            people: '张伟',
+            transfer: '模板九',
+            proTime: '2012-10-13 14:34:54',
+            status: "0"
+          }],
+      
       // 弹出层标题
       title: "",
       // 部门树选项
@@ -430,6 +346,21 @@ export default {
       dateRange: [],
       // 状态数据字典
       statusOptions: [],
+      templateOptions:[
+          {
+            dictValue: 0,
+            dictLabel: '模版一'
+          },{
+              dictValue: 1,
+              dictLabel: '模版二'
+          },{
+              dictValue: 2,
+              dictLabel: '模版三'
+          },{
+              dictValue: 3,
+              dictLabel: '模版四'
+          }
+      ],
       deviceStatusOptions:[
           {
             dictValue: 0,
@@ -649,6 +580,28 @@ export default {
       this.single = selection.length != 1;
       this.multiple = !selection.length;
     },
+    selectTemplate(event) {
+        console.log("aaaaaa",event)
+        console.log(event === 0)
+        if(event === 0) {
+            this.form.deviceName = "山西百脉建筑机械有限公司"
+            this.form.deviceType = "塔吊"
+            this.form.deviceModel = "TC6024"
+        } else if(event===1) {
+            this.form.deviceName = "中联重科股份有限公司"
+            this.form.deviceType = "起重机"
+            this.form.deviceModel = "TC7036"
+        } else if(event===2) {
+            this.form.deviceName = "利勃海尔机械服务(上海)有限公司"
+            this.form.deviceType = "升降机"
+            this.form.deviceModel = "TC5516"
+        } else {
+            this.form.deviceName = "科尼起重机设备(上海)有限公司"
+            this.form.deviceType = "水质检测设备"
+            this.form.deviceModel = "TC5513"
+        }
+        
+    },
     /** 新增按钮操作 */
     handleAdd() {
         this.open = true;
@@ -669,21 +622,22 @@ export default {
         console.log(row)
       this.reset();
     //   this.getTreeselect();
-      this.form.userId = row.userId
-      this.form.userName = row.userName
-      this.form.nickName = row.nickName
-      this.form.deviceType = row.deviceType
+   
+      this.form.equipmentID = row.equipmentID
+      this.form.equipmentName = row.equipmentName
+      this.form.people = row.people
+      this.form.proTime = row.proTime
       this.form.status = row.status
 
-      this.form.height = row.height
-      this.form.slope = row.slope
-      this.form.rotaRate = row.rotaRate
-      this.form.weight = row.weight
-      this.form.maxWeight = row.maxWeight
-      this.form.speed = row.speed
-      this.form.knm = row.knm
-      this.form.wind = row.wind
-      this.form.range = row.range
+    //   this.form.height = row.height
+    //   this.form.slope = row.slope
+    //   this.form.rotaRate = row.rotaRate
+    //   this.form.weight = row.weight
+    //   this.form.maxWeight = row.maxWeight
+    //   this.form.speed = row.speed
+    //   this.form.knm = row.knm
+    //   this.form.wind = row.wind
+    //   this.form.range = row.range
       this.open = true
     },
     /** 重置密码按钮操作 */
