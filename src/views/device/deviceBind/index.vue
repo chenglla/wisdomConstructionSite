@@ -84,7 +84,7 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
 
           <el-col :span="12">
@@ -117,6 +117,14 @@
                 <el-select v-model="form.template" placeholder="请选择模板" @change="selectTemplate">
                     <el-option v-for="dict in templateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
                 </el-select>
+                <i class="el-icon-plus"></i>
+            </el-form-item>
+            
+            
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="输入口令" prop="kouling">
+              <el-input v-model="form.kouling" placeholder="请输入口令" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -126,19 +134,19 @@
             <el-row >
             <el-col :span="12">
                 <el-form-item label="设备厂商" prop="deviceName">
-                <el-input v-model="form.deviceName" placeholder="请输入设备厂商" />
+                <el-input v-model="form.deviceName" placeholder="请输入设备厂商" disabled/>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
                 <el-form-item label="设备类型" prop="deviceType">
-                <el-input v-model="form.deviceType" placeholder="请输入设备类型"  />
+                <el-input v-model="form.deviceType" placeholder="请输入设备类型" disabled />
                 </el-form-item>
             </el-col>
             </el-row>
             <el-row >
             <el-col :span="12">
                 <el-form-item label="设备型号" prop="deviceModel">
-                <el-input v-model="form.deviceModel" placeholder="请输入设备型号"  />
+                <el-input v-model="form.deviceModel" placeholder="请输入设备型号" disabled />
                 </el-form-item>
             </el-col>
             </el-row>
