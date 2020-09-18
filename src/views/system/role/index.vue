@@ -213,7 +213,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="数据权限" v-show="form.dataScope == 2">
+        <!-- <el-form-item label="数据权限" v-show="form.dataScope == 2">
           <el-tree
             :data="deptOptions"
             show-checkbox
@@ -223,7 +223,7 @@
             empty-text="加载中，请稍后"
             :props="defaultProps"
           ></el-tree>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitDataScope">确 定</el-button>
@@ -270,22 +270,14 @@ export default {
       dataScopeOptions: [
         {
           value: "1",
-          label: "全部数据权限"
-        },
-        {
-          value: "2",
-          label: "自定数据权限"
-        },
-        {
-          value: "3",
           label: "本部门数据权限"
         },
         {
-          value: "4",
+          value: "2",
           label: "本部门及以下数据权限"
         },
         {
-          value: "5",
+          value: "3",
           label: "仅本人数据权限"
         }
       ],
