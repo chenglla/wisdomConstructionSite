@@ -12,7 +12,7 @@ const service = axios.create({
   // baseURL: 'http://vue.ruoyi.vip/prod-api',
   // baseURL: process.env.VUE_APP_BASE_API,
   // 超时
-  timeout: 10000
+  timeout: 100000
 })
 // request拦截器
 service.interceptors.request.use(config => {
