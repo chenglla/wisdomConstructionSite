@@ -23,9 +23,51 @@
       <el-form-item>
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="warning" icon="el-icon-s-promotion" size="mini" @click="initSubmit">初始化</el-button>
       </el-form-item>
     </el-form>
-
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="40%"
+      >
+      <div>
+        <el-input class="input-init" size="small" placeholder="请输入项目名称" v-model="proName"></el-input>
+        <el-button type="cyan" icon="el-icon-search" size="mini" @click="getInitData">搜索</el-button>
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%;margin-top: 10px">
+          <el-table-column
+            prop="pro_name"
+            label="工程"
+            width="180"
+          align="center">
+          </el-table-column>
+          <el-table-column
+            prop="address_all"
+            label="位置"
+            width="180"
+            align="center">
+          </el-table-column>
+          <el-table-column
+            prop="check_time"
+            label="时间"
+            align="center">
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="100">
+            <template slot-scope="scope">
+              <el-button @click="handleClick(scope.row)" type="success" size="mini">初始化</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -56,17 +98,17 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button 
-            size="mini" 
-            type="text" 
-            icon="el-icon-edit" 
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:dept:edit']"
           >修改</el-button>
-          <el-button 
-            size="mini" 
-            type="text" 
-            icon="el-icon-plus" 
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-plus"
             @click="handleAdd(scope.row)"
             v-hasPermi="['system:dept:add']"
           >新增</el-button>
@@ -138,15 +180,18 @@
 </template>
 
 <script>
-import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept";
+import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild, queryInitData, setInitData } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import axios from 'axios'
 
 export default {
   name: "Dept",
   components: { Treeselect },
   data() {
     return {
+      // 初始化输入
+      proName: '',
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -161,6 +206,10 @@ export default {
       open: false,
       // 状态数据字典
       statusOptions: [],
+      // 初始化弹出层
+      dialogVisible: false,
+      // 初始化表格数据
+      tableData: [],
       // 查询参数
       queryParams: {
         deptName: undefined,
@@ -202,6 +251,7 @@ export default {
       this.statusOptions = response.data;
     });
   },
+
   methods: {
     /** 查询部门列表 */
     getList() {
@@ -244,6 +294,48 @@ export default {
         status: "0"
       };
       this.resetForm("form");
+    },
+    // 初始化弹出层
+    initSubmit() {
+      this.getInitData()
+    },
+    // 查询初始化数据
+    getInitData() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+      var data = {
+        proName: this.proName
+      }
+      queryInitData(data).then((res) => {
+        this.tableData = res.data
+        loading.close()
+        this.dialogVisible = true
+        console.log(res.data)
+      })
+    },
+    // 初始化设置
+    handleClick(row) {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+      var data = {
+        proid: row.guid,
+        proName: row.pro_name
+      }
+      setInitData(data).then((res) => {
+        console.log(res.code)
+        if (res.code === 200) {
+          this.$message.success('初始化成功！')
+          loading.close()
+        }
+      })
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -318,3 +410,9 @@ export default {
   }
 };
 </script>
+<style>
+  .input-init {
+    width: 250px;
+    margin-right: 10px;
+  }
+</style>

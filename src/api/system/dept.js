@@ -66,3 +66,20 @@ export function delDept(deptId) {
     method: 'delete'
   })
 }
+
+// 查询初始化数据
+export function queryInitData(data) {
+  return request({
+    url: '/system/initial/list',
+    method: 'get',
+    params: data
+  })
+}
+// 初始化设置
+export function setInitData(data) {
+  return request({
+    url: '/system/initial/getProjectName',
+    method: 'get',
+    params: data
+  })
+}
