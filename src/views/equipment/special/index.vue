@@ -10,6 +10,14 @@
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
+<!--      <el-col :span="4" :xs="24">-->
+<!--        <div class="head-container">-->
+<!--          <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
+<!--        </div>-->
+<!--        <div class="head-container">-->
+<!--          <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />-->
+<!--        </div>-->
+<!--      </el-col>-->
       <!--用户数据-->
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
@@ -55,16 +63,26 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="设备编号" align="center" prop="equipmentID" />
-          <el-table-column label="设备名称" align="center" prop="equipmentName" :show-overflow-tooltip="true" />
-          <el-table-column label="负责人" align="center" prop="people" :show-overflow-tooltip="true" />
-          <el-table-column label="传输模板" align="center" prop="transfer" :show-overflow-tooltip="true" />
+          <el-table-column label="设备厂商" align="center" prop="equipmentSource" />
+          <el-table-column label="设备名称" align="center" prop="equipmentName"  />
+          <el-table-column label="设备型号" align="center" prop="equipmentModel" />
+          <el-table-column label="维修周期" align="center" prop="repairCycle"  />
+          <el-table-column label="负责人" align="center" prop="people"  />
+          <el-table-column label="联系方式" align="center" prop="tel"  />
+          <el-table-column label="传输状态" align="center" prop="transfer" :show-overflow-tooltip="true" >
+            <template slot-scope="scope">
+              <el-tag  v-if="scope.row.transfer==='正常'" type="success">正常</el-tag>
+              <el-tag  v-if="scope.row.transfer==='故障'" type="danger">故障</el-tag>
+              <el-tag  v-if="scope.row.transfer==='停用'" type="warning">停用</el-tag>
+            </template>
+          </el-table-column>
           <!--<el-table-column label="手机号码" align="center" prop="phonenumber" width="120" />-->
           <!--<el-table-column label="状态" align="center">-->
             <!--<template slot-scope="scope">-->
               <!--<el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>-->
             <!--</template>-->
           <!--</el-table-column>-->
-          <el-table-column label="出厂时间" align="center" prop="proTime" width="160">
+          <el-table-column label="进厂时间" align="center" prop="proTime" width="160">
             <!--<template slot-scope="scope">-->
               <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
             <!--</template>-->
@@ -73,6 +91,7 @@
             <template slot-scope="scope">
               <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
               <el-button v-if="scope.row.equipmentID !== 1" size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">删除</el-button>
+              <el-button size="mini" type="text" icon="el-icon-goods" @click="handleDetail(scope.row)" v-hasPermi="['system:user:detail']">详情</el-button>
               <!--<el-button size="mini" type="text" icon="el-icon-key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置</el-button>-->
             </template>
           </el-table-column>
@@ -88,30 +107,47 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备编号" prop="phonenumber">
-              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />
+            <el-form-item label="设备厂商" prop="equipmentSource">
+              <el-input v-model="form.equipmentSource" placeholder="设备厂商" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备名称" prop="email">
+            <el-form-item label="设备名称"  prop="equipmentName">
               <el-input v-model="form.equipmentName" placeholder="设备名称" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="nickName">
+            <el-form-item label="设备型号" prop="equipmentModel">
+              <el-input v-model="form.equipmentModel" placeholder="设备型号" maxlength="11" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="维修周期" >
+              <el-input v-model="form.repairCycle" placeholder="维修周期" maxlength="50" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="负责人" prop="people">
               <el-input v-model="form.people" placeholder="请输入负责人名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="传输模板" prop="nickName">
-              <el-input v-model="form.transfer" placeholder="请输入传输模板" />
+            <el-form-item label="联系方式" >
+              <el-input v-model="form.tel" placeholder="请输入联系方式" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="出厂时间" prop="nickName">
-              <el-input v-model="form.proTime" placeholder="请输入出厂时间" />
+            <el-form-item label="传输状态" >
+              <el-input v-model="form.transfer" placeholder="请输入传输状态" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="进厂时间" >
+              <el-input v-model="form.proTime" placeholder="请输入进厂时间" />
             </el-form-item>
           </el-col>
           <!--<el-col :span="12">-->
@@ -119,6 +155,30 @@
           <!--<treeselect v-model="form.deptId" :options="deptOptions" :disable-branch-nodes="true" :show-count="true" placeholder="请选择归属部门" />-->
           <!--</el-form-item>-->
           <!--</el-col>-->
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="资质证明" >
+<!--              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />-->
+              <el-upload
+                v-model="form.patentenclosure"
+                ref="upload"
+                class="upload-demo"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :auto-upload="false"
+              >
+                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+<!--                <el-button style="margin-left: 10px;background: #42b983" size="small" type="success" @click="submit">上传</el-button>-->
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备类型" >
+              <el-input v-model="form.equipmentName" placeholder="设备类型" maxlength="50" />
+            </el-form-item>
+          </el-col>
         </el-row>
         <!--<el-row>-->
           <!--<el-col :span="12">-->
@@ -222,60 +282,97 @@
     components: { Treeselect },
     data() {
       return {
+        fileList:[],
         response1: {
           total:6,rows:[{
+            tel: '13489021345',
+            repairCycle:'一年',
+            equipmentModel:'BCD',
+            equipmentSource:'华瑞',
+            transfer: '正常',
             equipmentID: '2357857',
             equipmentName: '塔吊1型号',
             people: '张强',
-            transfer: '模板一',
             proTime: '2016-05-23 19:30:23'
           },{
+            tel: '1375421345',
+            repairCycle:'两年',
+            equipmentModel:'GSD',
+            equipmentSource:'天力重工',
+            transfer: '停用',
             equipmentID: '3579078',
             equipmentName: '塔吊2型号',
             people: '李四',
-            transfer: '模板二',
             proTime: '2016-06-23 20:30:43'
           },{
+            tel: '1348970436',
+            repairCycle:'一年',
+            equipmentModel:'LDA',
+            equipmentSource:'华瑞',
+            transfer: '故障',
             equipmentID: '4564549',
             equipmentName: '塔吊3型号',
             people: '李四',
-            transfer: '模板三',
             proTime: '2016-06-23 20:30:43'
           },{
+            tel: '13498763456',
+            repairCycle:'一年',
+            equipmentModel:'LB',
+            equipmentSource:'徐工',
+            transfer: '正常',
             equipmentID: '1238089',
             equipmentName: '起重机1型号',
             people: '张叁',
-            transfer: '模板四',
             proTime: '2015-11-03 07:33:43'
           },{
+            tel: '13489021345',
+            repairCycle:'两年',
+            equipmentModel:'LH',
+            equipmentSource:'高安',
+            transfer: '故障',
             equipmentID: '4322321',
             equipmentName: '起重机2型号',
             people: '王芳',
-            transfer: '模板五',
             proTime: '2015-02-12 09:05:56'
           },{
+            tel: '13489021345',
+            repairCycle:'一年',
+            equipmentModel:'MG',
+            equipmentSource:'华瑞',
+            transfer: '正常',
             equipmentID: '8907554',
             equipmentName: '起重机3型号',
             people: '张爽',
-            transfer: '模板六',
             proTime: '2014-06-13 12:23:23'
           },{
             equipmentID: '6748543',
             equipmentName: '升降机1型号',
             people: '刘东',
-            transfer: '模板七',
+            tel: '13489021345',
+            repairCycle:'一年',
+            equipmentModel:'ME',
+            equipmentSource:'波坦',
+            transfer: '正常',
             proTime: '2016-12-12 12:12:23'
           },{
             equipmentID: '7893215',
             equipmentName: '升降机2型号',
             people: '王大强',
-            transfer: '模板八',
+            tel: '13489021345',
+            repairCycle:'一年',
+            equipmentModel:'MC',
+            equipmentSource:'中联重科',
+            transfer: '停用',
             proTime: '2012-10-13 14:34:54'
           },{
             equipmentID: '9086757',
             equipmentName: '升降机3型号',
             people: '张伟',
-            transfer: '模板九',
+            tel: '13489021345',
+            repairCycle:'一年',
+            equipmentModel:'SL',
+            equipmentSource:'沃尔夫',
+            transfer: '停用',
             proTime: '2012-10-13 14:34:54'
           },],code:200,msg:"查询成功"},
         response2: {
@@ -355,7 +452,51 @@
         // 弹出层标题
         title: "",
         // 部门树选项
-        deptOptions: undefined,
+        deptOptions: [{
+          id: 100,
+          label: "企业总览",
+          children: [{
+            id: 200,
+            label: "河北创巨圆科技发展有限公司",
+            children: [{
+              id: 101,
+              label: "特种设备",
+              children: [{
+                id: 102,
+                label: "起重机"
+              }, {
+                id: 103,
+                label: "塔吊"
+              }, {
+                id: 104,
+                label: "升降机"
+              }, {
+                id: 105,
+                label: "物料提升机"
+              }]
+            }, {
+              id: 201,
+              label: "视频设备",
+              children: [{
+                id: 202,
+                label: "摄像头"
+              }, {
+                id: 203,
+                label: "人脸识别设备"
+              }]
+            }, {
+              id: 301,
+              label: "环境检测设备",
+              children: [{
+                id: 302,
+                label: "水质检测设备"
+              }, {
+                id: 303,
+                label: "大气采样设备"
+              }]
+            }]
+          }]
+        }],
         // 是否显示弹出层
         open: false,
         // 部门名称
@@ -409,15 +550,32 @@
         },
         // 表单校验
         rules: {
-          userName: [
-            { required: true, message: "用户名称不能为空", trigger: "blur" },
+          equipmentSource: [
+            { required: true, message: "设备厂商不能为空", trigger: "blur" },
           ],
+          equipmentName: [
+            { required: true, message: "设备名称不能为空", trigger: "blur" },
+          ],
+          repairCycle: [
+            { required: true, message: "维修周期不能为空", trigger: "blur" },
+          ],
+          equipmentModel: [
+            { required: true, message: "设备型号不能为空", trigger: "blur" },
+          ],
+          people: [
+            { required: true, message: "负责人不能为空", trigger: "blur" },
+          ],
+          proTime: [
+            { required: true, message: "进厂时间不能为空", trigger: "blur" },
+          ],
+
           nickName: [
             { required: true, message: "用户昵称不能为空", trigger: "blur" },
           ],
           deptId: [
             { required: true, message: "归属部门不能为空", trigger: "blur" },
           ],
+
           password: [
             { required: true, message: "用户密码不能为空", trigger: "blur" },
           ],
@@ -429,7 +587,7 @@
               trigger: ["blur", "change"],
             },
           ],
-          phonenumber: [
+          tel: [
             { required: true, message: "手机号码不能为空", trigger: "blur" },
             {
               pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
@@ -448,7 +606,7 @@
     },
     created() {
       this.getList();
-      this.getTreeselect();
+      // this.getTreeselect();
       this.getDicts("sys_normal_disable").then((response) => {
         this.statusOptions = response.data;
       });
@@ -489,12 +647,13 @@
         // );
       },
       /** 查询部门下拉树结构 */
-      getTreeselect() {
-        this.deptOptions = [{"id":100,"label":"设备总览","children":[{"id":205,"label":"塔吊"},{"id":101,"label":"起重机"},{"id":102,"label":"升降机"}]}]
-        // treeselect().then((response) => {
-        //   this.deptOptions = response.data;
-        // });
-      },
+      // getTreeselect() {
+      //   // this.deptOptions = [{"id":100,"label":"设备总览","children":[{"id":205,"label":"塔吊"},{"id":101,"label":"起重机"},{"id":102,"label":"升降机"}]}]
+      //   treeselect().then((response) => {
+      //     this.deptOptions = response.data;
+      //   });
+      //
+      // },
       // 筛选节点
       filterNode(value, data) {
         if (!value) return true;
@@ -535,6 +694,10 @@
       // 表单重置
       reset() {
         this.form = {
+          patentenclosure:undefined,
+          equipmentSource:undefined,
+          equipmentModel:undefined,
+          repairCycle:undefined,
           userId: undefined,
           deptId: undefined,
           userName: undefined,
@@ -543,6 +706,7 @@
           phonenumber: undefined,
           email: undefined,
           sex: undefined,
+          tel: undefined,
           status: "0",
           remark: undefined,
           postIds: [],
@@ -570,7 +734,7 @@
       /** 新增按钮操作 */
       handleAdd() {
         this.reset();
-        this.getTreeselect();
+        // this.getTreeselect();
         this.open = true;
         this.title = "添加设备";
         // getUser().then((response) => {

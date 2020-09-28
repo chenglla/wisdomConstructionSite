@@ -24,7 +24,7 @@
           <el-form-item label="设备型号" prop="phonenumber">
             <el-input v-model="queryParams.phonenumber" placeholder="请输入设备型号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          
+
           <el-form-item label="创建时间">
             <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
           </el-form-item>
@@ -50,17 +50,25 @@
           <el-col :span="1.5">
             <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
+          <el-col :span="1.5">
+          <el-select v-model="queryParams.model" placeholder="请选择数据对接模板类型" clearable size="small" style="width: 240px">
+            <el-option v-for="dict in deviceModelOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+          </el-select>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain>下载数据对接模板</el-button>
+          </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="模版编号" align="center" prop="userId" />
+          <el-table-column label="编号" align="center" prop="userId" />
           <el-table-column label="设备厂商" align="center" prop="userName" :show-overflow-tooltip="true" />
           <el-table-column label="设备类型" align="center" prop="nickName" :show-overflow-tooltip="true" />
           <el-table-column label="设备型号" align="center" prop="deviceType" :show-overflow-tooltip="true" />
           <!-- <el-table-column label="手机号码" align="center" prop="phonenumber" width="120" /> -->
-          <el-table-column label="状态" align="center">
+          <el-table-column label="启用" align="center">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
             </template>
@@ -107,132 +115,132 @@
               <el-input v-model="form.deviceType" placeholder="请输入设备型号" style="width:250px;"/>
             </el-form-item>
           </el-col>
-          
+
         </el-row>
         <!--起重机-->
         <!-- 高度，倾斜度、风速、重量、速度、载重量-->
-        <div v-if="form.nickName=='起重机'">
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="高度(height)" prop="height">
-                <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="倾斜度(slope)" prop="slope">
-                <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            </el-row>
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="风速(wind)" prop="wind">
-                <el-input v-model="form.wind" placeholder="请输入风速"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">
-                <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            </el-row>
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="速度(speed)" prop="speed">
-                <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="载重量(weight)" prop="weight">
-                <el-input v-model="form.weight" placeholder="请输入载重量"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            </el-row>
-        </div>
-        
-
-        <!-- 塔吊-->
-        <div v-else-if="form.nickName=='塔吊'">
-            <el-row >
-                <el-col :span="12">
-                    <el-form-item label="高度(height)" prop="height">
-                    <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="倾斜度(slope)" prop="slope">
-                    <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row >
-                <el-col :span="12">
-                    <el-form-item label="回转速度(rotaRate)" prop="rotaRate">
-                    <el-input v-model="form.rotaRate" placeholder="请输入回转速度" style="width:250px;" />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="最大重量(maxWeight)" prop="maxWeight">
-                    <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  style="width:250px;"/>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row >
-                <el-col :span="12">
-                    <el-form-item label="速度(speed)" prop="speed">
-                    <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="起重力矩(knm)" prop="knm">
-                    <el-input v-model="form.knm" placeholder="请输入起重力矩"  style="width:250px;"/>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
-        
+<!--        <div v-if="form.nickName=='起重机'">-->
+<!--            <el-row >-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="高度(height)" prop="height">-->
+<!--                <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="倾斜度(slope)" prop="slope">-->
+<!--                <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row >-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="风速(wind)" prop="wind">-->
+<!--                <el-input v-model="form.wind" placeholder="请输入风速"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">-->
+<!--                <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row >-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="速度(speed)" prop="speed">-->
+<!--                <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="载重量(weight)" prop="weight">-->
+<!--                <el-input v-model="form.weight" placeholder="请输入载重量"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            </el-row>-->
+<!--        </div>-->
 
 
-        <!-- 其他-->
-        <div v-else-if="form.nickName!==undefined">
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="高度(height)" prop="height">
-                <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="倾斜度(slope)" prop="slope">
-                <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            </el-row>
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="重量(weight)" prop="weight">
-                <el-input v-model="form.weight" placeholder="请输入重量"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">
-                <el-input v-model="form.weight" placeholder="请输入最大载重量"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            </el-row>
-            <el-row >
-            <el-col :span="12">
-                <el-form-item label="速度(speed)" prop="speed">
-                <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="幅度(range)" prop="range">
-                <el-input v-model="form.range" placeholder="请输入幅度"  style="width:250px;"/>
-                </el-form-item>
-            </el-col>
-            </el-row>
-        </div>
-        
+<!--        &lt;!&ndash; 塔吊&ndash;&gt;-->
+<!--        <div v-else-if="form.nickName=='塔吊'">-->
+<!--            <el-row >-->
+<!--                <el-col :span="12">-->
+<!--                    <el-form-item label="高度(height)" prop="height">-->
+<!--                    <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>-->
+<!--                    </el-form-item>-->
+<!--                </el-col>-->
+<!--                <el-col :span="12">-->
+<!--                    <el-form-item label="倾斜度(slope)" prop="slope">-->
+<!--                    <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>-->
+<!--                    </el-form-item>-->
+<!--                </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row >-->
+<!--                <el-col :span="12">-->
+<!--                    <el-form-item label="回转速度(rotaRate)" prop="rotaRate">-->
+<!--                    <el-input v-model="form.rotaRate" placeholder="请输入回转速度" style="width:250px;" />-->
+<!--                    </el-form-item>-->
+<!--                </el-col>-->
+<!--                <el-col :span="12">-->
+<!--                    <el-form-item label="最大重量(maxWeight)" prop="maxWeight">-->
+<!--                    <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  style="width:250px;"/>-->
+<!--                    </el-form-item>-->
+<!--                </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row >-->
+<!--                <el-col :span="12">-->
+<!--                    <el-form-item label="速度(speed)" prop="speed">-->
+<!--                    <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>-->
+<!--                    </el-form-item>-->
+<!--                </el-col>-->
+<!--                <el-col :span="12">-->
+<!--                    <el-form-item label="起重力矩(knm)" prop="knm">-->
+<!--                    <el-input v-model="form.knm" placeholder="请输入起重力矩"  style="width:250px;"/>-->
+<!--                    </el-form-item>-->
+<!--                </el-col>-->
+<!--            </el-row>-->
+<!--        </div>-->
+
+
+
+<!--        &lt;!&ndash; 其他&ndash;&gt;-->
+<!--        <div v-else-if="form.nickName!==undefined">-->
+<!--            <el-row >-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="高度(height)" prop="height">-->
+<!--                <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="倾斜度(slope)" prop="slope">-->
+<!--                <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row >-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="重量(weight)" prop="weight">-->
+<!--                <el-input v-model="form.weight" placeholder="请输入重量"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">-->
+<!--                <el-input v-model="form.weight" placeholder="请输入最大载重量"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row >-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="速度(speed)" prop="speed">-->
+<!--                <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="12">-->
+<!--                <el-form-item label="幅度(range)" prop="range">-->
+<!--                <el-input v-model="form.range" placeholder="请输入幅度"  style="width:250px;"/>-->
+<!--                </el-form-item>-->
+<!--            </el-col>-->
+<!--            </el-row>-->
+<!--        </div>-->
+
         <el-row >
           <el-col :span="24">
             <el-form-item label="备注">
@@ -380,45 +388,49 @@ export default {
       deptOptions: undefined,
       // 设备树选项
       deviceOptions: [{
-          id: 100,
-          label: "设备总览",
+        id: 100,
+        label: "企业总览",
+        children: [{
+          id: 200,
+          label: "河北创巨圆科技发展有限公司",
           children: [{
-              id: 101,
-              label: "特种设备",
-              children:[{
-                  id:102,
-                  label: "起重机"
-              },{
-                  id: 103,
-                  label: "塔吊"
-              },{
-                  id: 104,
-                  label: "升降机"
-              },{
-                  id: 105,
-                  label: "物料提升机"
-              }]
-          },{
-              id: 201,
-              label: "视频设备",
-              children: [{
-                  id: 202,
-                  label: "摄像头"
-              },{
-                  id: 203,
-                  label: "人脸识别设备"
-              }]
-          },{
-              id: 301,
-              label: "环境检测设备",
-              children: [{
-                  id: 302,
-                  label: "水质检测设备"
-              },{
-                  id: 303,
-                  label: "大气采样设备"
-              }]
+            id: 101,
+            label: "特种设备",
+            children: [{
+              id: 102,
+              label: "起重机"
+            }, {
+              id: 103,
+              label: "塔吊"
+            }, {
+              id: 104,
+              label: "升降机"
+            }, {
+              id: 105,
+              label: "物料提升机"
+            }]
+          }, {
+            id: 201,
+            label: "视频设备",
+            children: [{
+              id: 202,
+              label: "摄像头"
+            }, {
+              id: 203,
+              label: "人脸识别设备"
+            }]
+          }, {
+            id: 301,
+            label: "环境检测设备",
+            children: [{
+              id: 302,
+              label: "水质检测设备"
+            }, {
+              id: 303,
+              label: "大气采样设备"
+            }]
           }]
+        }]
       }],
       // 是否显示弹出层
       open: false,
@@ -430,6 +442,31 @@ export default {
       dateRange: [],
       // 状态数据字典
       statusOptions: [],
+      deviceModelOptions:[{
+        dictValue: 0,
+        dictLabel: '起重机'
+      },{
+        dictValue: 1,
+        dictLabel: '塔吊'
+      },{
+        dictValue: 2,
+        dictLabel: '升降机'
+      },{
+        dictValue: 3,
+        dictLabel: '物料提升机'
+      },{
+        dictValue: 4,
+        dictLabel: '摄像头'
+      },{
+        dictValue: 5,
+        dictLabel: '人脸识别设备'
+      },{
+        dictValue: 6,
+        dictLabel: '水质检测设备'
+      },{
+        dictValue: 7,
+        dictLabel: '大气采样设备'
+      }],
       deviceStatusOptions:[
           {
             dictValue: 0,
@@ -491,6 +528,7 @@ export default {
         userName: undefined,
         phonenumber: undefined,
         status: undefined,
+        model:undefined,
         deptId: undefined,
       },
       // 表单校验
@@ -549,7 +587,7 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-      
+
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
           this.userList = response.rows;
@@ -606,13 +644,13 @@ export default {
     reset() {
       this.form = {
         userId: undefined,
-        
+
         userName: undefined,
         nickName: undefined,
-       
+
         phonenumber: undefined,
         email: undefined,
-        
+
         status: "0",
         deviceType: undefined,
 
@@ -626,9 +664,9 @@ export default {
         weight: undefined,
         range: undefined
 
-        
-        
-       
+
+
+
       };
       this.resetForm("form");
     },
@@ -652,7 +690,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
         this.open = true;
-        this.title = "添加模板";
+        this.title = "新增设备型号";
         console.log(this.form)
     //   this.reset();
     //   this.getTreeselect();
@@ -709,14 +747,14 @@ export default {
         //         if(this.form.userId !== undefined) {
         //             //更新操作
         //         } else {
-                    
+
         //             this.form.userId = Math.floor(Math.random() * 100) + 5
         //              console.log(this.form)
         //             this.dataList.push(this.form)
         //             console.log(this.dataList)
 
         //         }
-        //     } 
+        //     }
         // })
       this.$refs["form"].validate((valid) => {
         if (valid) {
@@ -771,6 +809,22 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$confirm("是否确认导出所有用户数据项?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
+          return exportUser(queryParams);
+        })
+        .then((response) => {
+          this.download(response.msg);
+        })
+        .catch(function () {});
+    },
+    /**  下载按钮操作 */
+    handledown() {
+      const queryParams = this.queryParams;
+      this.$confirm("是否下载数据对接模板?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

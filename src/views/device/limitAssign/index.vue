@@ -4,7 +4,7 @@
       <!--部门数据-->
       <el-col :span="4" :xs="24">
         <div class="head-container">
-          <el-input v-model="deptName" placeholder="请输入设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
+          <el-input v-model="deptName" placeholder="请输入企业名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
         <div class="head-container">
           <el-tree :data="deviceOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
@@ -13,19 +13,18 @@
       <!--用户数据-->
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="设备编号" prop="deviceNO">
-            <el-input v-model="queryParams.deviceNO" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="企业序号" prop="deviceNO">
+            <el-input v-model="queryParams.deviceNO" placeholder="请输入企业序号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备名称" prop="deviceName">
-            <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="企业名称" prop="deviceName">
+            <el-input v-model="queryParams.deviceName" placeholder="请输入企业名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="状态" prop="status">
-              <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">
+          <el-form-item label="是否停用" prop="status">
+              <el-select v-model="queryParams.status" placeholder="是否停用" clearable size="small" style="width: 240px">
                 <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
               </el-select>
           </el-form-item>
-          
-          <el-form-item label="创建时间">
+          <el-form-item label="时间">
             <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -35,18 +34,18 @@
         </el-form>
 
         <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
-          </el-col>
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>-->
+<!--          </el-col>-->
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>-->
+<!--          </el-col>-->
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>-->
+<!--          </el-col>-->
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>-->
+<!--          </el-col>-->
           <el-col :span="1.5">
             <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
@@ -54,25 +53,26 @@
         </el-row>
 
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
-          
+
            <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="设备编号" align="center" prop="equipmentID" />
-          <el-table-column label="设备名称" align="center" prop="equipmentName" :show-overflow-tooltip="true" />
+          <el-table-column label="企业序号" align="center" prop="equipmentID" />
+          <el-table-column label="企业名称" align="center" prop="equipmentName" :show-overflow-tooltip="true" />
           <el-table-column label="负责人" align="center" prop="people" :show-overflow-tooltip="true" />
-          <el-table-column label="状态" align="center">
+          <el-table-column label="联系方式" align="center" prop="tel" />
+          <el-table-column label="是否启用" align="center">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="出厂时间" align="center" prop="proTime" width="160">
-            
+          <el-table-column label="时间" align="center" prop="proTime" width="160">
+
           </el-table-column>
-          
-          
+
+
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">分配口令</el-button>
-              <el-button  size="mini" type="text" icon="el-icon-info" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">复制口令</el-button>
+<!--              <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">分配口令</el-button>-->
+              <el-button  size="mini" type="text" icon="el-icon-info" v-clipboard:copy="scope.row.equipmentID" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">复制口令</el-button>
               <!-- <el-button size="mini" type="text" icon="el-icon-key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置</el-button> -->
             </template>
           </el-table-column>
@@ -104,7 +104,7 @@
               <el-input v-model="form.people" placeholder="请输入负责人名称" />
             </el-form-item>
           </el-col>
-          
+
           <el-col :span="12">
             <el-form-item label="出厂时间" prop="proTime">
               <el-input v-model="form.proTime" placeholder="请输入出厂时间" />
@@ -112,15 +112,15 @@
           </el-col>
         </el-row>
         <el-row>
-         
+
           <el-col :span="12">
             <el-form-item label="分配口令" prop="kouling">
               <el-input v-model="form.kouling" disabled />
               <el-tag type="danger" @click.native="generatorKouLing" style="cursor:pointer;">点击生成口令</el-tag>
             </el-form-item>
           </el-col>
-          
-          
+
+
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -192,6 +192,7 @@ export default {
             equipmentID: '2357857',
             equipmentName: '塔吊1型号',
             people: '张强',
+            tel:1345678321,
             transfer: '模板一',
             proTime: '2016-05-23 19:30:23',
             status: "0"
@@ -199,6 +200,7 @@ export default {
             equipmentID: '3579078',
             equipmentName: '塔吊2型号',
             people: '李四',
+            tel:1308312321,
             transfer: '模板二',
             proTime: '2016-06-23 20:30:43',
             status: "0"
@@ -206,6 +208,7 @@ export default {
             equipmentID: '4564549',
             equipmentName: '塔吊3型号',
             people: '李四',
+            tel:1386313321,
             transfer: '模板三',
             proTime: '2016-06-23 20:30:43',
             status: "0"
@@ -213,6 +216,7 @@ export default {
             equipmentID: '1238089',
             equipmentName: '起重机1型号',
             people: '张叁',
+            tel:1397625121,
             transfer: '模板四',
             proTime: '2015-11-03 07:33:43',
             status: "0"
@@ -220,6 +224,7 @@ export default {
             equipmentID: '4322321',
             equipmentName: '起重机2型号',
             people: '王芳',
+            tel:1345853141,
             transfer: '模板五',
             proTime: '2015-02-12 09:05:56',
             status: "0"
@@ -227,6 +232,7 @@ export default {
             equipmentID: '8907554',
             equipmentName: '起重机3型号',
             people: '张爽',
+            tel:1345602141,
             transfer: '模板六',
             proTime: '2014-06-13 12:23:23',
             status: "0"
@@ -234,6 +240,7 @@ export default {
             equipmentID: '6748543',
             equipmentName: '升降机1型号',
             people: '刘东',
+            tel:1301278321,
             transfer: '模板七',
             proTime: '2016-12-12 12:12:23',
             status: 1
@@ -241,6 +248,7 @@ export default {
             equipmentID: '7893215',
             equipmentName: '升降机2型号',
             people: '王大强',
+            tel:1309873321,
             transfer: '模板八',
             proTime: '2012-10-13 14:34:54',
             status: "0"
@@ -248,11 +256,12 @@ export default {
             equipmentID: '9086757',
             equipmentName: '升降机3型号',
             people: '张伟',
+            tel:1345765421,
             transfer: '模板九',
             proTime: '2012-10-13 14:34:54',
             status: "0"
           }],
-      
+
       // 弹出层标题
       title: "",
       // 部门树选项
@@ -260,43 +269,47 @@ export default {
       // 设备树选项
       deviceOptions: [{
           id: 100,
-          label: "设备总览",
+          label: "企业总览",
           children: [{
+            id: 200,
+            label: "河北创巨圆科技发展有限公司",
+            children: [{
               id: 101,
               label: "特种设备",
-              children:[{
-                  id:102,
-                  label: "起重机"
-              },{
-                  id: 103,
-                  label: "塔吊"
-              },{
-                  id: 104,
-                  label: "升降机"
-              },{
-                  id: 105,
-                  label: "物料提升机"
+              children: [{
+                id: 102,
+                label: "起重机"
+              }, {
+                id: 103,
+                label: "塔吊"
+              }, {
+                id: 104,
+                label: "升降机"
+              }, {
+                id: 105,
+                label: "物料提升机"
               }]
-          },{
+            }, {
               id: 201,
               label: "视频设备",
               children: [{
-                  id: 202,
-                  label: "摄像头"
-              },{
-                  id: 203,
-                  label: "人脸识别设备"
+                id: 202,
+                label: "摄像头"
+              }, {
+                id: 203,
+                label: "人脸识别设备"
               }]
-          },{
+            }, {
               id: 301,
               label: "环境检测设备",
               children: [{
-                  id: 302,
-                  label: "水质检测设备"
-              },{
-                  id: 303,
-                  label: "大气采样设备"
+                id: 302,
+                label: "水质检测设备"
+              }, {
+                id: 303,
+                label: "大气采样设备"
               }]
+            }]
           }]
       }],
       // 是否显示弹出层
@@ -449,7 +462,7 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-      
+
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
           this.userList = response.rows;
@@ -506,10 +519,10 @@ export default {
     reset() {
       this.form = {
         userId: undefined,
-        
+
         userName: undefined,
         nickName: undefined,
-       
+
         phonenumber: undefined,
         email: undefined,
         kouling: undefined,
@@ -526,9 +539,9 @@ export default {
         weight: undefined,
         range: undefined
 
-        
-        
-       
+
+
+
       };
       this.resetForm("form");
     },
@@ -569,7 +582,7 @@ export default {
             this.form.deviceType = "水质检测设备"
             this.form.deviceModel = "TC5513"
         }
-        
+
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -591,7 +604,7 @@ export default {
         console.log(row)
       //this.reset();
     //   this.getTreeselect();
-   
+
       this.form.equipmentID = row.equipmentID
       this.form.equipmentName = row.equipmentName
       this.form.people = row.people
@@ -633,14 +646,14 @@ export default {
         //         if(this.form.userId !== undefined) {
         //             //更新操作
         //         } else {
-                    
+
         //             this.form.userId = Math.floor(Math.random() * 100) + 5
         //              console.log(this.form)
         //             this.dataList.push(this.form)
         //             console.log(this.dataList)
 
         //         }
-        //     } 
+        //     }
         // })
       this.$refs["form"].validate((valid) => {
         if (valid) {
@@ -759,7 +772,7 @@ export default {
             var AZ = String.fromCharCode(this.random(65,90));//生成A-Z
 
             strData = strData + num + az + AZ;//将生成的字符进行字符串拼接
-           
+
         }
         // 开始真正的随机(从随机字符库中随机取出四个)
         var str = "";
