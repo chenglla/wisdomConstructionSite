@@ -136,7 +136,10 @@ export default {
           this.$store
             .dispatch("Login", this.loginForm)
             .then(() => {
-              this.$router.push({ path: "/index" });
+              // var url = 'http://121.36.106.18:38081/'
+              // window.open(url,'_self')
+              window.location.href = 'http://121.36.106.18:38081/'
+              // this.$router.push({ path: "/index" });
               // this.$router.push({ path: this.redirect || "/" });
             })
             .catch(() => {
