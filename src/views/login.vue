@@ -63,9 +63,15 @@
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from '@/utils/jsencrypt'
+import { mapState } from 'vuex'
 
 export default {
   name: "Login",
+  computed: {
+    ...mapState({
+      siteId: state => state.user.siteId
+    }),
+  },
   data() {
     return {
       codeUrl: "",
@@ -138,7 +144,9 @@ export default {
             .then(() => {
               // var url = 'http://121.36.106.18:38081/'
               // window.open(url,'_self')
-              window.location.href = 'http://121.36.106.18:38081/'
+              window.location.href = 'http://121.36.106.18:38081/?siteId='+this.siteId
+              // console.log('f')
+              console.log(this.siteId)
               // this.$router.push({ path: "/index" });
               // this.$router.push({ path: this.redirect || "/" });
             })
