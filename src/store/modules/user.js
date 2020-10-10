@@ -44,6 +44,7 @@ const user = {
           setToken(res.token)
           commit('SET_TOKEN', res.token)
           commit('SET_SITEID', res.site_id)
+          localStorage.setItem("deptId", res.site_id)
           resolve()
         }).catch(error => {
           reject(error)
