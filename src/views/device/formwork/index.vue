@@ -52,7 +52,7 @@
           </el-col>
           <el-col :span="1.5">
           <el-select v-model="queryParams.model" placeholder="请选择数据对接模板类型" clearable size="small" style="width: 240px">
-            <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+            <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
           </el-select>
           </el-col>
           <el-col :span="1.5">
@@ -596,26 +596,32 @@ export default {
         type: "warning",
       })
         .then(function () {
-          return exportUser(queryParams);
+          
+          return exportDevice(queryParams);
         })
         .then((response) => {
-          this.download(response.msg);
+          
+          
+          window.location.href = response.msg
         })
-        .catch(function () {});
+        .catch(function () {
+          console.log("789")
+        });
     },
     /**  下载按钮操作 */
     handledown() {
       const queryParams = this.queryParams;
+      
       this.$confirm("是否下载数据对接模板?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(function () {
-          return exportUser(queryParams);
+          return exportDevice(queryParams);
         })
         .then((response) => {
-          this.download(response.msg);
+          window.location.href = response.msg
         })
         .catch(function () {});
     },
