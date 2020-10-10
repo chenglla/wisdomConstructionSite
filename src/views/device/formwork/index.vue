@@ -14,41 +14,19 @@
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="设备厂商" prop="devFactory">
-            <el-input
-              v-model="queryParams.devFactory"
-              placeholder="请输入设备厂商"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
+            <el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备类型" prop="devType">
-            <el-select v-model="queryParams.devType" placeholder="请选择设备类型" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
+          <el-form-item label="设备类型" prop="deviceName">
+            <el-select v-model="queryParams.devType" placeholder="请选择设备类型" clearable size="small" style="width: 240px">
+              <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
             </el-select>
           </el-form-item>
           <el-form-item label="设备型号" prop="devModel">
-            <el-input
-              v-model="queryParams.devModel"
-              placeholder="请输入设备型号"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
+            <el-input v-model="queryParams.devModel" placeholder="请输入设备型号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="是否启用" prop="status">
-            <el-select v-model="queryParams.status" placeholder="请选择1：启用，0：未启用。默认为未启用" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="备注" prop="content">
-            <el-input
-              v-model="queryParams.content"
-              placeholder="请输入备注"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
+
+          <el-form-item label="创建时间">
+            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -58,405 +36,146 @@
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button
-              type="primary"
-              icon="el-icon-plus"
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['system:device:add']"
-            >新增</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="success"
-              icon="el-icon-edit"
-              size="mini"
-              :disabled="single"
-              @click="handleUpdate"
-              v-hasPermi="['system:device:edit']"
-            >修改</el-button>
+            <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-              :disabled="multiple"
-              @click="handleDelete"
-              v-hasPermi="['system:device:remove']"
-            >删除</el-button>
+            <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="warning"
-              icon="el-icon-download"
-              size="mini"
-              @click="handleExport"
-              v-hasPermi="['system:device:export']"
-            >导出</el-button>
+            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
+          </el-col>
+          <el-col :span="1.5">
+          <el-select v-model="queryParams.model" placeholder="请选择数据对接模板类型" clearable size="small" style="width: 240px">
+            <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+          </el-select>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain>下载数据对接模板</el-button>
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="deviceList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" align="center" />
+        <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="设备编号" align="center" prop="id" />
-          <el-table-column label="设备厂商" align="center" prop="devFactory" />
-          <el-table-column label="设备类型" align="center" prop="devType" />
-          <el-table-column label="设备型号" align="center" prop="devModel" />
-          <el-table-column label="1：启用，0：未启用。默认为未启用" align="center" prop="status" />
-          <el-table-column label="备注" align="center" prop="content" />
-          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <el-table-column label="设备厂商" align="center" prop="devFactory" :show-overflow-tooltip="true" />
+          <el-table-column label="设备类型" align="center" prop="devType" :show-overflow-tooltip="true" />
+          <el-table-column label="设备型号" align="center" prop="devModel" :show-overflow-tooltip="true" />
+          <!-- <el-table-column label="手机号码" align="center" prop="phonenumber" width="120" /> -->
+          <el-table-column label="启用" align="center">
             <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit"
-                @click="handleUpdate(scope.row)"
-                v-hasPermi="['system:device:edit']"
-              >修改</el-button>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-delete"
-                @click="handleDelete(scope.row)"
-                v-hasPermi="['system:device:remove']"
-              >删除</el-button>
+              <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建时间" align="center" prop="createTime" width="160">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.createTime) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
+              <el-button  size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">删除</el-button>
+              <!-- <el-button size="mini" type="text" icon="el-icon-key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置</el-button> -->
             </template>
           </el-table-column>
         </el-table>
 
-        <pagination
-          v-show="total>0"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
-
-        <!-- 添加或修改支持设备对话框 -->
-        <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-          <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-            <el-form-item label="设备厂商" prop="devFactory">
-              <el-input v-model="form.devFactory" placeholder="请输入设备厂商" />
-            </el-form-item>
-            <el-form-item label="设备类型" prop="devType">
-              <el-select v-model="form.devType" placeholder="请选择设备类型">
-                <el-option label="请选择字典生成" value="" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="设备型号" prop="devModel">
-              <el-input v-model="form.devModel" placeholder="请输入设备型号" />
-            </el-form-item>
-            <el-form-item label="1：启用，0：未启用。默认为未启用">
-              <el-radio-group v-model="form.status">
-                <el-radio label="1">请选择字典生成</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="备注" prop="content">
-              <el-input v-model="form.content" placeholder="请输入备注" />
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="submitForm">确 定</el-button>
-            <el-button @click="cancel">取 消</el-button>
-          </div>
-        </el-dialog>
-        <!--<el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">-->
-          <!--<el-form-item label="设备厂商" prop="userName">-->
-            <!--<el-input v-model="queryParams.userName" placeholder="请输入设备厂商名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="设备类型" prop="status">-->
-            <!--<el-select v-model="queryParams.status" placeholder="请选择设备类型" clearable size="small" style="width: 240px">-->
-              <!--<el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
-            <!--</el-select>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="设备型号" prop="phonenumber">-->
-            <!--<el-input v-model="queryParams.phonenumber" placeholder="请输入设备型号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
-          <!--</el-form-item>-->
-
-          <!--<el-form-item label="创建时间">-->
-            <!--<el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item>-->
-            <!--<el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
-            <!--<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
-          <!--</el-form-item>-->
-        <!--</el-form>-->
-
-        <!--<el-row :gutter="10" class="mb8">-->
-          <!--<el-col :span="1.5">-->
-            <!--<el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>-->
-          <!--</el-col>-->
-          <!--<el-col :span="1.5">-->
-            <!--<el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>-->
-          <!--</el-col>-->
-          <!--<el-col :span="1.5">-->
-            <!--<el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>-->
-          <!--</el-col>-->
-          <!--<el-col :span="1.5">-->
-            <!--<el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>-->
-          <!--</el-col>-->
-          <!--<el-col :span="1.5">-->
-            <!--<el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>-->
-          <!--</el-col>-->
-          <!--<el-col :span="1.5">-->
-          <!--<el-select v-model="queryParams.model" placeholder="请选择数据对接模板类型" clearable size="small" style="width: 240px">-->
-            <!--<el-option v-for="dict in deviceModelOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
-          <!--</el-select>-->
-          <!--</el-col>-->
-          <!--<el-col :span="1.5">-->
-            <!--<el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain>下载数据对接模板</el-button>-->
-          <!--</el-col>-->
-          <!--<right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
-        <!--</el-row>-->
-
-        <!--<el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">-->
-          <!--<el-table-column type="selection" width="50" align="center" />-->
-          <!--<el-table-column label="编号" align="center" prop="userId" />-->
-          <!--<el-table-column label="设备厂商" align="center" prop="userName" :show-overflow-tooltip="true" />-->
-          <!--<el-table-column label="设备类型" align="center" prop="nickName" :show-overflow-tooltip="true" />-->
-          <!--<el-table-column label="设备型号" align="center" prop="deviceType" :show-overflow-tooltip="true" />-->
-          <!--&lt;!&ndash; <el-table-column label="手机号码" align="center" prop="phonenumber" width="120" /> &ndash;&gt;-->
-          <!--<el-table-column label="启用" align="center">-->
-            <!--<template slot-scope="scope">-->
-              <!--<el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>-->
-            <!--</template>-->
-          <!--</el-table-column>-->
-          <!--<el-table-column label="创建时间" align="center" prop="createTime" width="160">-->
-            <!--<template slot-scope="scope">-->
-              <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
-            <!--</template>-->
-          <!--</el-table-column>-->
-          <!--<el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">-->
-            <!--<template slot-scope="scope">-->
-              <!--<el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>-->
-              <!--<el-button  size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">删除</el-button>-->
-              <!--&lt;!&ndash; <el-button size="mini" type="text" icon="el-icon-key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置</el-button> &ndash;&gt;-->
-            <!--</template>-->
-          <!--</el-table-column>-->
-        <!--</el-table>-->
-
-        <!--<pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />-->
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
       </el-col>
     </el-row>
 
-    <!--&lt;!&ndash; 添加或修改参数配置对话框 &ndash;&gt;-->
-    <!--<el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>-->
-      <!--<el-form ref="form" :model="form" :rules="rules" label-width="160px">-->
-        <!--<el-row>-->
+    <!-- 添加或修改参数配置对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
+        <el-row>
 
-            <!--<el-col :span="12">-->
-                <!--<el-form-item  label="设备厂商" prop="userName">-->
-                    <!--<el-input v-model="form.userName" placeholder="请输入设备厂商名称" style="width:250px;"/>-->
-                <!--</el-form-item>-->
-            <!--</el-col>-->
-            <!--<el-col :span="12">-->
-                <!--<el-form-item label="设备类型">-->
-                    <!--<el-select v-model="form.nickName" placeholder="请选择设备类型" style="width:250px;">-->
-                        <!--<el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" ></el-option>-->
-                    <!--</el-select>-->
-                <!--</el-form-item>-->
-            <!--</el-col>-->
-        <!--</el-row>-->
-        <!--<el-row>-->
-          <!--<el-col :span="12">-->
-            <!--<el-form-item label="设备型号" prop="deviceType">-->
-              <!--<el-input v-model="form.deviceType" placeholder="请输入设备型号" style="width:250px;"/>-->
-            <!--</el-form-item>-->
-          <!--</el-col>-->
+            <el-col :span="12">
+                <el-form-item  label="设备厂商" prop="makefactory">
+                    <el-input v-model="form.devFactory" placeholder="请输入设备厂商名称" style="width:250px;"/>
+                </el-form-item>
+            </el-col>
+            <el-col :span="12">
+                <el-form-item label="设备类型">
+                    <el-select v-model="form.devType" placeholder="请选择设备类型" style="width:250px;">
+                        <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" ></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="设备型号" prop="devModel">
+              <el-input v-model="form.devModel" placeholder="请输入设备型号" style="width:250px;"/>
+            </el-form-item>
+          </el-col>
 
-        <!--</el-row>-->
-        <!--&lt;!&ndash;起重机&ndash;&gt;-->
-        <!--&lt;!&ndash; 高度，倾斜度、风速、重量、速度、载重量&ndash;&gt;-->
-<!--&lt;!&ndash;        <div v-if="form.nickName=='起重机'">&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="高度(height)" prop="height">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="倾斜度(slope)" prop="slope">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="风速(wind)" prop="wind">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.wind" placeholder="请输入风速"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="速度(speed)" prop="speed">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="载重量(weight)" prop="weight">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.weight" placeholder="请输入载重量"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+        </el-row>
+        
+        <el-row >
+          <el-col :span="24">
+            <el-form-item label="备注">
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
 
-
-<!--&lt;!&ndash;        &lt;!&ndash; 塔吊&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;        <div v-else-if="form.nickName=='塔吊'">&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-form-item label="高度(height)" prop="height">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-form-item label="倾斜度(slope)" prop="slope">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-form-item label="回转速度(rotaRate)" prop="rotaRate">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-input v-model="form.rotaRate" placeholder="请输入回转速度" style="width:250px;" />&ndash;&gt;-->
-<!--&lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-form-item label="最大重量(maxWeight)" prop="maxWeight">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-input v-model="form.maxWeight" placeholder="请输入最大载重量"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-form-item label="速度(speed)" prop="speed">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-form-item label="起重力矩(knm)" prop="knm">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <el-input v-model="form.knm" placeholder="请输入起重力矩"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-
-
-
-<!--&lt;!&ndash;        &lt;!&ndash; 其他&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;        <div v-else-if="form.nickName!==undefined">&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="高度(height)" prop="height">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.height" placeholder="请输入高度" style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="倾斜度(slope)" prop="slope">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.slope" placeholder="请输入倾斜度"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="重量(weight)" prop="weight">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.weight" placeholder="请输入重量"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="最大重量(maxWeight)" prop="maxWeight">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.weight" placeholder="请输入最大载重量"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-row >&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="速度(speed)" prop="speed">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.speed" placeholder="请输入速度"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-col :span="12">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-form-item label="幅度(range)" prop="range">&ndash;&gt;-->
-<!--&lt;!&ndash;                <el-input v-model="form.range" placeholder="请输入幅度"  style="width:250px;"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
-<!--&lt;!&ndash;            </el-row>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-
-        <!--<el-row >-->
-          <!--<el-col :span="24">-->
-            <!--<el-form-item label="备注">-->
-              <!--<el-input v-model="form.remark" type="textarea" placeholder="请输入内容" ></el-input>-->
-            <!--</el-form-item>-->
-          <!--</el-col>-->
-        <!--</el-row>-->
-      <!--</el-form>-->
-      <!--<div slot="footer" class="dialog-footer">-->
-        <!--<el-button type="primary" @click="submitForm">确 定</el-button>-->
-        <!--<el-button @click="cancel">取 消</el-button>-->
-      <!--</div>-->
-    <!--</el-dialog>-->
-
-    <!--&lt;!&ndash; 用户导入对话框 &ndash;&gt;-->
-    <!--<el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>-->
-      <!--<el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers" :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading" :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag>-->
-        <!--<i class="el-icon-upload"></i>-->
-        <!--<div class="el-upload__text">-->
-          <!--将文件拖到此处，或-->
-          <!--<em>点击上传</em>-->
-        <!--</div>-->
-        <!--<div class="el-upload__tip" slot="tip">-->
-          <!--<el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据-->
-          <!--<el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>-->
-        <!--</div>-->
-        <!--<div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>-->
-      <!--</el-upload>-->
-      <!--<div slot="footer" class="dialog-footer">-->
-        <!--<el-button type="primary" @click="submitFileForm">确 定</el-button>-->
-        <!--<el-button @click="upload.open = false">取 消</el-button>-->
-      <!--</div>-->
-    <!--</el-dialog>-->
+    <!-- 用户导入对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers" :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading" :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+        </div>
+        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {
-  listUser,
-  getUser,
-  delUser,
-  addUser,
-  updateUser,
-  exportUser,
-  resetUserPwd,
-  changeUserStatus,
-  importTemplate,
-} from "@/api/system/user";
-import { getToken } from "@/utils/auth";
-import { getLeftColumn } from "@/api/system/dept";
+
+
 import { listDevice, getDevice, delDevice, addDevice, updateDevice, exportDevice } from "@/api/system/device";
+import { getToken } from "@/utils/auth";
+import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
+import { getLeftColumn } from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { mapState } from 'vuex'
+import { unionTypeAnnotation } from '@babel/types';
 
 export default {
   name: "Formwork",
   components: { Treeselect },
   computed: {
-    ...mapState({
-      username: state => state.user.name
-    }),
-  },
+  ...mapState({
+    username: state => state.user.name
+  }),
+},
   data() {
     return {
-
       // 遮罩层
       loading: true,
       // 选中数组
@@ -469,144 +188,61 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 支持设备表格数据
-      deviceList: [],
+      // 用户表格数据
+      userList: null,
+      dataList: [],
       // 弹出层标题
       title: "",
-      // 是否显示弹出层
-      open: false,
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        devFactory: null,
-        devType: null,
-        devModel: null,
-        status: null,
-        content: null
-      },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-      },
-      dataList: [{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-25 10:33:00",
-          userId: 1,
-          userName: "山西百脉建筑机械有限公司",
-          nickName: "塔吊",
-          deviceType: "TC6024",
-          status: "0",
-          phonenumber: "15888888888",
-          email: "zkrt@163.com",
-          height: 300,
-          slope: 20,
-          rotaRate: 0.3,
-          maxWeight: 10,
-          speed: 1.2,
-          knm: 2
-      },{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-25 11:35:00",
-          userId: 2,
-          userName: "中联重科股份有限公司",
-          nickName: "起重机",
-          deviceType: "TC7036",
-          status: "0",
-          phonenumber: "15000000000",
-          email: "zkrt@163.com",
-          height: 100,
-          slope: 12,
-          wind: 5,
-          maxWeight: 10,
-          speed: 1.3,
-          weight: 6
-      },{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-25 14:35:00",
-          userId: 3,
-          userName: "利勃海尔机械服务(上海)有限公司",
-          nickName: "升降机",
-          deviceType: "TC5516",
-          status: "1",
-          phonenumber: "15111111111",
-          email: "zkrt@163.com",
-          height: 100,
-          slope: 8,
-          weight: 5,
-          maxWeight: 12,
-          speed: 5,
-          range: 1.2
-      },{
-          admin: true,
-          createBy: "admin",
-          createTime: "2020-08-26 10:28:00",
-          userId: 4,
-          userName: "科尼起重机设备(上海)有限公司",
-          nickName: "水质检测设备",
-          deviceType: "TC5513",
-          status: "0",
-          phonenumber: "15111111111",
-          email: "zkrt@163.com",
-          height: 100,
-          slope: 8,
-          weight: 5,
-          maxWeight: 12,
-          speed: 5,
-          range: 1.2
-      }],
       // 部门树选项
       deptOptions: [],
       // 设备树选项
-      // deviceOptions: [{
-      //   id: 100,
-      //   label: "企业总览",
-      //   children: [{
-      //     id: 200,
-      //     label: "河北创巨圆科技发展有限公司",
-      //     children: [{
-      //       id: 101,
-      //       label: "特种设备",
-      //       children: [{
-      //         id: 102,
-      //         label: "起重机"
-      //       }, {
-      //         id: 103,
-      //         label: "塔吊"
-      //       }, {
-      //         id: 104,
-      //         label: "升降机"
-      //       }, {
-      //         id: 105,
-      //         label: "物料提升机"
-      //       }]
-      //     }, {
-      //       id: 201,
-      //       label: "视频设备",
-      //       children: [{
-      //         id: 202,
-      //         label: "摄像头"
-      //       }, {
-      //         id: 203,
-      //         label: "人脸识别设备"
-      //       }]
-      //     }, {
-      //       id: 301,
-      //       label: "环境检测设备",
-      //       children: [{
-      //         id: 302,
-      //         label: "水质检测设备"
-      //       }, {
-      //         id: 303,
-      //         label: "大气采样设备"
-      //       }]
-      //     }]
-      //   }]
-      // }],
+      deviceOptions: [{
+        id: 100,
+        label: "企业总览",
+        children: [{
+          id: 200,
+          label: "河北创巨圆科技发展有限公司",
+          children: [{
+            id: 101,
+            label: "特种设备",
+            children: [{
+              id: 102,
+              label: "起重机"
+            }, {
+              id: 103,
+              label: "塔吊"
+            }, {
+              id: 104,
+              label: "升降机"
+            }, {
+              id: 105,
+              label: "物料提升机"
+            }]
+          }, {
+            id: 201,
+            label: "视频设备",
+            children: [{
+              id: 202,
+              label: "摄像头"
+            }, {
+              id: 203,
+              label: "人脸识别设备"
+            }]
+          }, {
+            id: 301,
+            label: "环境检测设备",
+            children: [{
+              id: 302,
+              label: "水质检测设备"
+            }, {
+              id: 303,
+              label: "大气采样设备"
+            }]
+          }]
+        }]
+      }],
+      // 是否显示弹出层
+      open: false,
       // 部门名称
       deptName: undefined,
       // 默认密码
@@ -643,25 +279,25 @@ export default {
       deviceStatusOptions:[
           {
             dictValue: 0,
-            dictLabel: '起重机'
+            dictLabel: '塔式起重机'
           },{
               dictValue: 1,
-              dictLabel: '塔吊'
-          },{
-              dictValue: 2,
-              dictLabel: '升降机'
-          },{
-              dictValue: 3,
               dictLabel: '物料提升机'
           },{
-              dictValue: 4,
-              dictLabel: '摄像头'
+              dictValue: 2,
+              dictLabel: '施工升降机'
           },{
-              dictValue: 5,
+              dictValue: 3,
+              dictLabel: '虹膜识别设备'
+          },{
+              dictValue: 4,
               dictLabel: '人脸识别设备'
           },{
+              dictValue: 5,
+              dictLabel: '刷卡设备'
+          },{
               dictValue: 6,
-              dictLabel: '水质检测设备'
+              dictLabel: '噪音检测设备'
           },{
               dictValue: 7,
               dictLabel: '大气采样设备'
@@ -673,6 +309,8 @@ export default {
       postOptions: [],
       // 角色选项
       roleOptions: [],
+      // 表单参数
+      form: {},
       defaultProps: {
         children: "childs",
         label: "name",
@@ -692,47 +330,47 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/system/user/importData",
       },
-      // // 查询参数
-      // queryParams: {
-      //   pageNum: 1,
-      //   pageSize: 10,
-      //   userName: undefined,
-      //   phonenumber: undefined,
-      //   status: undefined,
-      //   model:undefined,
-      //   deptId: undefined,
-      // },
-      // // 表单校验
-      // rules: {
-      //   userName: [
-      //     { required: true, message: "用户名称不能为空", trigger: "blur" },
-      //   ],
-      //   nickName: [
-      //     { required: true, message: "用户昵称不能为空", trigger: "blur" },
-      //   ],
-      //   deptId: [
-      //     { required: true, message: "归属部门不能为空", trigger: "blur" },
-      //   ],
-      //   password: [
-      //     { required: true, message: "用户密码不能为空", trigger: "blur" },
-      //   ],
-      //   email: [
-      //     { required: true, message: "邮箱地址不能为空", trigger: "blur" },
-      //     {
-      //       type: "email",
-      //       message: "'请输入正确的邮箱地址",
-      //       trigger: ["blur", "change"],
-      //     },
-      //   ],
-      //   phonenumber: [
-      //     { required: true, message: "手机号码不能为空", trigger: "blur" },
-      //     {
-      //       pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-      //       message: "请输入正确的手机号码",
-      //       trigger: "blur",
-      //     },
-      //   ],
-      // },
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        userName: undefined,
+        phonenumber: undefined,
+        status: undefined,
+        model:undefined,
+        deptId: undefined,
+      },
+      // 表单校验
+      rules: {
+        userName: [
+          { required: true, message: "用户名称不能为空", trigger: "blur" },
+        ],
+        nickName: [
+          { required: true, message: "用户昵称不能为空", trigger: "blur" },
+        ],
+        deptId: [
+          { required: true, message: "归属部门不能为空", trigger: "blur" },
+        ],
+        password: [
+          { required: true, message: "用户密码不能为空", trigger: "blur" },
+        ],
+        email: [
+          { required: true, message: "邮箱地址不能为空", trigger: "blur" },
+          {
+            type: "email",
+            message: "'请输入正确的邮箱地址",
+            trigger: ["blur", "change"],
+          },
+        ],
+        phonenumber: [
+          { required: true, message: "手机号码不能为空", trigger: "blur" },
+          {
+            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   watch: {
@@ -755,26 +393,82 @@ export default {
     });
   },
   methods: {
-    /** 查询用户列表 */
-    // getList() {
-    //   this.loading = true;
-    //
-    //   listUser(this.addDateRange(this.queryParams, this.dateRange)).then(
-    //     (response) => {
-    //       this.userList = response.rows;
-    //       this.total = response.total;
-    //       this.loading = false;
-    //     }
-    //   );
-    // },
     /** 查询支持设备列表 */
     getList() {
+      var deptId = localStorage.getItem("deptId")
+      console.log("deptId", deptId)
+      var params = {
+        deptId: deptId
+      }
       this.loading = true;
-      listDevice(this.queryParams).then(response => {
-        this.deviceList = response.rows;
+      listDevice(params).then(response => {
+        this.dataList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
+    },
+    /** 查询部门下拉树结构 */
+    getTreeselect() {
+  // console.log(this.username)
+      var data = {
+        username: this.username,
+        status: 4
+      }
+      getLeftColumn(data).then((response) => {
+        this.deptOptions.push(response.data)
+      });
+    },
+    // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    // 节点单击事件
+    handleNodeClick(data, node, e) {
+      console.log("data",data)
+      console.log(node)
+      console.log(e)
+      var params = {
+        devType: data.name,
+      }
+      this.loading = true;
+      listDevice(params).then(response => {
+        this.dataList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+      
+    },
+    // 用户状态修改
+    handleStatusChange(row) {
+      let text = row.status === "0" ? "启用" : "停用";
+      this.$confirm(
+        '确认要"' + text + '' + '"该设备吗?',
+        "警告",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+        .then(() => {
+          console.log("123")
+          var tmp = ''
+          if(row.status === '0') {
+            tmp = '1'
+          } else {
+            tmp = '0'
+          }
+          var form = {
+            id: row.id,
+            status: tmp
+          }
+          
+          updateDevice(form);
+        })
+        .catch(function () {
+          console.log("456")
+          row.status = row.status === "0" ? "1" : "0";
+        });
     },
     // 取消按钮
     cancel() {
@@ -784,54 +478,70 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: null,
-        devFactory: null,
-        devType: null,
-        devModel: null,
-        status: 0,
-        createTime: null,
-        content: null
+        id: undefined,
+        devFactory: undefined,
+        devType: undefined,
+        devModel: undefined,
+        content: undefined,
+        status: undefined
+
       };
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
+
+      this.queryParams.page = 1;
+      this.loading = true;
+      listDevice(this.queryParams).then(response => {
+        this.dataList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+     
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.dateRange = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.userId);
+      this.single = selection.length != 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加支持设备";
+        this.open = true;
+        this.title = "新增设备";
+        console.log(this.form)
+    
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getDevice(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改支持设备";
-      });
+        console.log(row)
+      
+  
+      this.form.id = row.id
+      this.form.devFactory = row.devFactory
+      this.form.devType = row.devType
+      this.form.devModel = row.devModel
+      this.form.content = row.content
+      
+      
+      this.open = true
     },
+    /** 重置密码按钮操作 */
+    
     /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
+    submitForm: function () {
+        
+      this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.form.id != null) {
-            updateDevice(this.form).then(response => {
+          if (this.form.id != undefined) {
+            updateDevice(this.form).then((response) => {
               if (response.code === 200) {
                 this.msgSuccess("修改成功");
                 this.open = false;
@@ -839,7 +549,7 @@ export default {
               }
             });
           } else {
-            addDevice(this.form).then(response => {
+            addDevice(this.form).then((response) => {
               if (response.code === 200) {
                 this.msgSuccess("新增成功");
                 this.open = false;
@@ -852,58 +562,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm('是否确认删除支持设备编号为"' + ids + '"的数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function() {
-        return delDevice(ids);
-      }).then(() => {
-        this.getList();
-        this.msgSuccess("删除成功");
-      }).catch(function() {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有支持设备数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function() {
-        return exportDevice(queryParams);
-      }).then(response => {
-        this.download(response.msg);
-      }).catch(function() {});
-    },
-    /** 查询部门下拉树结构 */
-    getTreeselect() {
-      // console.log(this.username)
-      var data = {
-        username: this.username,
-        status: 4
-      }
-      getLeftColumn(data).then((response) => {
-        this.deptOptions.push(response.data)
-        console.log(this.deptOptions)
-      });
-    },
-    // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
-    },
-    // 节点单击事件
-    handleNodeClick(data) {
-      this.queryParams.deptId = data.id;
-      this.getList();
-    },
-    // 用户状态修改
-    handleStatusChange(row) {
-      let text = row.status === "0" ? "启用" : "停用";
+      const userIds = row.id ;
       this.$confirm(
-        '确认要"' + text + '""' + row.userName + '"用户吗?',
+        '是否确认删除该数据项?',
         "警告",
         {
           confirmButtonText: "确定",
@@ -912,244 +573,79 @@ export default {
         }
       )
         .then(function () {
-          return changeUserStatus(row.userId, row.status);
+            // for(let i = 0; i < this.dataList.length; i++) {
+            //     let obj = this.dataList[i]
+            //     if(obj.userId === userIds) {
+            //         this.dataList.splice(i, 1)
+            //     }
+            // }
+          return delDevice(userIds);
         })
         .then(() => {
-          this.msgSuccess(text + "成功");
+          this.getList();
+          this.msgSuccess("删除成功");
         })
-        .catch(function () {
-          row.status = row.status === "0" ? "1" : "0";
-        });
+        .catch(function () {});
     },
-    // // 取消按钮
-    // cancel() {
-    //   this.open = false;
-    //   this.reset();
-    // },
-    // // 表单重置
-    // reset() {
-    //   this.form = {
-    //     userId: undefined,
-    //
-    //     userName: undefined,
-    //     nickName: undefined,
-    //
-    //     phonenumber: undefined,
-    //     email: undefined,
-    //
-    //     status: "0",
-    //     deviceType: undefined,
-    //
-    //     height: undefined,
-    //     slope: undefined,
-    //     rotaRate: undefined,
-    //     maxWeight: undefined,
-    //     speed: undefined,
-    //     knm: undefined,
-    //     wind: undefined,
-    //     weight: undefined,
-    //     range: undefined
-    //
-    //
-    //
-    //
-    //   };
-    //   this.resetForm("form");
-    // },
-    // /** 搜索按钮操作 */
-    // handleQuery() {
-    //   this.queryParams.page = 1;
-    //   this.getList();
-    // },
-    // /** 重置按钮操作 */
-    // resetQuery() {
-    //   this.dateRange = [];
-    //   this.resetForm("queryForm");
-    //   this.handleQuery();
-    // },
-    // // 多选框选中数据
-    // handleSelectionChange(selection) {
-    //   this.ids = selection.map((item) => item.userId);
-    //   this.single = selection.length != 1;
-    //   this.multiple = !selection.length;
-    // },
-    // /** 新增按钮操作 */
-    // handleAdd() {
-    //     this.open = true;
-    //     this.title = "新增设备型号";
-    //     console.log(this.form)
-    // //   this.reset();
-    // //   this.getTreeselect();
-    // //   getUser().then((response) => {
-    // //     this.postOptions = response.posts;
-    // //     this.roleOptions = response.roles;
-    // //     this.open = true;
-    // //     this.title = "添加用户";
-    // //     this.form.password = this.initPassword;
-    // //   });
-    // },
-    // /** 修改按钮操作 */
-    // handleUpdate(row) {
-    //     console.log(row)
-    //   this.reset();
-    // //   this.getTreeselect();
-    //   this.form.userId = row.userId
-    //   this.form.userName = row.userName
-    //   this.form.nickName = row.nickName
-    //   this.form.deviceType = row.deviceType
-    //   this.form.status = row.status
-    //
-    //   this.form.height = row.height
-    //   this.form.slope = row.slope
-    //   this.form.rotaRate = row.rotaRate
-    //   this.form.weight = row.weight
-    //   this.form.maxWeight = row.maxWeight
-    //   this.form.speed = row.speed
-    //   this.form.knm = row.knm
-    //   this.form.wind = row.wind
-    //   this.form.range = row.range
-    //   this.open = true
-    // },
-    // /** 重置密码按钮操作 */
-    // handleResetPwd(row) {
-    //   this.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消",
-    //   })
-    //     .then(({ value }) => {
-    //       resetUserPwd(row.userId, value).then((response) => {
-    //         if (response.code === 200) {
-    //           this.msgSuccess("修改成功，新密码是：" + value);
-    //         }
-    //       });
-    //     })
-    //     .catch(() => {});
-    // },
-    // /** 提交按钮 */
-    // submitForm: function () {
-    //     // console.log(this.form)
-    //     // this.$refs["form"].validate((valid) => {
-    //     //     if(valid) {
-    //     //         if(this.form.userId !== undefined) {
-    //     //             //更新操作
-    //     //         } else {
-    //
-    //     //             this.form.userId = Math.floor(Math.random() * 100) + 5
-    //     //              console.log(this.form)
-    //     //             this.dataList.push(this.form)
-    //     //             console.log(this.dataList)
-    //
-    //     //         }
-    //     //     }
-    //     // })
-    //   this.$refs["form"].validate((valid) => {
-    //     if (valid) {
-    //       if (this.form.userId != undefined) {
-    //         updateUser(this.form).then((response) => {
-    //           if (response.code === 200) {
-    //             this.msgSuccess("修改成功");
-    //             this.open = false;
-    //             this.getList();
-    //           }
-    //         });
-    //       } else {
-    //         addUser(this.form).then((response) => {
-    //           if (response.code === 200) {
-    //             this.msgSuccess("新增成功");
-    //             this.open = false;
-    //             this.getList();
-    //           }
-    //         });
-    //       }
-    //     }
-    //   });
-    // },
-    // /** 删除按钮操作 */
-    // handleDelete(row) {
-    //   const userIds = row.userId || this.ids;
-    //   this.$confirm(
-    //     '是否确认删除模板编号为"' + userIds + '"的数据项?',
-    //     "警告",
-    //     {
-    //       confirmButtonText: "确定",
-    //       cancelButtonText: "取消",
-    //       type: "warning",
-    //     }
-    //   )
-    //     .then(function () {
-    //         // for(let i = 0; i < this.dataList.length; i++) {
-    //         //     let obj = this.dataList[i]
-    //         //     if(obj.userId === userIds) {
-    //         //         this.dataList.splice(i, 1)
-    //         //     }
-    //         // }
-    //       return delUser(userIds);
-    //     })
-    //     .then(() => {
-    //       this.getList();
-    //       this.msgSuccess("删除成功");
-    //     })
-    //     .catch(function () {});
-    // },
-    // /** 导出按钮操作 */
-    // handleExport() {
-    //   const queryParams = this.queryParams;
-    //   this.$confirm("是否确认导出所有用户数据项?", "警告", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消",
-    //     type: "warning",
-    //   })
-    //     .then(function () {
-    //       return exportUser(queryParams);
-    //     })
-    //     .then((response) => {
-    //       this.download(response.msg);
-    //     })
-    //     .catch(function () {});
-    // },
-    // /**  下载按钮操作 */
-    // handledown() {
-    //   const queryParams = this.queryParams;
-    //   this.$confirm("是否下载数据对接模板?", "警告", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消",
-    //     type: "warning",
-    //   })
-    //     .then(function () {
-    //       return exportUser(queryParams);
-    //     })
-    //     .then((response) => {
-    //       this.download(response.msg);
-    //     })
-    //     .catch(function () {});
-    // },
-    // /** 导入按钮操作 */
-    // handleImport() {
-    //   this.upload.title = "用户导入";
-    //   this.upload.open = true;
-    // },
-    // /** 下载模板操作 */
-    // importTemplate() {
-    //   importTemplate().then((response) => {
-    //     this.download(response.msg);
-    //   });
-    // },
-    // // 文件上传中处理
-    // handleFileUploadProgress(event, file, fileList) {
-    //   this.upload.isUploading = true;
-    // },
-    // // 文件上传成功处理
-    // handleFileSuccess(response, file, fileList) {
-    //   this.upload.open = false;
-    //   this.upload.isUploading = false;
-    //   this.$refs.upload.clearFiles();
-    //   this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-    //   this.getList();
-    // },
-    // // 提交上传文件
-    // submitFileForm() {
-    //   this.$refs.upload.submit();
-    // },
+    /** 导出按钮操作 */
+    handleExport() {
+      const queryParams = this.queryParams;
+      this.$confirm("是否确认导出所有用户数据项?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
+          return exportUser(queryParams);
+        })
+        .then((response) => {
+          this.download(response.msg);
+        })
+        .catch(function () {});
+    },
+    /**  下载按钮操作 */
+    handledown() {
+      const queryParams = this.queryParams;
+      this.$confirm("是否下载数据对接模板?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
+          return exportUser(queryParams);
+        })
+        .then((response) => {
+          this.download(response.msg);
+        })
+        .catch(function () {});
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload.title = "用户导入";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      importTemplate().then((response) => {
+        this.download(response.msg);
+      });
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
+    },
   },
 };
 </script>

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询支持设备列表
 export function listDevice(query) {
   return request({
-    url: '/device/sysDev/list',
+    url: '/device/supportDevice/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDevice(query) {
 // 查询支持设备详细
 export function getDevice(id) {
   return request({
-    url: '/system/device/' + id,
+    url: '/device/supportDevice/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDevice(id) {
 // 新增支持设备
 export function addDevice(data) {
   return request({
-    url: '/system/device',
+    url: '/device/supportDevice',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDevice(data) {
 // 修改支持设备
 export function updateDevice(data) {
   return request({
-    url: '/system/device',
+    url: '/device/supportDevice',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateDevice(data) {
 // 删除支持设备
 export function delDevice(id) {
   return request({
-    url: '/system/device/' + id,
+    url: '/device/supportDevice/' + id,
     method: 'delete'
   })
 }
@@ -46,7 +46,7 @@ export function delDevice(id) {
 // 导出支持设备
 export function exportDevice(query) {
   return request({
-    url: '/system/device/export',
+    url: '/device/supportDevice/export',
     method: 'get',
     params: query
   })
