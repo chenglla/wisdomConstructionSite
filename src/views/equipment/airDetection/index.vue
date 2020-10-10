@@ -269,13 +269,19 @@ import {
   importTemplate,
 } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
-import { treeselect } from "@/api/system/dept";
+import { getLeftColumn } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { mapState } from 'vuex'
 
 export default {
   name: "airDetection",
   components: { Treeselect },
+  computed: {
+    ...mapState({
+      username: state => state.user.name
+    }),
+  },
   data() {
     return {
       fileList:[],
@@ -450,51 +456,7 @@ export default {
       // 弹出层标题
       title: "",
       // 部门树选项
-      deptOptions: [{
-        id: 100,
-        label: "企业总览",
-        children: [{
-          id: 200,
-          label: "河北创巨圆科技发展有限公司",
-          children: [{
-            id: 101,
-            label: "特种设备",
-            children: [{
-              id: 102,
-              label: "起重机"
-            }, {
-              id: 103,
-              label: "塔吊"
-            }, {
-              id: 104,
-              label: "升降机"
-            }, {
-              id: 105,
-              label: "物料提升机"
-            }]
-          }, {
-            id: 201,
-            label: "视频设备",
-            children: [{
-              id: 202,
-              label: "摄像头"
-            }, {
-              id: 203,
-              label: "人脸识别设备"
-            }]
-          }, {
-            id: 301,
-            label: "环境检测设备",
-            children: [{
-              id: 302,
-              label: "水质检测设备"
-            }, {
-              id: 303,
-              label: "大气采样设备"
-            }]
-          }]
-        }]
-      }],
+      deptOptions: [],
       // 是否显示弹出层
       open: false,
       // 部门名称
@@ -514,8 +476,8 @@ export default {
       // 表单参数
       form: {},
       defaultProps: {
-        children: "children",
-        label: "label",
+        children: "childs",
+        label: "name",
       },
       // 用户导入参数
       upload: {
@@ -604,7 +566,7 @@ export default {
   },
   created() {
     this.getList();
-    // this.getTreeselect();
+    this.getTreeselect();
     this.getDicts("sys_normal_disable").then((response) => {
       this.statusOptions = response.data;
     });
@@ -645,6 +607,16 @@ export default {
       // );
     },
     /** 查询部门下拉树结构 */
+    getTreeselect() {
+      // console.log(this.username)
+      var data = {
+        username: this.username,
+        status: 3
+      }
+      getLeftColumn(data).then((response) => {
+        this.deptOptions.push(response.data)
+      });
+    },
     // getTreeselect() {
     //   // this.deptOptions = [{"id":100,"label":"设备总览","children":[{"id":205,"label":"塔吊"},{"id":101,"label":"起重机"},{"id":102,"label":"升降机"}]}]
     //   treeselect().then((response) => {

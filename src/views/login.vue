@@ -144,9 +144,14 @@ export default {
             .then(() => {
               // var url = 'http://121.36.106.18:38081/'
               // window.open(url,'_self')
-              window.location.href = 'http://121.36.106.18:38081/?siteId='+this.siteId
+              if (this.loginForm.username === 'admin') {
+                this.$router.push('/index')
+              } else {
+                window.location.href = 'http://121.36.106.18:38081/?siteId='+this.siteId
+              }
+
               // console.log('f')
-              console.log(this.siteId)
+              // console.log(this.siteId)
               // this.$router.push({ path: "/index" });
               // this.$router.push({ path: this.redirect || "/" });
             })

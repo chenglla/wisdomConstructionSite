@@ -83,3 +83,13 @@ export function setInitData(data) {
     params: data
   })
 }
+
+// 根据用户名获取设备树形结构
+export function getLeftColumn(data) {
+  return request({
+    url: '/system/initial/getLeftColumn',
+    method: 'get',
+    params: data
+  })
+}
+
