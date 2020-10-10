@@ -38,12 +38,12 @@
           <el-col :span="1.5">
             <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
           </el-col>
@@ -62,7 +62,7 @@
         </el-row>
 
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="50" align="center" />
+          
           <el-table-column label="设备编号" align="center" prop="id" />
           <el-table-column label="设备厂商" align="center" prop="devFactory" :show-overflow-tooltip="true" />
           <el-table-column label="设备类型" align="center" prop="devType" :show-overflow-tooltip="true" />
