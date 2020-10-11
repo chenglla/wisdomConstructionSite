@@ -3,35 +3,45 @@
     <el-row :gutter="20">
       <!--部门数据-->
       <el-col :span="4" :xs="24">
-        <div class="head-container">
-          <el-input v-model="deptName" placeholder="请输入公司名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
-        </div>
+        <!--<div class="head-container">-->
+          <!--<el-input v-model="deptName" placeholder="请输入公司名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
+        <!--</div>-->
         <div class="head-container">
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="设备名称" prop="devName">
-            <el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
-          </el-form-item>
-          <el-form-item label="设备编号" prop="devId">
-            <el-input v-model="queryParams.devId" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">
-              <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="进厂时间">
-            <el-date-picker v-model="queryParams.entryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="进厂时间"></el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-          </el-form-item>
-        </el-form>
+        <div v-show="showSearch" style="padding: 10px">
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备名称</span><el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 200px;margin-right: 10px" />
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备编号</span><el-input v-model="queryParams.devId" placeholder="请输入设备编号" clearable size="small" style="width: 200px;margin-right: 10px"  />
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">状态</span>
+          <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 200px;margin-right: 10px">
+            <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+          </el-select>
+          <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </div>
+        <!--<el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">-->
+          <!--<el-form-item label="设备名称" prop="devName">-->
+            <!--<el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="设备编号" prop="devId">-->
+            <!--<el-input v-model="queryParams.devId" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="状态" prop="status">-->
+            <!--<el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">-->
+              <!--<el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
+            <!--</el-select>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="进厂时间">-->
+            <!--<el-date-picker v-model="queryParams.entryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="进厂时间"></el-date-picker>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item>-->
+            <!--<el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
+            <!--<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
+          <!--</el-form-item>-->
+        <!--</el-form>-->
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -672,7 +682,7 @@
           deviceType:undefined,
           makefactory:undefined,
           devId: undefined,
-          status: "0",
+          status: '',
         };
         this.resetForm("form");
       },
@@ -688,8 +698,10 @@
       },
       /** 重置按钮操作 */
       resetQuery() {
-        this.queryParams.entryTime = '';
-        this.resetForm("queryForm");
+        this.queryParams.devName = '';
+        this.queryParams.devId = ''
+        this.queryParams.status = ''
+        // this.resetForm("queryForm");
         this.handleQuery();
       },
       // 多选框选中数据
@@ -700,7 +712,7 @@
       },
       /** 新增按钮操作 */
       handleAdd() {
-
+        this.reset()
         // this.getTreeselect();
         this.open = true;
         this.title = "添加特种设备";

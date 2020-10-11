@@ -3,38 +3,50 @@
     <el-row :gutter="20">
       <!--部门数据-->
       <el-col :span="4" :xs="24">
-        <div class="head-container">
-          <el-input v-model="deptName" placeholder="请输入设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
-        </div>
+        <!--<div class="head-container">-->
+          <!--<el-input v-model="deptName" placeholder="请输入设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
+        <!--</div>-->
         <div class="head-container">
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
       <!--用户数据-->
-      <el-col :span="20" :xs="24">
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px" style="margin-left: 20px;">
-          <el-form-item label="设备厂商" prop="devFactory">
-            <el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
-          </el-form-item>
-          <el-form-item label="设备类型" prop="deviceName">
-            <el-select v-model="queryParams.devType" placeholder="请选择设备类型" clearable size="small" style="width: 240px">
-              <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="设备型号" prop="devModel">
-            <el-input v-model="queryParams.devModel" placeholder="请输入设备型号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
-            <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery" style="margin-left: 10px;">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-          </el-form-item>
 
-          <!-- <el-form-item label="创建时间">
-            <el-date-picker v-model="queryParams.createTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
-          </el-form-item> -->
-          <!-- <el-form-item>
-            <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-          </el-form-item> -->
-        </el-form>
+      <el-col :span="20" :xs="24">
+        <div v-show="showSearch" style="margin-bottom: 20px">
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备厂商</span><el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备类型</span>
+          <el-select v-model="queryParams.devType" placeholder="请选择设备类型" clearable size="small" style="width: 200px;margin-right: 10px">
+            <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
+          </el-select>
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备型号</span>
+          <el-input v-model="queryParams.devModel" placeholder="请输入设备型号" clearable size="small" style="width: 200px;margin-right: 10px"/>
+          <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </div>
+        <!--<el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px" style="margin-left: 20px;">-->
+          <!--<el-form-item label="设备厂商" prop="devFactory">-->
+            <!--<el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="设备类型" prop="deviceName">-->
+            <!--<el-select v-model="queryParams.devType" placeholder="请选择设备类型" clearable size="small" style="width: 240px">-->
+              <!--<el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />-->
+            <!--</el-select>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="设备型号" prop="devModel">-->
+            <!--<el-input v-model="queryParams.devModel" placeholder="请输入设备型号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+            <!--<el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery" style="margin-left: 10px;">搜索</el-button>-->
+            <!--<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
+          <!--</el-form-item>-->
+
+          <!--&lt;!&ndash; <el-form-item label="创建时间">-->
+            <!--<el-date-picker v-model="queryParams.createTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>-->
+          <!--</el-form-item> &ndash;&gt;-->
+          <!--&lt;!&ndash; <el-form-item>-->
+            <!--<el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
+            <!--<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
+          <!--</el-form-item> &ndash;&gt;-->
+        <!--</el-form>-->
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -58,13 +70,13 @@
           </el-select>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain>下载数据对接模板</el-button>
+            <el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain disabled>下载数据对接模板</el-button>
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
-          
+
           <el-table-column label="设备编号" align="center" prop="id" />
           <el-table-column label="设备厂商" align="center" prop="devFactory" :show-overflow-tooltip="true" />
           <el-table-column label="设备类型" align="center" prop="devType" :show-overflow-tooltip="true" />
@@ -336,11 +348,14 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        userName: undefined,
-        phonenumber: undefined,
-        status: undefined,
-        model:undefined,
-        deptId: undefined,
+        devFactory: '',
+        devType: '',
+        devModel: '',
+        // userName: undefined,
+        // phonenumber: undefined,
+        // status: undefined,
+        // model:undefined,
+        // deptId: undefined,
       },
       // 表单校验
       rules: {
@@ -435,14 +450,18 @@ export default {
       // }
       if(data.flag === null) {
         var params = {
-          devType: data.name 
-          
+          constructionSiteId: data.deptId,
+        }
+      } else if(data.flag === 1){
+        var params = {
+          constructionSiteId: data.deptId,
+          devType: data.name
 
         }
       } else {
         var params = {
-          deptId: data.deptId,
-          devType: data.name  
+          constructionSiteId: data.deptId,
+          type: data.name
 
         }
       }
@@ -517,8 +536,11 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
-      this.resetForm("queryForm");
+      // this.dateRange = [];
+      // this.resetForm("queryForm");
+      this.queryParams.devFactory = ''
+      this.queryParams.devType = ''
+      this.queryParams.devModel = ''
       this.handleQuery();
     },
     // 多选框选中数据
@@ -613,12 +635,12 @@ export default {
         type: "warning",
       })
         .then(function () {
-          
+
           return exportDevice(queryParams);
         })
         .then((response) => {
-          
-          
+
+
           window.location.href = response.msg
         })
         .catch(function () {
@@ -628,7 +650,7 @@ export default {
     /**  下载按钮操作 */
     handledown() {
       const queryParams = this.queryParams;
-      
+
       this.$confirm("是否下载数据对接模板?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

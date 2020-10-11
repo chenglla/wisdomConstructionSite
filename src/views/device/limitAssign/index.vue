@@ -11,27 +11,38 @@
         </div>
       </el-col> -->
       <!--用户数据-->
+      <div v-show="showSearch" style="padding: 10px">
+        <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">企业序号</span><el-input v-model="queryParams.constructionSiteId" placeholder="请输入企业序号" clearable size="small" style="width: 240px;margin-right: 10px" @keyup.enter.native="handleQuery" />
+        <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">企业名称</span><el-input v-model="queryParams.constructionSiteName" placeholder="请输入企业名称" clearable size="small" style="width: 240px;margin-right: 10px" @keyup.enter.native="handleQuery" />
+        <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">是否停用</span>
+        <el-select v-model="queryParams.status" placeholder="是否停用" clearable size="small" style="width: 240px;margin-right: 10px">
+          <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+        </el-select>
+        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </div>
+
       <el-col :span="24" :xs="24">
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="企业序号" prop="constructionSiteId">
-            <el-input v-model="queryParams.constructionSiteId" placeholder="请输入企业序号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
-          </el-form-item>
-          <el-form-item label="企业名称" prop="constructionSiteName">
-            <el-input v-model="queryParams.constructionSiteName" placeholder="请输入企业名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
-          </el-form-item>
-          <el-form-item label="是否停用" prop="status">
-              <el-select v-model="queryParams.status" placeholder="是否停用" clearable size="small" style="width: 240px">
-                <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
-              </el-select>
-          </el-form-item>
-          <!-- <el-form-item label="时间">
-            <el-date-picker v-model="queryParams.time" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date" placeholder="请选择日期" ></el-date-picker>
-          </el-form-item> -->
-          <el-form-item>
-            <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-          </el-form-item>
-        </el-form>
+        <!--<el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">-->
+          <!--<el-form-item label="企业序号" prop="constructionSiteId">-->
+            <!--<el-input v-model="queryParams.constructionSiteId" placeholder="请输入企业序号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="企业名称" prop="constructionSiteName">-->
+            <!--<el-input v-model="queryParams.constructionSiteName" placeholder="请输入企业名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="是否停用" prop="status">-->
+              <!--<el-select v-model="queryParams.status" placeholder="是否停用" clearable size="small" style="width: 240px">-->
+                <!--<el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
+              <!--</el-select>-->
+          <!--</el-form-item>-->
+          <!--&lt;!&ndash; <el-form-item label="时间">-->
+            <!--<el-date-picker v-model="queryParams.time" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date" placeholder="请选择日期" ></el-date-picker>-->
+          <!--</el-form-item> &ndash;&gt;-->
+          <!--<el-form-item>-->
+            <!--<el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
+            <!--<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
+          <!--</el-form-item>-->
+        <!--</el-form>-->
 
         <el-row :gutter="10" class="mb8">
 <!--          <el-col :span="1.5">-->
@@ -63,7 +74,7 @@
            <template slot-scope="scope">
               <el-tag  v-if="scope.row.status===0" type="danger">未启用</el-tag>
               <el-tag  v-if="scope.row.status===1" type="success">启用</el-tag>
-              
+
             </template>
           </el-table-column>
           <el-table-column label="时间" align="center" prop="time" width="160">
@@ -394,7 +405,7 @@ export default {
         // 是否更新已经存在的用户数据
         updateSupport: 0,
         // 设置上传的请求头部
-        
+
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/system/user/importData",
       },
@@ -463,7 +474,7 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-      
+
       listToken().then(
         (response) => {
           this.dataList = response.rows;
@@ -490,7 +501,7 @@ export default {
       this.getList();
     },
     // 用户状态修改
-    
+
 
     handleStatusChange(row) {
       let text = row.status === "0" ? "启用" : "停用";
@@ -514,7 +525,7 @@ export default {
             id: row.id,
             status: tmp
           }
-          
+
           updateToken(form);
         })
         .catch(function () {
@@ -523,7 +534,7 @@ export default {
         });
     },
 
-    
+
     // 取消按钮
     cancel() {
       this.open = false;
@@ -583,7 +594,10 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams.time = '';
-      this.resetForm("queryForm");
+      this.queryParams.constructionSiteId = ''
+      this.queryParams.constructionSiteName = ''
+      this.queryParams.status = ''
+      // this.resetForm("queryForm");
       this.handleQuery();
     },
     // 多选框选中数据
