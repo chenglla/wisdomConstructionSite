@@ -124,7 +124,9 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="工地名称"  prop="deptId">
-              <el-input v-model="form.deptId" placeholder="部门名称" maxlength="50" />
+              <el-select v-model="form.deptId" placeholder="请选择工地名称" clearable size="small" style="width: 240px">
+                <el-option v-for="item in departmentList" :key="item.deptId" :label="item.name" :value="item.deptId" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -248,6 +250,7 @@
     },
     data() {
       return {
+        departmentList: [],
         fileList:[],
         deviceOptions:[
           {
@@ -691,7 +694,7 @@
         // this.getTreeselect();
         this.open = true;
         this.title = "添加特种设备";
-        // this.getDepartmentList()
+        this.getDepartmentList()
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
@@ -803,17 +806,16 @@
       submitFileForm() {
         this.$refs.upload.submit();
       },
-      // getDepartmentList(){
-      //    var username = localStorage.getItem("userName")
-      //   console.log("userName",username)
-      //   var params = {
-      //      username: username
-      //   }
-      //   departmentDev(params).then(response => {
-      //     departmentList: response.rows
-      //   });
-      //    console.log(departmentList)
-      // }
+      getDepartmentList(){
+         var username = localStorage.getItem("userName")
+        console.log("userName",username)
+        var params = {
+           username: username
+        }
+        departmentDev(params).then(response => {
+          this.departmentList = response.data.childs
+        });
+      }
     },
   };
 </script>
