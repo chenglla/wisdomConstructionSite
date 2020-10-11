@@ -51,3 +51,12 @@ export function exportDev(query) {
     params: query
   })
 }
+
+// 获取部门列表
+export function getDeparament(query) {
+  return request({
+    url: '/system/initial/getDeptList',
+    method: 'get',
+    params: query
+  })
+}
