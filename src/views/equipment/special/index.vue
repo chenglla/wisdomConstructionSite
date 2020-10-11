@@ -56,7 +56,7 @@
 <!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="设备编号" align="center" prop="devId" />
           <el-table-column label="设备厂商" align="center" prop="makefactory" />
-          <el-table-column label="设备名称" align="center" prop="devName"  />
+          <el-table-column label="设备名称" align="center" prop="deviceName"  />
           <el-table-column label="设备型号" align="center" prop="deviceType" />
           <el-table-column label="维修周期" align="center" prop="maintenanCycle"  />
           <el-table-column label="负责人" align="center" prop="personInCharge"  />
@@ -111,7 +111,7 @@
           <el-col :span="12">
             <el-form-item label="设备类型" prop="deviceName">
               <el-select v-model="form.deviceName" placeholder="请选择设备类型" clearable size="small" style="width: 240px">
-                <el-option v-for="dict in deviceOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+                <el-option v-for="dict in deviceOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -609,10 +609,20 @@
         console.log("data",data)
         console.log("node",node)
         console.log("e",e)
+        // var params = {
+        //   deptId: data.deptId,
+        //   devName:data.name
+        // }
+        if(data.flag === null) {
         var params = {
           deptId: data.deptId,
-          devName:data.name
         }
+      } else {
+        var params = {
+          deptId: data.deptId,
+          deviceName: data.name
+        }
+      }
         this.loading = true;
         listDev(params).then(response => {
           this.userList = response.rows;
@@ -678,7 +688,7 @@
       },
       /** 重置按钮操作 */
       resetQuery() {
-        this.dateRange = [];
+        this.queryParams.entryTime = '';
         this.resetForm("queryForm");
         this.handleQuery();
       },
