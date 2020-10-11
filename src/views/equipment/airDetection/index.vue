@@ -257,17 +257,8 @@
 </template>
 
 <script>
-import {
-  listUser,
-  getUser,
-  delUser,
-  addUser,
-  updateUser,
-  exportUser,
-  resetUserPwd,
-  changeUserStatus,
-  importTemplate,
-} from "@/api/system/user";
+import { listDev, getDev, delDev, addDev, updateDev, exportDev } from "@/api/system/otherdev";
+
 import { getToken } from "@/utils/auth";
 import { getLeftColumn } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -580,31 +571,20 @@ export default {
   methods: {
     /** 查询用户列表 */
     getList() {
-      this.loading = true;
-      var response
-      if(this.queryParams.deptId === 100) {
-        response = this.response1
-      } else if(this.queryParams.deptId === 205) {
-        response = this.response2
-      } else if (this.queryParams.deptId === 101) {
-        response = this.response3
-      } else if (this.queryParams.deptId === 102) {
-        response = this.response4
+      var deptId = localStorage.getItem("deptId")
+      console.log("deptId", deptId)
+      var params = {
+        constructionSiteId: deptId,
+        type: '绿色施工'
       }
-      this.userList = response.rows;
-      this.total = response.total;
-      setTimeout(() => {
-        this.loading = false
-      }, 300)
+      this.loading = true;
+      listDev(params).then(response => {
+        this.userList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
 
-      // this.loading = true;
-      // listUser(this.addDateRange(this.queryParams, this.dateRange)).then(
-      //   (response) => {
-      //     this.userList = response.rows;
-      //     this.total = response.total;
-      //     this.loading = false;
-      //   }
-      // );
+      
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
