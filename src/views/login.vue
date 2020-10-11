@@ -2,7 +2,7 @@
   <div class="login">
 <!--    <h3 class="title">中科瑞通后台</h3>-->
     <div class="login_title">
-      <p>中科瑞通后台管理系统</p>
+      <p>智慧工地统一登陆平台</p>
     </div>
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">
