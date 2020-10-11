@@ -62,18 +62,19 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="设备编号" align="center" prop="equipmentID" />
-          <el-table-column label="设备厂商" align="center" prop="equipmentSource" />
-          <el-table-column label="设备名称" align="center" prop="equipmentName"  />
-          <el-table-column label="设备型号" align="center" prop="equipmentModel" />
+          <el-table-column label="工地ID" align="center" prop="constructionSiteId" />
+          <el-table-column label="工地名称" align="center" prop="constructionSiteName" />
+          <el-table-column label="设备厂商" align="center" prop="devFactory"  />
+          <el-table-column label="设备类型" align="center" prop="devType" />
+          <el-table-column label="设备型号" align="center" prop="devModel" />
+          <el-table-column label="设备名称" align="center" prop="devName" />
 <!--          <el-table-column label="维修周期" align="center" prop="repairCycle"  />-->
-          <el-table-column label="负责人" align="center" prop="people"  />
-          <el-table-column label="联系方式" align="center" prop="tel"  />
-          <el-table-column label="传输状态" align="center" prop="transfer" :show-overflow-tooltip="true" >
+          <el-table-column label="负责人" align="center" prop="personInCharge"  />
+          <el-table-column label="联系方式" align="center" prop="phone"  />
+          <el-table-column label="传输状态" align="center" prop="status" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
-              <el-tag  v-if="scope.row.transfer==='正常'" type="success">正常</el-tag>
-              <el-tag  v-if="scope.row.transfer==='故障'" type="danger">故障</el-tag>
-              <el-tag  v-if="scope.row.transfer==='停用'" type="warning">停用</el-tag>
+              <el-tag  v-if="scope.row.status===1" type="success">启用</el-tag>
+              <el-tag  v-if="scope.row.status===0" type="warning">未启用</el-tag>
             </template>
           </el-table-column>
           <!--<el-table-column label="手机号码" align="center" prop="phonenumber" width="120" />-->
@@ -82,11 +83,6 @@
           <!--<el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>-->
           <!--</template>-->
           <!--</el-table-column>-->
-          <el-table-column label="进厂时间" align="center" prop="proTime" width="160">
-            <!--<template slot-scope="scope">-->
-            <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
-            <!--</template>-->
-          </el-table-column>
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
@@ -107,44 +103,52 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备厂商" prop="equipmentSource">
-              <el-input v-model="form.equipmentSource" placeholder="设备厂商" maxlength="11" />
+            <el-form-item label="设备厂商" prop="devFactory">
+              <el-input v-model="form.devFactory" placeholder="设备厂商" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备名称"  prop="equipmentName">
-              <el-input v-model="form.equipmentName" placeholder="设备名称" maxlength="50" />
+            <el-form-item label="设备名称"  prop="devName">
+              <el-input v-model="form.devName" placeholder="设备名称" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备型号" prop="equipmentModel">
-              <el-input v-model="form.equipmentModel" placeholder="设备型号" maxlength="11" />
+            <el-form-item label="设备型号" prop="devModel">
+              <el-input v-model="form.devModel" placeholder="设备型号" maxlength="11" />
             </el-form-item>
           </el-col>
-<!--          <el-col :span="12">-->
-<!--            <el-form-item label="维修周期" >-->
-<!--              <el-input v-model="form.repairCycle" placeholder="维修周期" maxlength="50" />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
+          <el-col :span="12">
+            <el-form-item label="工地名称" prop="constructionSiteName">
+              <el-input v-model="form.constructionSiteName" placeholder="设备型号" maxlength="11" />
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="people">
-              <el-input v-model="form.people" placeholder="请输入负责人名称" />
+            <el-form-item label="负责人" prop="personInCharge">
+              <el-input v-model="form.personInCharge" placeholder="请输入负责人名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系方式" >
-              <el-input v-model="form.tel" placeholder="请输入联系方式" />
+              <el-input v-model="form.phone" placeholder="请输入联系方式" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="传输状态" >
-              <el-input v-model="form.transfer" placeholder="请输入传输状态" />
+            <el-form-item label="设备类型" >
+              <el-select v-model="form.devModel" placeholder="设备类型">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item label="进厂时间" >
               <el-input v-model="form.proTime" placeholder="请输入进厂时间" />
@@ -157,6 +161,14 @@
           <!--</el-col>-->
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item label="传输状态" >
+              <el-radio-group v-model="form.status">
+                <el-radio :label="0">未启用</el-radio>
+                <el-radio :label="1">启用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
 <!--          <el-col :span="12">-->
 <!--            <el-form-item label="资质证明" >-->
 <!--              &lt;!&ndash;              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />&ndash;&gt;-->
@@ -170,11 +182,7 @@
 <!--              </el-upload>-->
 <!--            </el-form-item>-->
 <!--          </el-col>-->
-          <el-col :span="12">
-            <el-form-item label="设备类型" >
-              <el-input v-model="form.equipmentName" placeholder="设备类型" maxlength="50" />
-            </el-form-item>
-          </el-col>
+
         </el-row>
         <!--<el-row>-->
         <!--<el-col :span="12">-->
@@ -257,17 +265,7 @@
 </template>
 
 <script>
-import {
-  listUser,
-  getUser,
-  delUser,
-  addUser,
-  updateUser,
-  exportUser,
-  resetUserPwd,
-  changeUserStatus,
-  importTemplate,
-} from "@/api/system/user";
+  import { listDev, getDev, delDev, addDev, updateDev, exportDev } from "@/api/system/otherdev";
 import { getToken } from "@/utils/auth";
 import { getLeftColumn } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -285,6 +283,16 @@ export default {
   data() {
     return {
       fileList:[],
+      options: [{
+        value: '虹膜识别设备',
+        label: '虹膜识别设备'
+      }, {
+        value: '人脸设备',
+        label: '人脸设备'
+      }, {
+        value: '刷卡设备',
+        label: '刷卡设备'
+      }],
       response1: {
         total:6,rows:[{
           tel: '13489021345',
@@ -580,22 +588,18 @@ export default {
   methods: {
     /** 查询用户列表 */
     getList() {
-      this.loading = true;
-      var response
-      if(this.queryParams.deptId === 100) {
-        response = this.response1
-      } else if(this.queryParams.deptId === 205) {
-        response = this.response2
-      } else if (this.queryParams.deptId === 101) {
-        response = this.response3
-      } else if (this.queryParams.deptId === 102) {
-        response = this.response4
+      var deptId = localStorage.getItem("deptId")
+      console.log("deptId", deptId)
+      var params = {
+        constructionSiteId: deptId,
+        type: '考勤设备'
       }
-      this.userList = response.rows;
-      this.total = response.total;
-      setTimeout(() => {
-        this.loading = false
-      }, 300)
+      this.loading = true;
+      listDev(params).then(response => {
+        this.userList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
 
       // this.loading = true;
       // listUser(this.addDateRange(this.queryParams, this.dateRange)).then(
