@@ -702,6 +702,7 @@ export default {
       this.form = row
       this.open = true;
       this.title = "修改设备";
+      this.getDeparamentList()
       // this.reset();
       // this.getTreeselect();
       // const userId = row.userId || this.ids;

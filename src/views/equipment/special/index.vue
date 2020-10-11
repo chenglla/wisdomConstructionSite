@@ -66,7 +66,7 @@
 <!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="设备编号" align="center" prop="devId" />
           <el-table-column label="设备厂商" align="center" prop="makefactory" />
-          <el-table-column label="设备名称" align="center" prop="deviceName"  />
+          <el-table-column label="设备名称" align="center" prop="devName"  />
           <el-table-column label="设备型号" align="center" prop="deviceType" />
           <el-table-column label="维修周期" align="center" prop="maintenanCycle"  />
           <el-table-column label="负责人" align="center" prop="personInCharge"  />
@@ -84,7 +84,7 @@
               <!--<el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>-->
             <!--</template>-->
           <!--</el-table-column>-->
-          <el-table-column label="进厂时间" align="center" prop="entryTime" width="160">
+          <el-table-column label="进厂时间" align="center" prop="entryTime" >
             <!--<template slot-scope="scope">-->
               <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
             <!--</template>-->
@@ -106,16 +106,10 @@
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-
         <el-row>
-<!--            <el-col :span="12">-->
-<!--              <el-form-item label="设备编号" prop="makefactory">-->
-<!--                <el-input v-model="form.devId" placeholder="设备编号" maxlength="11" />-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
           <el-col :span="12">
             <el-form-item label="设备厂商" prop="makefactory">
-              <el-input v-model="form.makefactory" placeholder="设备厂商" maxlength="11" />
+              <el-input v-model="form.makefactory" placeholder="设备厂商" maxlength="11"  style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -128,8 +122,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备名称"  prop="deviceName">
-              <el-input v-model="form.devName" placeholder="设备名称" maxlength="50" />
+            <el-form-item label="设备名称"  prop="devName">
+              <el-input v-model="form.devName" placeholder="设备名称" maxlength="50" style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -143,24 +137,24 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="设备型号" prop="deviceType">
-              <el-input v-model="form.deviceType" placeholder="设备型号" maxlength="11" />
+              <el-input v-model="form.deviceType" placeholder="设备型号" maxlength="11" style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="维修周期" prop="maintenanCycle">
-              <el-input v-model="form.maintenanCycle" placeholder="维修周期" maxlength="50" />
+              <el-input v-model="form.maintenanCycle" placeholder="维修周期" maxlength="50" style="width:240px" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="负责人" prop="personInCharge">
-              <el-input v-model="form.personInCharge" placeholder="请输入负责人名称" />
+              <el-input v-model="form.personInCharge" placeholder="请输入负责人名称" style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系方式" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入联系方式" />
+              <el-input v-model="form.phone" placeholder="请输入联系方式" style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -619,20 +613,16 @@
         console.log("data",data)
         console.log("node",node)
         console.log("e",e)
-        // var params = {
-        //   deptId: data.deptId,
-        //   devName:data.name
-        // }
-        if(data.flag === null) {
-        var params = {
-          deptId: data.deptId,
+        if(data.flag === 1) {
+          var params = {
+            deptId: data.deptId,
+            deviceName: data.name
+          }
+        } else{
+          var params = {
+            deptId: data.deptId,
+          }
         }
-      } else {
-        var params = {
-          deptId: data.deptId,
-          deviceName: data.name
-        }
-      }
         this.loading = true;
         listDev(params).then(response => {
           this.userList = response.rows;
