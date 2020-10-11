@@ -12,7 +12,7 @@
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px" style="margin-left: 20px;">
           <el-form-item label="设备厂商" prop="devFactory">
             <el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
@@ -23,15 +23,17 @@
           </el-form-item>
           <el-form-item label="设备型号" prop="devModel">
             <el-input v-model="queryParams.devModel" placeholder="请输入设备型号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
-          </el-form-item>
-
-          <el-form-item label="创建时间">
-            <el-date-picker v-model="queryParams.createTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+            <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery" style="margin-left: 10px;">搜索</el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
+
+          <!-- <el-form-item label="创建时间">
+            <el-date-picker v-model="queryParams.createTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
+          </el-form-item> -->
+          <!-- <el-form-item>
+            <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          </el-form-item> -->
         </el-form>
 
         <el-row :gutter="10" class="mb8">
@@ -428,8 +430,21 @@ export default {
       console.log("data",data)
       console.log(node)
       console.log(e)
-      var params = {
-        devType: data.name,
+      // var params = {
+      //   devType: data.name,
+      // }
+      if(data.flag === null) {
+        var params = {
+          devType: data.name 
+          
+
+        }
+      } else {
+        var params = {
+          deptId: data.deptId,
+          devType: data.name  
+
+        }
       }
       this.loading = true;
       listDevice(params).then(response => {
@@ -545,6 +560,7 @@ export default {
               if (response.code === 200) {
                 this.msgSuccess("修改成功");
                 this.open = false;
+                this.reset()
                 this.getList();
               }
             });
@@ -553,6 +569,7 @@ export default {
               if (response.code === 200) {
                 this.msgSuccess("新增成功");
                 this.open = false;
+                this.reset()
                 this.getList();
               }
             });
