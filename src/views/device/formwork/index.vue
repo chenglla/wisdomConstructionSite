@@ -18,7 +18,7 @@
           </el-form-item>
           <el-form-item label="设备类型" prop="deviceName">
             <el-select v-model="queryParams.devType" placeholder="请选择设备类型" clearable size="small" style="width: 240px">
-              <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+              <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
             </el-select>
           </el-form-item>
           <el-form-item label="设备型号" prop="devModel">
@@ -26,7 +26,7 @@
           </el-form-item>
 
           <el-form-item label="创建时间">
-            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -38,12 +38,12 @@
           <el-col :span="1.5">
             <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
           </el-col>
@@ -52,7 +52,7 @@
           </el-col>
           <el-col :span="1.5">
           <el-select v-model="queryParams.model" placeholder="请选择数据对接模板类型" clearable size="small" style="width: 240px">
-            <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+            <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
           </el-select>
           </el-col>
           <el-col :span="1.5">
@@ -62,7 +62,7 @@
         </el-row>
 
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="50" align="center" />
+          
           <el-table-column label="设备编号" align="center" prop="id" />
           <el-table-column label="设备厂商" align="center" prop="devFactory" :show-overflow-tooltip="true" />
           <el-table-column label="设备类型" align="center" prop="devType" :show-overflow-tooltip="true" />
@@ -596,26 +596,32 @@ export default {
         type: "warning",
       })
         .then(function () {
-          return exportUser(queryParams);
+          
+          return exportDevice(queryParams);
         })
         .then((response) => {
-          this.download(response.msg);
+          
+          
+          window.location.href = response.msg
         })
-        .catch(function () {});
+        .catch(function () {
+          console.log("789")
+        });
     },
     /**  下载按钮操作 */
     handledown() {
       const queryParams = this.queryParams;
+      
       this.$confirm("是否下载数据对接模板?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(function () {
-          return exportUser(queryParams);
+          return exportDevice(queryParams);
         })
         .then((response) => {
-          this.download(response.msg);
+          window.location.href = response.msg
         })
         .catch(function () {});
     },

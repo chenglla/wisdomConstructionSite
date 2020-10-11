@@ -2,22 +2,22 @@
   <div class="app-container">
     <el-row :gutter="20">
       <!--部门数据-->
-      <el-col :span="4" :xs="24">
+      <!-- <el-col :span="4" :xs="24">
         <div class="head-container">
           <el-input v-model="deptName" placeholder="请输入企业名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
         <div class="head-container">
           <el-tree :data="deviceOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
-      </el-col>
+      </el-col> -->
       <!--用户数据-->
-      <el-col :span="20" :xs="24">
+      <el-col :span="24" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="企业序号" prop="deviceNO">
-            <el-input v-model="queryParams.deviceNO" placeholder="请输入企业序号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="企业序号" prop="constructionSiteId">
+            <el-input v-model="queryParams.constructionSiteId" placeholder="请输入企业序号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="企业名称" prop="deviceName">
-            <el-input v-model="queryParams.deviceName" placeholder="请输入企业名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="企业名称" prop="constructionSiteName">
+            <el-input v-model="queryParams.constructionSiteName" placeholder="请输入企业名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
           <el-form-item label="是否停用" prop="status">
               <el-select v-model="queryParams.status" placeholder="是否停用" clearable size="small" style="width: 240px">
@@ -55,16 +55,14 @@
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
 
            <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="企业序号" align="center" prop="equipmentID" />
-          <el-table-column label="企业名称" align="center" prop="equipmentName" :show-overflow-tooltip="true" />
-          <el-table-column label="负责人" align="center" prop="people" :show-overflow-tooltip="true" />
-          <el-table-column label="联系方式" align="center" prop="tel" />
-          <el-table-column label="是否启用" align="center">
-            <template slot-scope="scope">
-              <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
-            </template>
+          <el-table-column label="企业序号" align="center" prop="constructionSiteId" />
+          <el-table-column label="企业名称" align="center" prop="constructionSiteName" :show-overflow-tooltip="true" />
+          <el-table-column label="负责人" align="center" prop="personInCharge" :show-overflow-tooltip="true" />
+          <el-table-column label="联系方式" align="center" prop="phone" />
+          <el-table-column label="是否启用" align="center" prop="status" :formatter="changeStatus">
+           
           </el-table-column>
-          <el-table-column label="时间" align="center" prop="proTime" width="160">
+          <el-table-column label="时间" align="center" prop="time" width="160">
 
           </el-table-column>
 
@@ -72,7 +70,7 @@
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
 <!--              <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">分配口令</el-button>-->
-              <el-button  size="mini" type="text" icon="el-icon-info" v-clipboard:copy="scope.row.equipmentID" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">复制口令</el-button>
+              <el-button  size="mini" type="text" icon="el-icon-info" v-clipboard:copy="scope.row.token" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">复制口令</el-button>
               <!-- <el-button size="mini" type="text" icon="el-icon-key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置</el-button> -->
             </template>
           </el-table-column>
@@ -100,8 +98,8 @@
         </el-row>
         <el-row>
             <el-col :span="12">
-            <el-form-item label="负责人" prop="people">
-              <el-input v-model="form.people" placeholder="请输入负责人名称" />
+            <el-form-item label="负责人" prop="personInCharge">
+              <el-input v-model="form.personInCharge" placeholder="请输入负责人名称" />
             </el-form-item>
           </el-col>
 
@@ -152,18 +150,8 @@
 </template>
 
 <script>
-import {
-  listUser,
-  getUser,
-  delUser,
-  addUser,
-  updateUser,
-  exportUser,
-  resetUserPwd,
-  changeUserStatus,
-  importTemplate,
-} from "@/api/system/user";
-import { getToken } from "@/utils/auth";
+import { listToken, getToken, delToken, addToken, updateToken, exportToken } from "@/api/system/token";
+// import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -321,7 +309,9 @@ export default {
       // 日期范围
       dateRange: [],
       // 状态数据字典
-      statusOptions: [],
+      statusOptions: [
+       
+      ],
       templateOptions:[
           {
             dictValue: 0,
@@ -393,7 +383,7 @@ export default {
         // 是否更新已经存在的用户数据
         updateSupport: 0,
         // 设置上传的请求头部
-        headers: { Authorization: "Bearer " + getToken() },
+        
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/system/user/importData",
       },
@@ -447,25 +437,25 @@ export default {
   },
   created() {
     this.getList();
-    this.getTreeselect();
-    this.getDicts("sys_normal_disable").then((response) => {
-      this.statusOptions = response.data;
-    });
-    this.getDicts("sys_user_sex").then((response) => {
-      this.sexOptions = response.data;
-    });
-    this.getConfigKey("sys.user.initPassword").then((response) => {
-      this.initPassword = response.msg;
-    });
+    //this.getTreeselect();
+    // this.getDicts("sys_normal_disable").then((response) => {
+    //   this.statusOptions = response.data;
+    // });
+    // this.getDicts("sys_user_sex").then((response) => {
+    //   this.sexOptions = response.data;
+    // });
+    // this.getConfigKey("sys.user.initPassword").then((response) => {
+    //   this.initPassword = response.msg;
+    // });
   },
   methods: {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-
-      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(
+      
+      listToken().then(
         (response) => {
-          this.userList = response.rows;
+          this.dataList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -489,27 +479,40 @@ export default {
       this.getList();
     },
     // 用户状态修改
+    
+
     handleStatusChange(row) {
       let text = row.status === "0" ? "启用" : "停用";
       this.$confirm(
-        '确认要"' + text + '""' + row.userName + '"用户吗?',
+        '确认要"' + text + '' + '"该设备吗?',
         "警告",
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
-        }
-      )
-        .then(function () {
-          return changeUserStatus(row.userId, row.status);
         })
         .then(() => {
-          this.msgSuccess(text + "成功");
+          console.log("123")
+          var tmp = ''
+          if(row.status === '0') {
+            tmp = '1'
+          } else {
+            tmp = '0'
+          }
+          var form = {
+            id: row.id,
+            status: tmp
+          }
+          
+          updateToken(form);
         })
         .catch(function () {
+          console.log("456")
           row.status = row.status === "0" ? "1" : "0";
         });
     },
+
+    
     // 取消按钮
     cancel() {
       this.open = false;
@@ -545,10 +548,26 @@ export default {
       };
       this.resetForm("form");
     },
+
+    changeStatus(row) {
+      //console.log("row", row)
+      if(row.status === 0) {
+        return '停用'
+      } else {
+        return '启用'
+      }
+    },
+
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.page = 1;
-      this.getList();
+
+      this.loading = true;
+      listToken(this.queryParams).then(response => {
+        this.dataList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
     },
     /** 重置按钮操作 */
     resetQuery() {
