@@ -51,3 +51,10 @@ export function exportDev(query) {
     params: query
   })
 }
+export function departmentDev(query) {
+  return request({
+    url: '/system/initial/getDeptList',
+    method: 'get',
+    params: query
+  })
+}

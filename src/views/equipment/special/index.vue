@@ -10,30 +10,22 @@
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
-<!--      <el-col :span="4" :xs="24">-->
-<!--        <div class="head-container">-->
-<!--          <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
-<!--        </div>-->
-<!--        <div class="head-container">-->
-<!--          <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />-->
-<!--        </div>-->
-<!--      </el-col>-->
       <!--用户数据-->
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="设备名称" prop="userName">
-            <el-input v-model="queryParams.equipmentName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备名称" prop="devName">
+            <el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备编号" prop="phonenumber">
-            <el-input v-model="queryParams.equipmentID" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备编号" prop="devId">
+            <el-input v-model="queryParams.devId" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">
               <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
             </el-select>
           </el-form-item>
-          <el-form-item label="出厂时间">
-            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+          <el-form-item label="进厂时间">
+            <el-date-picker v-model="queryParams.entryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="进厂时间"></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -45,12 +37,12 @@
           <el-col :span="1.5">
             <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
-          </el-col>
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>-->
+<!--          </el-col>-->
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>-->
+<!--          </el-col>-->
           <el-col :span="1.5">
             <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
           </el-col>
@@ -71,9 +63,9 @@
           <el-table-column label="联系方式" align="center" prop="phone"  />
           <el-table-column label="传输状态" align="center" prop="status" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
-              <el-tag  v-if="scope.row.transfer==='正常'" type="success">正常</el-tag>
-              <el-tag  v-if="scope.row.transfer==='故障'" type="danger">故障</el-tag>
-              <el-tag  v-if="scope.row.transfer==='停用'" type="warning">停用</el-tag>
+              <el-tag  v-if="scope.row.status===0" type="success">正常</el-tag>
+<!--              <el-tag  v-if="scope.row.transfer==='故障'" type="danger">故障</el-tag>-->
+              <el-tag  v-if="scope.row.status===1" type="danger">停用</el-tag>
             </template>
           </el-table-column>
           <!--<el-table-column label="手机号码" align="center" prop="phonenumber" width="120" />-->
@@ -106,14 +98,33 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
 
         <el-row>
+<!--            <el-col :span="12">-->
+<!--              <el-form-item label="设备编号" prop="makefactory">-->
+<!--                <el-input v-model="form.devId" placeholder="设备编号" maxlength="11" />-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
           <el-col :span="12">
             <el-form-item label="设备厂商" prop="makefactory">
               <el-input v-model="form.makefactory" placeholder="设备厂商" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="设备类型" prop="deviceName">
+              <el-select v-model="form.deviceName" placeholder="请选择设备类型" clearable size="small" style="width: 240px">
+                <el-option v-for="dict in deviceOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="设备名称"  prop="deviceName">
               <el-input v-model="form.devName" placeholder="设备名称" maxlength="50" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="部门名称"  prop="deviceName">
+              <el-input v-model="form.departmentName" placeholder="部门名称" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -142,12 +153,14 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="传输状态" prop="status">
-              <el-input v-model="form.status" placeholder="请输入传输状态" />
+              <el-select v-model="form.status" placeholder="设备状态" clearable size="small" style="width: 240px">
+                <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="进厂时间" prop="entryTime">
-              <el-input v-model="form.entryTime" placeholder="请输入进厂时间" />
+              <el-date-picker v-model="form.entryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="进厂时间"></el-date-picker>
             </el-form-item>
           </el-col>
           <!--<el-col :span="12">-->
@@ -174,11 +187,7 @@
               </el-upload>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="设备类型" prop="deviceName">
-              <el-input v-model="form.deviceName" placeholder="设备类型" maxlength="50" />
-            </el-form-item>
-          </el-col>
+
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -221,7 +230,7 @@
     changeUserStatus,
     importTemplate,
   } from "@/api/system/user";
-  import { listDev, getDev, delDev, addDev, updateDev, exportDev } from "@/api/system/dev";
+  import { listDev, getDev, delDev, addDev, updateDev, exportDev,departmentDev } from "@/api/system/dev";
   import { getToken } from "@/utils/auth";
   import { getLeftColumn } from "@/api/system/dept";
   import Treeselect from "@riophae/vue-treeselect";
@@ -240,6 +249,18 @@
     data() {
       return {
         fileList:[],
+        deviceOptions:[
+          {
+            dictValue: 0,
+            dictLabel: '塔式起重机'
+          },{
+            dictValue: 1,
+            dictLabel: '物料提升机'
+          },{
+            dictValue: 2,
+            dictLabel: '施工升降机'
+          }
+        ],
         response1: {
           total:6,rows:[{
             tel: '13489021345',
@@ -418,7 +439,14 @@
         // 日期范围
         dateRange: [],
         // 状态数据字典
-        statusOptions: [],
+        statusOptions: [{
+          dictValue: 0,
+          dictLabel: '正常'
+        },
+          {
+            dictValue: 1,
+            dictLabel: '停用'
+          }],
         // 性别状态字典
         sexOptions: [],
         // 岗位选项
@@ -450,9 +478,12 @@
         queryParams: {
           pageNum: 1,
           pageSize: 10,
+          entryTime:undefined,
+          status:undefined,
+          devId:undefined,
+          devName: undefined,
           userName: undefined,
           phonenumber: undefined,
-          status: undefined,
           equipmentName: '',
           equipmentID: '',
           people: '',
@@ -519,12 +550,12 @@
     created() {
       this.getList();
       this.getTreeselect();
-      this.getDicts("sys_normal_disable").then((response) => {
-        this.statusOptions = response.data;
-      });
-      this.getDicts("sys_user_sex").then((response) => {
-        this.sexOptions = response.data;
-      });
+      // this.getDicts("sys_normal_disable").then((response) => {
+      //   this.statusOptions = response.data;
+      // });
+      // this.getDicts("sys_user_sex").then((response) => {
+      //   this.sexOptions = response.data;
+      // });
       this.getConfigKey("sys.user.initPassword").then((response) => {
         this.initPassword = response.msg;
       });
@@ -571,9 +602,22 @@
         return data.label.indexOf(value) !== -1;
       },
       // 节点单击事件
-      handleNodeClick(data) {
-        this.queryParams.deptId = data.id;
-        this.getList();
+      handleNodeClick(data, node, e) {
+        console.log("data",data)
+        console.log("node",node)
+        console.log("e",e)
+        var params = {
+          deptId: data.deptId,
+          devName:data.name
+        }
+        this.loading = true;
+        listDev(params).then(response => {
+          this.userList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+        // this.queryParams.deptId = data.deptId;
+        // this.getList();
       },
       // 用户状态修改
       handleStatusChange(row) {
@@ -605,6 +649,7 @@
       // 表单重置
       reset() {
         this.form = {
+          departmentName:undefined,
           devName:undefined,
           deviceName:undefined,
           entryTime:undefined,
@@ -620,8 +665,13 @@
       },
       /** 搜索按钮操作 */
       handleQuery() {
+        console.log(this.queryParams)
         this.queryParams.page = 1;
-        this.getList();
+        listDev(this.queryParams).then(response => {
+          this.userList = response.rows;
+          this.total = response.total;
+        });
+        // this.getList();
       },
       /** 重置按钮操作 */
       resetQuery() {
