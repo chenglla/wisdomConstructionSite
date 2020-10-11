@@ -53,7 +53,7 @@
         </el-row>
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="50" align="center" />
+<!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="设备编号" align="center" prop="devId" />
           <el-table-column label="设备厂商" align="center" prop="makefactory" />
           <el-table-column label="设备名称" align="center" prop="devName"  />
@@ -123,8 +123,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门名称"  prop="deviceName">
-              <el-input v-model="form.departmentName" placeholder="部门名称" maxlength="50" />
+            <el-form-item label="工地名称"  prop="deptId">
+              <el-input v-model="form.deptId" placeholder="部门名称" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -769,10 +769,10 @@
           type: "warning",
         })
           .then(function () {
-            // return exportUser(queryParams);
+            return exportDev(queryParams);
           })
           .then((response) => {
-            // this.download(response.msg);
+            window.location.href = response.msg
           })
           .catch(function () {});
       },
