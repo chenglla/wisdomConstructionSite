@@ -26,7 +26,7 @@
           </el-form-item>
 
           <el-form-item label="创建时间">
-            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
+            <el-date-picker v-model="queryParams.createTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -117,7 +117,7 @@
           </el-col>
 
         </el-row>
-        
+
         <el-row >
           <el-col :span="24">
             <el-form-item label="备注">
@@ -437,7 +437,7 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
-      
+
     },
     // 用户状态修改
     handleStatusChange(row) {
@@ -462,7 +462,7 @@ export default {
             id: row.id,
             status: tmp
           }
-          
+
           updateDevice(form);
         })
         .catch(function () {
@@ -498,7 +498,7 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
-     
+
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -517,27 +517,27 @@ export default {
         this.open = true;
         this.title = "新增设备";
         console.log(this.form)
-    
+
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
         console.log(row)
-      
-  
+
+
       this.form.id = row.id
       this.form.devFactory = row.devFactory
       this.form.devType = row.devType
       this.form.devModel = row.devModel
       this.form.content = row.content
-      
-      
+
+
       this.open = true
     },
     /** 重置密码按钮操作 */
-    
+
     /** 提交按钮 */
     submitForm: function () {
-        
+
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != undefined) {
