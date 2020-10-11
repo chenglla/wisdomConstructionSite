@@ -45,12 +45,7 @@
           <el-col :span="1.5">
             <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
-          </el-col>
+          
           <el-col :span="1.5">
             <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
           </el-col>
@@ -123,11 +118,15 @@
               <el-input v-model="form.devModel" placeholder="设备型号" maxlength="11" />
             </el-form-item>
           </el-col>
-<!--          <el-col :span="12">-->
-<!--            <el-form-item label="维修周期" >-->
-<!--              <el-input v-model="form.repairCycle" placeholder="维修周期" maxlength="50" />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
+          <el-col :span="12">
+            <el-form-item label="工地名称" >
+               <el-select v-model="form.devType" placeholder="请选择工地名称" clearable size="small" style="width: 240px">
+                <el-option v-for="item in departmentList" :key="item.deptId" :label="item.name" :value="item.deptId" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          
+
         </el-row>
         <el-row>
           <el-col :span="12">
@@ -150,83 +149,22 @@
               <el-input v-model="form.proTime" placeholder="请输入进厂时间" />
             </el-form-item>
           </el-col>
-          <!--<el-col :span="12">-->
-          <!--<el-form-item label="归属部门" prop="deptId">-->
-          <!--<treeselect v-model="form.deptId" :options="deptOptions" :disable-branch-nodes="true" :show-count="true" placeholder="请选择归属部门" />-->
-          <!--</el-form-item>-->
-          <!--</el-col>-->
+          
         </el-row>
         <el-row>
-<!--          <el-col :span="12">-->
-<!--            <el-form-item label="资质证明" >-->
-<!--              &lt;!&ndash;              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />&ndash;&gt;-->
-<!--              <el-upload-->
-<!--                class="upload-demo"-->
-<!--                multiple-->
-<!--                :limit="3"-->
-<!--                :file-list="fileList"-->
-<!--              >-->
-<!--                <el-button size="small" type="primary">点击上传</el-button>-->
-<!--              </el-upload>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
+
           <el-col :span="12">
             <el-form-item label="设备类型" >
-              <el-input v-model="form.equipmentName" placeholder="设备类型" maxlength="50" />
+               <el-select v-model="form.devType" placeholder="请选择设备类型" clearable size="small" style="width: 240px">
+                <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <!--<el-row>-->
-        <!--<el-col :span="12">-->
-        <!--<el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">-->
-        <!--<el-input v-model="form.userName" placeholder="请输入用户名称" />-->
-        <!--</el-form-item>-->
-        <!--</el-col>-->
-        <!--<el-col :span="12">-->
-        <!--<el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">-->
-        <!--<el-input v-model="form.password" placeholder="请输入用户密码" type="password" />-->
-        <!--</el-form-item>-->
-        <!--</el-col>-->
-        <!--</el-row>-->
-        <!--<el-row>-->
-        <!--<el-col :span="12">-->
-        <!--<el-form-item label="用户性别">-->
-        <!--<el-select v-model="form.sex" placeholder="请选择">-->
-        <!--<el-option v-for="dict in sexOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"></el-option>-->
-        <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--</el-col>-->
-        <!--<el-col :span="12">-->
-        <!--<el-form-item label="状态">-->
-        <!--<el-radio-group v-model="form.status">-->
-        <!--<el-radio v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictValue">{{dict.dictLabel}}</el-radio>-->
-        <!--</el-radio-group>-->
-        <!--</el-form-item>-->
-        <!--</el-col>-->
-        <!--</el-row>-->
-        <!--<el-row>-->
-        <!--<el-col :span="12">-->
-        <!--<el-form-item label="岗位">-->
-        <!--<el-select v-model="form.postIds" multiple placeholder="请选择">-->
-        <!--<el-option v-for="item in postOptions" :key="item.postId" :label="item.postName" :value="item.postId" :disabled="item.status == 1"></el-option>-->
-        <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--</el-col>-->
-        <!--<el-col :span="12">-->
-        <!--<el-form-item label="角色">-->
-        <!--<el-select v-model="form.roleIds" multiple placeholder="请选择">-->
-        <!--<el-option v-for="item in roleOptions" :key="item.roleId" :label="item.roleName" :value="item.roleId" :disabled="item.status == 1"></el-option>-->
-        <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--</el-col>-->
-        <!--</el-row>-->
-        <!--<el-row>-->
-        <!--<el-col :span="24">-->
-        <!--<el-form-item label="备注">-->
-        <!--<el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>-->
-        <!--</el-form-item>-->
-        <!--</el-col>-->
-        <!--</el-row>-->
+      
+       
+       
+      
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -277,6 +215,15 @@ export default {
     return {
       departmentList: [],
       fileList:[],
+      deviceStatusOptions:[
+          {
+              dictValue: 1,
+              dictLabel: '噪音检测设备'
+          },{
+              dictValue: 2,
+              dictLabel: '大气采样设备'
+          }
+      ],
       response1: {
         total:6,rows:[{
           tel: '13489021345',
@@ -611,9 +558,21 @@ export default {
       return data.label.indexOf(value) !== -1;
     },
     // 节点单击事件
-    handleNodeClick(data) {
-      this.queryParams.deptId = data.id;
-      this.getList();
+    handleNodeClick(data, node, e) {
+      console.log("data",data)
+      console.log(node)
+      console.log(e)
+      var params = {
+        deptId: data.deptId,
+        devType: data.name,
+      }
+      this.loading = true;
+      listDev(params).then(response => {
+        this.userList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+      
     },
     // 用户状态修改
     handleStatusChange(row) {
@@ -667,7 +626,12 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.page = 1;
-      this.getList();
+      this.loading = true;
+      listDev(this.queryParams).then(response => {
+        this.userList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -735,8 +699,8 @@ export default {
     submitForm: function () {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.form.userId != undefined) {
-            updateUser(this.form).then((response) => {
+          if (this.form.id != undefined) {
+            updateDev(this.form).then((response) => {
               if (response.code === 200) {
                 this.msgSuccess("修改成功");
                 this.open = false;
@@ -744,7 +708,7 @@ export default {
               }
             });
           } else {
-            addUser(this.form).then((response) => {
+            addDev(this.form).then((response) => {
               if (response.code === 200) {
                 this.msgSuccess("新增成功");
                 this.open = false;
@@ -757,7 +721,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const userIds = row.equipmentID || this.ids;
+      const userIds = row.id;
       this.$confirm(
         '是否确认删除设备编号为"' + userIds + '"的数据项?',
         "警告",
@@ -768,7 +732,7 @@ export default {
         }
       )
         .then(function () {
-          return delUser(userIds);
+          return delDev(userIds);
         })
         .then(() => {
           this.getList();
@@ -785,10 +749,10 @@ export default {
         type: "warning",
       })
         .then(function () {
-          // return exportUser(queryParams);
+          return exportDev(queryParams);
         })
         .then((response) => {
-          // this.download(response.msg);
+          window.location.href = response.msg
         })
         .catch(function () {});
     },
@@ -827,7 +791,7 @@ export default {
         username: username
       }
       getDeparament(params).then(response => {
-        departmentList: response.rows
+        this.departmentList = response.data.childs
       });
     }
 
