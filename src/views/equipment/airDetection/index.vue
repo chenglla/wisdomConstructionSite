@@ -86,7 +86,7 @@
             <template slot-scope="scope">
               <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
               <el-button v-if="scope.row.equipmentID !== 1" size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">删除</el-button>
-              <!-- <el-button size="mini" type="text" icon="el-icon-goods" @click="handleDetail(scope.row)" v-hasPermi="['system:user:detail']">详情</el-button> -->
+              <el-button size="mini" type="text" icon="el-icon-goods" @click="handleDetail(scope.row)" v-hasPermi="['system:user:detail']">详情</el-button>
               <!--<el-button size="mini" type="text" icon="el-icon-key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置</el-button>-->
             </template>
           </el-table-column>
