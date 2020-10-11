@@ -25,7 +25,7 @@
               </el-select>
           </el-form-item>
           <el-form-item label="时间">
-            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+            <el-date-picker v-model="queryParams.time" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date" placeholder="请选择日期" ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -59,8 +59,12 @@
           <el-table-column label="企业名称" align="center" prop="constructionSiteName" :show-overflow-tooltip="true" />
           <el-table-column label="负责人" align="center" prop="personInCharge" :show-overflow-tooltip="true" />
           <el-table-column label="联系方式" align="center" prop="phone" />
-          <el-table-column label="是否启用" align="center" prop="status" :formatter="changeStatus">
-           
+          <el-table-column label="是否启用" align="center" prop="status" >
+           <template slot-scope="scope">
+              <el-tag  v-if="scope.row.status===0" type="danger">未启用</el-tag>
+              <el-tag  v-if="scope.row.status===1" type="success">启用</el-tag>
+              
+            </template>
           </el-table-column>
           <el-table-column label="时间" align="center" prop="time" width="160">
 
@@ -310,7 +314,14 @@ export default {
       dateRange: [],
       // 状态数据字典
       statusOptions: [
-       
+       {
+          dictValue: 0,
+          dictLabel: '未启用'
+        },
+        {
+          dictValue: 1,
+          dictLabel: '启用'
+        }
       ],
       templateOptions:[
           {
@@ -571,7 +582,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
+      this.queryParams.time = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -736,10 +747,10 @@ export default {
         type: "warning",
       })
         .then(function () {
-          return exportUser(queryParams);
+          return exportToken(queryParams);
         })
         .then((response) => {
-          this.download(response.msg);
+          window.location.href = response.msg
         })
         .catch(function () {});
     },

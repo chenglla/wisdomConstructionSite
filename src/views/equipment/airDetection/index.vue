@@ -4,7 +4,7 @@
       <!--部门数据-->
       <el-col :span="4" :xs="24">
         <div class="head-container">
-          <el-input v-model="devName" placeholder="请设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
+          <el-input v-model="deviceName" placeholder="请设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
         <div class="head-container">
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
@@ -24,16 +24,16 @@
           <el-form-item label="设备名称" prop="devName">
             <el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备编号" prop="id">
-            <el-input v-model="queryParams.id" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备厂商" prop="devFactory">
+            <el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">
               <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
             </el-select>
           </el-form-item>
-          <el-form-item label="出厂时间">
-            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+          <el-form-item label="进厂时间">
+            <el-date-picker v-model="queryParams.entryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="请选择进厂时间" ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -61,7 +61,7 @@
           <el-table-column label="设备厂商" align="center" prop="devFactory" />
           <el-table-column label="设备名称" align="center" prop="devName"  />
           <el-table-column label="设备型号" align="center" prop="devModel" />
-<!--          <el-table-column label="维修周期" align="center" prop="repairCycle"  />-->
+         <el-table-column label="设备类型" align="center" prop="devType"  />
           <el-table-column label="负责人" align="center" prop="personInCharge"  />
           <el-table-column label="联系方式" align="center" prop="phone"  />
           <el-table-column label="传输状态" align="center" prop="status" :show-overflow-tooltip="true" >
@@ -77,7 +77,7 @@
           <!--<el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>-->
           <!--</template>-->
           <!--</el-table-column>-->
-          <el-table-column label="进厂时间" align="center" prop="proTime" width="160">
+          <el-table-column label="进厂时间" align="center" prop="entryTime" width="160">
             <!--<template slot-scope="scope">-->
             <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
             <!--</template>-->
@@ -120,7 +120,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="工地名称" >
-               <el-select v-model="form.devType" placeholder="请选择工地名称" clearable size="small" style="width: 240px">
+               <el-select v-model="form.constructionSiteId" placeholder="请选择工地名称" clearable size="small" style="width: 240px">
                 <el-option v-for="item in departmentList" :key="item.deptId" :label="item.name" :value="item.deptId" />
               </el-select>
             </el-form-item>
@@ -140,13 +140,16 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="传输状态" >
-              <el-input v-model="form.status" placeholder="请输入传输状态" />
+            <el-form-item label="传输状态" prop="status">
+              <el-radio-group v-model="form.status">
+                <el-radio :label="0">未启用</el-radio>
+                <el-radio :label="1">启用</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="进厂时间" >
-              <el-input v-model="form.proTime" placeholder="请输入进厂时间" />
+              <el-date-picker v-model="form.entryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="进厂时间" ></el-date-picker>
             </el-form-item>
           </el-col>
           
@@ -213,6 +216,7 @@ export default {
   },
   data() {
     return {
+      deviceName: '',
       departmentList: [],
       fileList:[],
       deviceStatusOptions:[
@@ -405,7 +409,16 @@ export default {
       // 日期范围
       dateRange: [],
       // 状态数据字典
-      statusOptions: [],
+      statusOptions: [
+        {
+          dictValue: 0,
+          dictLabel: '未启用'
+        },
+        {
+          dictValue: 1,
+          dictLabel: '启用'
+        }
+      ],
       // 性别状态字典
       sexOptions: [],
       // 岗位选项
@@ -437,15 +450,12 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        userName: undefined,
-        phonenumber: undefined,
+        devFactory: '',
+        devName: '',
         status: undefined,
-        equipmentName: '',
-        equipmentID: '',
-        people: '',
-        transfer: '',
-        proTime: '',
-        deptId: 100,
+        entryTime: '',
+        
+        
       },
       // 表单校验
       rules: {
@@ -506,15 +516,15 @@ export default {
   created() {
     this.getList();
     this.getTreeselect();
-    this.getDicts("sys_normal_disable").then((response) => {
-      this.statusOptions = response.data;
-    });
-    this.getDicts("sys_user_sex").then((response) => {
-      this.sexOptions = response.data;
-    });
-    this.getConfigKey("sys.user.initPassword").then((response) => {
-      this.initPassword = response.msg;
-    });
+    // this.getDicts("sys_normal_disable").then((response) => {
+    //   this.statusOptions = response.data;
+    // });
+    // this.getDicts("sys_user_sex").then((response) => {
+    //   this.sexOptions = response.data;
+    // });
+    // this.getConfigKey("sys.user.initPassword").then((response) => {
+    //   this.initPassword = response.msg;
+    // });
   },
   methods: {
     /** 查询用户列表 */
@@ -562,10 +572,23 @@ export default {
       console.log("data",data)
       console.log(node)
       console.log(e)
-      var params = {
-        deptId: data.deptId,
-        devType: data.name,
+      if(data.flag === null) {
+        var params = {
+          constructionSiteId: data.deptId,
+          
+          type: '绿色施工'
+
+        }
+      } else {
+        var params = {
+          constructionSiteId: data.deptId,
+          devType: data.name,
+          type: '绿色施工'
+
+        }
       }
+    
+      
       this.loading = true;
       listDev(params).then(response => {
         this.userList = response.rows;
@@ -604,28 +627,26 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        equipmentSource:undefined,
-        equipmentModel:undefined,
-        repairCycle:undefined,
-        userId: undefined,
-        deptId: undefined,
-        userName: undefined,
-        nickName: undefined,
-        password: undefined,
-        phonenumber: undefined,
-        email: undefined,
-        sex: undefined,
-        tel: undefined,
-        status: "0",
-        remark: undefined,
-        postIds: [],
-        roleIds: [],
+        constructionSiteId:undefined,
+        constructionSiteName:'石家庄宝能中心项目二标段',
+        devFactory:'',
+        devModel: '',
+        devName: '',
+        devType: '',
+        entryTime: '',
+        personInCharge: '',
+        phone: '',
+        status: 0,
+        type: "绿色施工",
+        
       };
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.page = 1;
+      this.queryParams.constructionSiteId = localStorage.getItem("deptId")
+      this.queryParams.type = "绿色施工"
       this.loading = true;
       listDev(this.queryParams).then(response => {
         this.userList = response.rows;
@@ -635,7 +656,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
+      this.queryParams.entryTime = ''
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -698,7 +719,9 @@ export default {
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate((valid) => {
+        
         if (valid) {
+          this.form.type = "绿色施工"
           if (this.form.id != undefined) {
             updateDev(this.form).then((response) => {
               if (response.code === 200) {
@@ -742,6 +765,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.constructionSiteId = localStorage.getItem("deptId")
+      this.queryParams.type = "绿色施工"
       const queryParams = this.queryParams;
       this.$confirm("是否确认导出所有数据项?", "警告", {
         confirmButtonText: "确定",
