@@ -701,6 +701,7 @@
         this.form = row
           this.open = true;
           this.title = "修改设备";
+        this.getDepartmentList()
         console.log(row)
       },
       /** 重置密码按钮操作 */
