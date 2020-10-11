@@ -691,7 +691,7 @@
         // this.getTreeselect();
         this.open = true;
         this.title = "添加特种设备";
-
+        // this.getDepartmentList()
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
@@ -803,6 +803,17 @@
       submitFileForm() {
         this.$refs.upload.submit();
       },
+      // getDepartmentList(){
+      //    var username = localStorage.getItem("userName")
+      //   console.log("userName",username)
+      //   var params = {
+      //      username: username
+      //   }
+      //   departmentDev(params).then(response => {
+      //     departmentList: response.rows
+      //   });
+      //    console.log(departmentList)
+      // }
     },
   };
 </script>
