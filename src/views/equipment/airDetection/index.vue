@@ -4,7 +4,7 @@
       <!--部门数据-->
       <el-col :span="4" :xs="24">
         <div class="head-container">
-          <el-input v-model="deptName" placeholder="请设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
+          <el-input v-model="devName" placeholder="请设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
         <div class="head-container">
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
@@ -21,11 +21,11 @@
       <!--用户数据-->
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="设备名称" prop="userName">
-            <el-input v-model="queryParams.equipmentName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备名称" prop="devName">
+            <el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备编号" prop="phonenumber">
-            <el-input v-model="queryParams.equipmentID" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备编号" prop="id">
+            <el-input v-model="queryParams.id" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">
@@ -62,18 +62,18 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="设备编号" align="center" prop="equipmentID" />
-          <el-table-column label="设备厂商" align="center" prop="equipmentSource" />
-          <el-table-column label="设备名称" align="center" prop="equipmentName"  />
-          <el-table-column label="设备型号" align="center" prop="equipmentModel" />
+          <el-table-column label="设备编号" align="center" prop="id" />
+          <el-table-column label="设备厂商" align="center" prop="devFactory" />
+          <el-table-column label="设备名称" align="center" prop="devName"  />
+          <el-table-column label="设备型号" align="center" prop="devModel" />
 <!--          <el-table-column label="维修周期" align="center" prop="repairCycle"  />-->
-          <el-table-column label="负责人" align="center" prop="people"  />
-          <el-table-column label="联系方式" align="center" prop="tel"  />
-          <el-table-column label="传输状态" align="center" prop="transfer" :show-overflow-tooltip="true" >
+          <el-table-column label="负责人" align="center" prop="personInCharge"  />
+          <el-table-column label="联系方式" align="center" prop="phone"  />
+          <el-table-column label="传输状态" align="center" prop="status" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
-              <el-tag  v-if="scope.row.transfer==='正常'" type="success">正常</el-tag>
-              <el-tag  v-if="scope.row.transfer==='故障'" type="danger">故障</el-tag>
-              <el-tag  v-if="scope.row.transfer==='停用'" type="warning">停用</el-tag>
+              <el-tag  v-if="scope.row.status===0" type="danger">未启用</el-tag>
+              <el-tag  v-if="scope.row.status===1" type="success">启用</el-tag>
+              
             </template>
           </el-table-column>
           <!--<el-table-column label="手机号码" align="center" prop="phonenumber" width="120" />-->
@@ -107,20 +107,20 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备厂商" prop="equipmentSource">
-              <el-input v-model="form.equipmentSource" placeholder="设备厂商" maxlength="11" />
+            <el-form-item label="设备厂商" prop="devFactory">
+              <el-input v-model="form.devFactory" placeholder="设备厂商" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备名称"  prop="equipmentName">
-              <el-input v-model="form.equipmentName" placeholder="设备名称" maxlength="50" />
+            <el-form-item label="设备名称"  prop="devName">
+              <el-input v-model="form.devName" placeholder="设备名称" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备型号" prop="equipmentModel">
-              <el-input v-model="form.equipmentModel" placeholder="设备型号" maxlength="11" />
+            <el-form-item label="设备型号" prop="devModel">
+              <el-input v-model="form.devModel" placeholder="设备型号" maxlength="11" />
             </el-form-item>
           </el-col>
 <!--          <el-col :span="12">-->
@@ -131,18 +131,18 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="people">
-              <el-input v-model="form.people" placeholder="请输入负责人名称" />
+            <el-form-item label="负责人" prop="personInCharge">
+              <el-input v-model="form.personInCharge" placeholder="请输入负责人名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系方式" >
-              <el-input v-model="form.tel" placeholder="请输入联系方式" />
+              <el-input v-model="form.phone" placeholder="请输入联系方式" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="传输状态" >
-              <el-input v-model="form.transfer" placeholder="请输入传输状态" />
+              <el-input v-model="form.status" placeholder="请输入传输状态" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -257,7 +257,7 @@
 </template>
 
 <script>
-import { listDev, getDev, delDev, addDev, updateDev, exportDev } from "@/api/system/otherdev";
+import { listDev, getDev, delDev, addDev, updateDev, exportDev, getDeparament } from "@/api/system/otherdev";
 
 import { getToken } from "@/utils/auth";
 import { getLeftColumn } from "@/api/system/dept";
@@ -275,6 +275,7 @@ export default {
   },
   data() {
     return {
+      departmentList: [],
       fileList:[],
       response1: {
         total:6,rows:[{
@@ -501,19 +502,19 @@ export default {
       },
       // 表单校验
       rules: {
-        equipmentSource: [
+        devFactory: [
           { required: true, message: "设备厂商不能为空", trigger: "blur" },
         ],
-        equipmentName: [
+        devName: [
           { required: true, message: "设备名称不能为空", trigger: "blur" },
         ],
         repairCycle: [
           { required: true, message: "维修周期不能为空", trigger: "blur" },
         ],
-        equipmentModel: [
+        devModel: [
           { required: true, message: "设备型号不能为空", trigger: "blur" },
         ],
-        people: [
+        personInCharge: [
           { required: true, message: "负责人不能为空", trigger: "blur" },
         ],
         proTime: [
@@ -682,10 +683,11 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
+      
       // this.getTreeselect();
       this.open = true;
       this.title = "添加设备";
+      this.getDeparamentList()
       // getUser().then((response) => {
       //   this.postOptions = response.posts;
       //   this.roleOptions = response.roles;
@@ -817,6 +819,18 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
+
+    getDeparamentList() {
+      var username = localStorage.getItem("userName")
+      console.log("userName", username)
+      var params = {
+        username: username
+      }
+      getDeparament(params).then(response => {
+        departmentList: response.rows
+      });
+    }
+
   },
 };
 </script>

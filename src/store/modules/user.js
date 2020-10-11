@@ -45,6 +45,7 @@ const user = {
           commit('SET_TOKEN', res.token)
           commit('SET_SITEID', res.site_id)
           localStorage.setItem("deptId", res.site_id)
+
           resolve()
         }).catch(error => {
           reject(error)
@@ -66,6 +67,7 @@ const user = {
           }
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
+          localStorage.setItem("userName", user.userName)
           resolve(res)
         }).catch(error => {
           reject(error)
