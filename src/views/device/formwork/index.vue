@@ -26,7 +26,7 @@
           </el-form-item>
 
           <el-form-item label="创建时间">
-            <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
+            <el-date-picker v-model="queryParams.createTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="创建时间" ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
