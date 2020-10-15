@@ -65,7 +65,7 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
 <!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="设备编号" align="center" prop="devId" />
-          <el-table-column label="设备厂商" align="center" prop="makefactory" />
+          <el-table-column label="产权单位" align="center" prop="makefactory" />
           <el-table-column label="设备名称" align="center" prop="devName"  />
           <el-table-column label="设备型号" align="center" prop="deviceType" />
           <el-table-column label="维修周期" align="center" prop="maintenanCycle"  />
@@ -108,8 +108,8 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备厂商" prop="makefactory">
-              <el-input v-model="form.makefactory" placeholder="设备厂商" maxlength="11"  style="width:240px" />
+            <el-form-item label="产权单位" prop="makefactory">
+              <el-input v-model="form.makefactory" placeholder="产权单位" maxlength="11"  style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -501,7 +501,7 @@
         // 表单校验
         rules: {
           equipmentSource: [
-            { required: true, message: "设备厂商不能为空", trigger: "blur" },
+            { required: true, message: "产权单位不能为空", trigger: "blur" },
           ],
           equipmentName: [
             { required: true, message: "设备名称不能为空", trigger: "blur" },
