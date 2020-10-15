@@ -14,7 +14,7 @@
 
       <el-col :span="20" :xs="24">
         <div v-show="showSearch" style="margin-bottom: 20px">
-          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备厂商</span><el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">产权单位</span><el-input v-model="queryParams.devFactory" placeholder="请输入产权单位名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
           <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备类型</span>
           <el-select v-model="queryParams.devType" placeholder="请选择设备类型" clearable size="small" style="width: 200px;margin-right: 10px">
             <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
@@ -78,7 +78,7 @@
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
 
           <el-table-column label="设备编号" align="center" prop="id" />
-          <el-table-column label="设备厂商" align="center" prop="devFactory" :show-overflow-tooltip="true" />
+          <el-table-column label="产权单位" align="center" prop="devFactory" :show-overflow-tooltip="true" />
           <el-table-column label="设备类型" align="center" prop="devType" :show-overflow-tooltip="true" />
           <el-table-column label="设备型号" align="center" prop="devModel" :show-overflow-tooltip="true" />
           <!-- <el-table-column label="手机号码" align="center" prop="phonenumber" width="120" /> -->
@@ -111,8 +111,8 @@
         <el-row>
 
             <el-col :span="12">
-                <el-form-item  label="设备厂商" prop="makefactory">
-                    <el-input v-model="form.devFactory" placeholder="请输入设备厂商名称" style="width:250px;"/>
+                <el-form-item  label="产权单位" prop="makefactory">
+                    <el-input v-model="form.devFactory" placeholder="请输入产权单位名称" style="width:250px;"/>
                 </el-form-item>
             </el-col>
             <el-col :span="12">

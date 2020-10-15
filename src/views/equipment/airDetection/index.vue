@@ -22,7 +22,7 @@
       <el-col :span="20" :xs="24">
         <div v-show="showSearch" style="padding: 10px">
           <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备名称</span><el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 200px;margin-right: 10px" />
-          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备厂商</span><el-input v-model="queryParams.devFactory" placeholder="请输入设备厂商" clearable size="small" style="width: 200px;margin-right: 10px"  />
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">产权单位</span><el-input v-model="queryParams.devFactory" placeholder="请输入产权单位" clearable size="small" style="width: 200px;margin-right: 10px"  />
           <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">状态</span>
           <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 200px;margin-right: 10px">
             <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
@@ -68,7 +68,7 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="设备编号" align="center" prop="id" />
-          <el-table-column label="设备厂商" align="center" prop="devFactory" />
+          <el-table-column label="产权单位" align="center" prop="devFactory" />
           <el-table-column label="设备名称" align="center" prop="devName"  />
           <el-table-column label="设备型号" align="center" prop="devModel" />
          <el-table-column label="设备类型" align="center" prop="devType"  />
@@ -112,8 +112,8 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备厂商" prop="devFactory">
-              <el-input v-model="form.devFactory" placeholder="设备厂商" maxlength="11" />
+            <el-form-item label="产权单位" prop="devFactory">
+              <el-input v-model="form.devFactory" placeholder="产权单位" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -470,7 +470,7 @@ export default {
       // 表单校验
       rules: {
         devFactory: [
-          { required: true, message: "设备厂商不能为空", trigger: "blur" },
+          { required: true, message: "产权单位不能为空", trigger: "blur" },
         ],
         devName: [
           { required: true, message: "设备名称不能为空", trigger: "blur" },

@@ -74,7 +74,7 @@
           <el-table-column type="selection" width="50" align="center" />
           <!--<el-table-column label="工地ID" align="center" prop="constructionSiteId" />-->
           <!--<el-table-column label="工地名称" align="center" prop="constructionSiteName" />-->
-          <el-table-column label="设备厂商" align="center" prop="devFactory"  />
+          <el-table-column label="产权单位" align="center" prop="devFactory"  />
           <el-table-column label="设备类型" align="center" prop="devType" />
           <el-table-column label="设备型号" align="center" prop="devModel" />
           <el-table-column label="设备名称" align="center" prop="devName" />
@@ -108,8 +108,8 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备厂商" prop="devFactory">
-              <el-input v-model="form.devFactory" placeholder="设备厂商" maxlength="11" />
+            <el-form-item label="产权单位" prop="devFactory">
+              <el-input v-model="form.devFactory" placeholder="产权单位" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -437,7 +437,7 @@ export default {
       // 表单校验
       rules: {
         devFactory: [
-          { required: true, message: "设备厂商不能为空", trigger: "blur" },
+          { required: true, message: "产权单位不能为空", trigger: "blur" },
         ],
         devName: [
           { required: true, message: "设备名称不能为空", trigger: "blur" },
