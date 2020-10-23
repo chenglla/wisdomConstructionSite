@@ -20,7 +20,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item style="width:500px;margin-top:30px;">
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
         <el-button type="warning" icon="el-icon-s-promotion" size="mini" @click="initSubmit">初始化</el-button>
