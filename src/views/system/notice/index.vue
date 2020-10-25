@@ -1,6 +1,19 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <div v-show="showSearch" style="margin-bottom: 20px">
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">公告标题</span><el-input v-model="queryParams.noticeTitle" placeholder="请输入公告标题" clearable size="small" style="width: 200px;margin-right: 10px"/>
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">操作人员</span><el-input v-model="queryParams.createBy" placeholder="请输入操作人员" clearable size="small" style="width: 200px;margin-right: 10px"/>
+
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">用户状态</span>
+      <el-select v-model="queryParams.noticeType" placeholder="公告类型" clearable size="small" style="width: 200px;margin-right: 10px">
+        <el-option v-for="dict in typeOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+      </el-select>
+
+      <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+    </div>
+
+    <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="公告标题" prop="noticeTitle">
         <el-input
           v-model="queryParams.noticeTitle"
@@ -21,19 +34,14 @@
       </el-form-item>
       <el-form-item label="类型" prop="noticeType">
         <el-select v-model="queryParams.noticeType" placeholder="公告类型" clearable size="small">
-          <el-option
-            v-for="dict in typeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
+          <el-option v-for="dict in typeOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -276,7 +284,10 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      // this.resetForm("queryForm");
+      this.queryParams.noticeTitle = ''
+      this.queryParams.createBy = ''
+      this.queryParams.noticeType = ''
       this.handleQuery();
     },
     // 多选框选中数据

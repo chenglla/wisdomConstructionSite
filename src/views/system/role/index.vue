@@ -1,6 +1,21 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
+    <div v-show="showSearch" style="margin-bottom: 20px">
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">角色名称</span><el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">权限字符</span><el-input v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable size="small" style="width: 200px;margin-right: 10px"/>
+
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">状态</span>
+      <el-select v-model="queryParams.status" placeholder="角色状态" clearable size="small" style="width: 200px;margin-right: 10px">
+        <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+      </el-select>
+      
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">创建时间</span>
+      <el-date-picker v-model="dateRange" size="small" style="width: 200px;margin-right: 10px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+
+      <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+    </div>
+    <!-- <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
       <el-form-item label="角色名称" prop="roleName">
         <el-input
           v-model="queryParams.roleName"
@@ -22,38 +37,18 @@
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="角色状态"
-          clearable
-          size="small"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
+        <el-select v-model="queryParams.status" placeholder="角色状态" clearable size="small" style="width: 240px">
+          <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateRange"
-          size="small"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
+        <el-date-picker v-model="dateRange" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -425,7 +420,9 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
+      this.queryParams.roleName = ''
+      this.queryParams.roleKey = ''
+      this.queryParams.status = ''
       this.handleQuery();
     },
     // 多选框选中数据

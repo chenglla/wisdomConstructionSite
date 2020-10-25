@@ -12,7 +12,22 @@
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+        <div v-show="showSearch" style="margin-bottom: 20px">
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">用户名称</span><el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">手机号码</span><el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable size="small" style="width: 200px;margin-right: 10px"/>
+
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">用户状态</span>
+          <el-select v-model="queryParams.status" placeholder="用户状态" clearable size="small"  style="width: 200px;margin-right: 10px">
+            <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+          </el-select>
+          
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">创建时间</span>
+          <el-date-picker v-model="dateRange" size="small" style="width: 200px;margin-right: 10px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+
+          <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </div>
+        <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="用户名称" prop="userName">
             <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
@@ -31,7 +46,7 @@
             <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
-        </el-form>
+        </el-form> -->
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -408,7 +423,11 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
+      // this.resetForm("queryForm");
+      this.queryParams.userName = ''
+      this.queryParams.phonenumber = ''
+      this.queryParams.status = ''
+      
       this.handleQuery();
     },
     // 多选框选中数据

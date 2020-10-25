@@ -1,6 +1,28 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <div v-show="showSearch" style="margin-bottom: 20px">
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">系统模块</span><el-input v-model="queryParams.title" placeholder="请输入系统模块" clearable size="small" style="width: 200px;margin-right: 10px"/>
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">操作人员</span><el-input v-model="queryParams.operName" placeholder="请输入操作人员" clearable size="small" style="width: 200px;margin-right: 10px"/>
+
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">类型</span>
+      <el-select v-model="queryParams.businessType" placeholder="操作类型" clearable size="small" style="width: 200px;margin-right: 10px" >
+        <el-option v-for="dict in typeOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+      </el-select>
+
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">状态</span>
+      <el-select v-model="queryParams.status" placeholder="操作状态" clearable size="small" style="width: 200px;margin-right: 10px" >
+        <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+      </el-select>
+      
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">创建时间</span>
+      <el-date-picker v-model="dateRange" size="small" style="width: 200px;margin-right: 10px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+
+      <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+    </div>
+
+
+    <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="系统模块" prop="title">
         <el-input
           v-model="queryParams.title"
@@ -22,35 +44,13 @@
         />
       </el-form-item>
       <el-form-item label="类型" prop="businessType">
-        <el-select
-          v-model="queryParams.businessType"
-          placeholder="操作类型"
-          clearable
-          size="small"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in typeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
+        <el-select v-model="queryParams.businessType" placeholder="操作类型" clearable size="small" style="width: 240px" >
+          <el-option v-for="dict in typeOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
         </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="操作状态"
-          clearable
-          size="small"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
+        <el-select v-model="queryParams.status" placeholder="操作状态" clearable size="small" style="width: 240px" >
+          <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
         </el-select>
       </el-form-item>
       <el-form-item label="操作时间">
@@ -69,7 +69,7 @@
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -259,7 +259,11 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
+      // this.resetForm("queryForm");
+      this.queryParams.title = ''
+      this.queryParams.operName = ''
+      this.queryParams.businessType = ''
+      this.queryParams.status = ''
       this.handleQuery();
     },
     // 多选框选中数据
