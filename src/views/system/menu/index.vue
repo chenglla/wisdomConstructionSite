@@ -1,6 +1,16 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
+    <div v-show="showSearch" style="margin-bottom: 20px">
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">菜单名称</span><el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">状态</span>
+      <el-select v-model="queryParams.status" placeholder="菜单状态" clearable size="small" style="width: 200px;margin-right: 10px">
+        <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"/>
+      </el-select>
+      <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+    </div>
+    <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
       <el-form-item label="菜单名称" prop="menuName">
         <el-input
           v-model="queryParams.menuName"
@@ -12,19 +22,14 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="菜单状态" clearable size="small">
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
+          <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"/>
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -327,7 +332,9 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      // this.resetForm("queryForm");
+      this.queryParams.menuName = ''
+      this.queryParams.status = ''
       this.handleQuery();
     },
     /** 新增按钮操作 */

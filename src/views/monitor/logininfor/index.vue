@@ -1,6 +1,24 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <div v-show="showSearch" style="margin-bottom: 20px">
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">登录地址</span><el-input v-model="queryParams.ipaddr" placeholder="请输入登录地址" clearable size="small" style="width: 200px;margin-right: 10px"/>
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">用户名称</span><el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">状态</span>
+      <el-select v-model="queryParams.status" placeholder="登录状态" clearable size="small" style="width: 200px;margin-right: 10px">
+        <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+      </el-select>
+      
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">登录时间</span>
+      <el-date-picker v-model="dateRange" size="small" style="width: 200px;margin-right: 10px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+
+      <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+    </div>
+
+
+
+    <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="登录地址" prop="ipaddr">
         <el-input
           v-model="queryParams.ipaddr"
@@ -22,19 +40,8 @@
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="登录状态"
-          clearable
-          size="small"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
+        <el-select v-model="queryParams.status" placeholder="登录状态" clearable size="small" style="width: 240px">
+          <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
         </el-select>
       </el-form-item>
       <el-form-item label="登录时间">
@@ -53,7 +60,7 @@
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -176,7 +183,10 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
+      // this.resetForm("queryForm");
+       this.queryParams.ipaddr = ''
+      this.queryParams.userName = ''
+      this.queryParams.status = ''
       this.handleQuery();
     },
     // 多选框选中数据

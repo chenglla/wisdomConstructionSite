@@ -1,6 +1,21 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <div v-show="showSearch" style="margin-bottom: 20px">
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">参数名称</span><el-input v-model="queryParams.configName" placeholder="请输入参数名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">参数键名</span><el-input v-model="queryParams.configKey" placeholder="请输入参数键名" clearable size="small" style="width: 200px;margin-right: 10px"/>
+
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">系统内置</span>
+      <el-select v-model="queryParams.configType" placeholder="系统内置" clearable size="small" style="width: 200px;margin-right: 10px">
+        <el-option v-for="dict in typeOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"/>
+      </el-select>
+      
+      <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">创建时间</span>
+      <el-date-picker v-model="dateRange" size="small" style="width: 200px;margin-right: 10px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+
+      <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+    </div>
+    <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="参数名称" prop="configName">
         <el-input
           v-model="queryParams.configName"
@@ -23,12 +38,7 @@
       </el-form-item>
       <el-form-item label="系统内置" prop="configType">
         <el-select v-model="queryParams.configType" placeholder="系统内置" clearable size="small">
-          <el-option
-            v-for="dict in typeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
+          <el-option v-for="dict in typeOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"/>
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
@@ -47,7 +57,7 @@
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -273,7 +283,10 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
+      // this.resetForm("queryForm");
+      this.queryParams.configName = ''
+      this.queryParams.configKey = ''
+      this.queryParams.configType = ''
       this.handleQuery();
     },
     /** 新增按钮操作 */
