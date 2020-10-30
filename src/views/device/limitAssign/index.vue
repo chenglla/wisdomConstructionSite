@@ -4,7 +4,7 @@
       <!--部门数据-->
       <!-- <el-col :span="4" :xs="24">
         <div class="head-container">
-          <el-input v-model="deptName" placeholder="请输入企业名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
+          <el-input v-model="deptName" placeholder="请输入项目名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
         <div class="head-container">
           <el-tree :data="deviceOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
@@ -12,8 +12,8 @@
       </el-col> -->
       <!--用户数据-->
       <div v-show="showSearch" style="padding: 10px">
-        <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">企业序号</span><el-input v-model="queryParams.constructionSiteId" placeholder="请输入企业序号" clearable size="small" style="width: 240px;margin-right: 10px" @keyup.enter.native="handleQuery" />
-        <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">企业名称</span><el-input v-model="queryParams.constructionSiteName" placeholder="请输入企业名称" clearable size="small" style="width: 240px;margin-right: 10px" @keyup.enter.native="handleQuery" />
+        <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">项目序号</span><el-input v-model="queryParams.constructionSiteId" placeholder="请输入项目序号" clearable size="small" style="width: 240px;margin-right: 10px" @keyup.enter.native="handleQuery" />
+        <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">项目名称</span><el-input v-model="queryParams.constructionSiteName" placeholder="请输入项目名称" clearable size="small" style="width: 240px;margin-right: 10px" @keyup.enter.native="handleQuery" />
         <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">是否停用</span>
         <el-select v-model="queryParams.status" placeholder="是否停用" clearable size="small" style="width: 240px;margin-right: 10px">
           <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
@@ -24,11 +24,11 @@
 
       <el-col :span="24" :xs="24">
         <!--<el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">-->
-          <!--<el-form-item label="企业序号" prop="constructionSiteId">-->
-            <!--<el-input v-model="queryParams.constructionSiteId" placeholder="请输入企业序号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--<el-form-item label="项目序号" prop="constructionSiteId">-->
+            <!--<el-input v-model="queryParams.constructionSiteId" placeholder="请输入项目序号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
           <!--</el-form-item>-->
-          <!--<el-form-item label="企业名称" prop="constructionSiteName">-->
-            <!--<el-input v-model="queryParams.constructionSiteName" placeholder="请输入企业名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--<el-form-item label="项目名称" prop="constructionSiteName">-->
+            <!--<el-input v-model="queryParams.constructionSiteName" placeholder="请输入项目名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
           <!--</el-form-item>-->
           <!--<el-form-item label="是否停用" prop="status">-->
               <!--<el-select v-model="queryParams.status" placeholder="是否停用" clearable size="small" style="width: 240px">-->
@@ -66,8 +66,8 @@
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
 
            <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="企业序号" align="center" prop="constructionSiteId" />
-          <el-table-column label="企业名称" align="center" prop="constructionSiteName" :show-overflow-tooltip="true" />
+          <el-table-column label="项目序号" align="center" prop="constructionSiteId" />
+          <el-table-column label="项目名称" align="center" prop="constructionSiteName" :show-overflow-tooltip="true" />
           <el-table-column label="负责人" align="center" prop="personInCharge" :show-overflow-tooltip="true" />
           <el-table-column label="联系方式" align="center" prop="phone" />
           <el-table-column label="是否启用" align="center" prop="status" >
@@ -272,7 +272,7 @@ export default {
       // 设备树选项
       deviceOptions: [{
           id: 100,
-          label: "企业总览",
+          label: "项目总览",
           children: [{
             id: 200,
             label: "河北创巨圆科技发展有限公司",
