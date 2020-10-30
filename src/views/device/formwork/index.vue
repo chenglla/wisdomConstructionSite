@@ -70,7 +70,7 @@
           </el-select>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain disabled>下载数据对接模板</el-button>
+            <el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain >下载数据对接模板</el-button>
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -649,8 +649,10 @@ export default {
     },
     /**  下载按钮操作 */
     handledown() {
-      const queryParams = this.queryParams;
-
+      console.log("Aaaaa")
+      var queryParams = this.queryParams;
+      console.log("aaa", queryParams)
+      
       this.$confirm("是否下载数据对接模板?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
