@@ -64,14 +64,14 @@
           <el-col :span="1.5">
             <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
           <el-select v-model="queryParams.model" placeholder="请选择数据对接模板类型" clearable size="small" style="width: 240px">
             <el-option v-for="dict in deviceStatusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictLabel" />
           </el-select>
-          </el-col>
-          <el-col :span="1.5">
+          </el-col> -->
+          <!-- <el-col :span="1.5">
             <el-button type="primary"  icon="el-icon-download" size="mini" @click="handledown" v-hasPermi="['system:user:down']"  plain >下载数据对接模板</el-button>
-          </el-col>
+          </el-col> -->
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
