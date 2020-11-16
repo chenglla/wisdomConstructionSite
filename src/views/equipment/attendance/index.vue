@@ -6,7 +6,7 @@
         <!--<div class="head-container">-->
           <!--<el-input v-model="deptName" placeholder="请设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
         <!--</div>-->
-        <div class="head-container">
+        <div class="head-container header_tree">
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
@@ -126,7 +126,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="工地名称" prop="constructionSiteId">
-              <el-select v-model="form.constructionSiteId" placeholder="工地名称" @change="selectName">
+              <el-select v-model="form.constructionSiteId" placeholder="工地名称" @change="selectName" style="width: 240px">
                 <el-option
                   v-for="item in options2"
                   :key="item.deptId"
@@ -815,3 +815,13 @@ export default {
   },
 };
 </script>
+<style lang="css" scoped>
+.header_tree {
+  overflow:auto;
+  max-height: 600px;
+}
+.header_tree .el-tree {
+  min-width: 100%;
+  display: inline-block;
+}
+</style>

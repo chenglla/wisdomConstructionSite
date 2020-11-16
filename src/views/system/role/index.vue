@@ -264,15 +264,15 @@ export default {
       // 数据范围选项
       dataScopeOptions: [
         {
-          value: "1",
+          value: "3",
           label: "本部门数据权限"
         },
         {
-          value: "2",
+          value: "4",
           label: "本部门及以下数据权限"
         },
         {
-          value: "3",
+          value: "5",
           label: "仅本人数据权限"
         }
       ],
@@ -457,15 +457,15 @@ export default {
     /** 分配数据权限操作 */
     handleDataScope(row) {
       this.reset();
-      const roleDeptTreeselect = this.getRoleDeptTreeselect(row.roleId);
+      // const roleDeptTreeselect = this.getRoleDeptTreeselect(row.roleId);
       getRole(row.roleId).then(response => {
         this.form = response.data;
         this.openDataScope = true;
-        this.$nextTick(() => {
-          roleDeptTreeselect.then(res => {
-            this.$refs.dept.setCheckedKeys(res.checkedKeys);
-          });
-        });
+        // this.$nextTick(() => {
+        //   roleDeptTreeselect.then(res => {
+        //     this.$refs.dept.setCheckedKeys(res.checkedKeys);
+        //   });
+        // });
         this.title = "分配数据权限";
       });
     },
@@ -497,8 +497,9 @@ export default {
     },
     /** 提交按钮（数据权限） */
     submitDataScope: function() {
+      
       if (this.form.roleId != undefined) {
-        this.form.deptIds = this.getDeptAllCheckedKeys();
+        //this.form.deptIds = this.getDeptAllCheckedKeys();
         dataScope(this.form).then(response => {
           if (response.code === 200) {
             this.msgSuccess("修改成功");

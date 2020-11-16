@@ -6,7 +6,7 @@
         <!--<div class="head-container">-->
           <!--<el-input v-model="deviceName" placeholder="请设备名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
         <!--</div>-->
-        <div class="head-container">
+        <div class="head-container header_tree">
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
@@ -840,3 +840,13 @@ export default {
   },
 };
 </script>
+<style lang="css" scoped>
+.header_tree {
+  overflow:auto;
+  max-height: 600px;
+}
+.header_tree .el-tree {
+  min-width: 100%;
+  display: inline-block;
+}
+</style>

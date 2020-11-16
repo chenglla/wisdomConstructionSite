@@ -6,8 +6,8 @@
         <!--<div class="head-container">-->
           <!--<el-input v-model="deptName" placeholder="请输入公司名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
         <!--</div>-->
-        <div class="head-container">
-          <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
+        <div class="head-container header_tree" >
+          <el-tree :data="deptOptions" :props="defaultProps" :default-expand-all="expends" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
       <!--用户数据-->
@@ -103,9 +103,10 @@
       </el-col>
     </el-row>
 
+  
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="form" :model="form"  label-width="120px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="产权单位" prop="makefactory">
@@ -127,7 +128,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="工地名称"  prop="deptId">
+            <el-form-item label="工地名称"  prop="deptId" >
               <el-select v-model="form.deptId" placeholder="请选择工地名称" clearable size="small" style="width: 240px">
                 <el-option v-for="item in departmentList" :key="item.deptId" :label="item.name" :value="item.deptId" />
               </el-select>
@@ -461,7 +462,22 @@
         // 角色选项
         roleOptions: [],
         // 表单参数
-        form: {},
+          
+        form: {
+          devId: '',
+          deptId: '',
+          makefactory: '',
+          deviceName: '',
+          devName: '',
+          siteName: '',
+          deviceType: '', 
+          maintenanCycle: '', 
+          personInCharge: '',
+          phone: '',
+          status: '',
+          entryTime: '',
+          patentenclosure: ''
+        },
         defaultProps: {
           children: "childs",
           label: "name",
@@ -496,56 +512,56 @@
           people: '',
           transfer: '',
           proTime: '',
-          deptId: 100,
+          deptId: '',
         },
         // 表单校验
-        rules: {
-          equipmentSource: [
-            { required: true, message: "产权单位不能为空", trigger: "blur" },
-          ],
-          equipmentName: [
-            { required: true, message: "设备名称不能为空", trigger: "blur" },
-          ],
-          repairCycle: [
-            { required: true, message: "维修周期不能为空", trigger: "blur" },
-          ],
-          equipmentModel: [
-            { required: true, message: "设备型号不能为空", trigger: "blur" },
-          ],
-          people: [
-            { required: true, message: "负责人不能为空", trigger: "blur" },
-          ],
-          proTime: [
-            { required: true, message: "进厂时间不能为空", trigger: "blur" },
-          ],
+        // rules: {
+        //   equipmentSource: [
+        //     { required: true, message: "产权单位不能为空", trigger: "blur" },
+        //   ],
+        //   equipmentName: [
+        //     { required: true, message: "设备名称不能为空", trigger: "blur" },
+        //   ],
+        //   repairCycle: [
+        //     { required: true, message: "维修周期不能为空", trigger: "blur" },
+        //   ],
+        //   equipmentModel: [
+        //     { required: true, message: "设备型号不能为空", trigger: "blur" },
+        //   ],
+        //   people: [
+        //     { required: true, message: "负责人不能为空", trigger: "blur" },
+        //   ],
+        //   proTime: [
+        //     { required: true, message: "进厂时间不能为空", trigger: "blur" },
+        //   ],
 
-          nickName: [
-            { required: true, message: "用户昵称不能为空", trigger: "blur" },
-          ],
-          deptId: [
-            { required: true, message: "归属部门不能为空", trigger: "blur" },
-          ],
+        //   nickName: [
+        //     { required: true, message: "用户昵称不能为空", trigger: "blur" },
+        //   ],
+        //   deptId: [
+        //     { required: true, message: "归属部门不能为空", trigger: "blur" },
+        //   ],
 
-          password: [
-            { required: true, message: "用户密码不能为空", trigger: "blur" },
-          ],
-          email: [
-            { required: true, message: "邮箱地址不能为空", trigger: "blur" },
-            {
-              type: "email",
-              message: "'请输入正确的邮箱地址",
-              trigger: ["blur", "change"],
-            },
-          ],
-          tel: [
-            { required: true, message: "手机号码不能为空", trigger: "blur" },
-            {
-              pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-              message: "请输入正确的手机号码",
-              trigger: "blur",
-            },
-          ],
-        },
+        //   password: [
+        //     { required: true, message: "用户密码不能为空", trigger: "blur" },
+        //   ],
+        //   email: [
+        //     { required: true, message: "邮箱地址不能为空", trigger: "blur" },
+        //     {
+        //       type: "email",
+        //       message: "'请输入正确的邮箱地址",
+        //       trigger: ["blur", "change"],
+        //     },
+        //   ],
+        //   tel: [
+        //     { required: true, message: "手机号码不能为空", trigger: "blur" },
+        //     {
+        //       pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+        //       message: "请输入正确的手机号码",
+        //       trigger: "blur",
+        //     },
+        //   ],
+        // },
       };
     },
     watch: {
@@ -593,7 +609,9 @@
           status: 1
         }
         getLeftColumn(data).then((response) => {
+          console.log("sitename", response.data.name)
           this.deptOptions.push(response.data)
+          this.siteName = response.data.name
         });
       },
       // getTreeselect() {
@@ -662,6 +680,7 @@
       // 表单重置
       reset() {
         this.form = {
+          deptId: '',
           departmentName:undefined,
           devName:undefined,
           deviceName:undefined,
@@ -711,6 +730,7 @@
       /** 修改按钮操作 */
       handleUpdate(row) {
         this.form = row
+        this.form.siteName = this.siteName
           this.open = true;
           this.title = "修改设备";
         this.getDepartmentList()
@@ -733,6 +753,7 @@
       },
       /** 提交按钮 */
       submitForm: function () {
+        console.log("this.form", this.form)
         this.$refs["form"].validate((valid) => {
           if (valid) {
             if (this.form.devId != undefined) {
@@ -826,9 +847,23 @@
            username: username
         }
         departmentDev(params).then(response => {
+          console.log("sss", response.data)
+          
           this.departmentList = response.data.childs
         });
       }
     },
   };
 </script>
+
+<style lang="css" scoped>
+.header_tree {
+  overflow:auto;
+  max-height: 600px;
+}
+.header_tree .el-tree {
+  min-width: 100%;
+  display: inline-block;
+}
+</style>
+
