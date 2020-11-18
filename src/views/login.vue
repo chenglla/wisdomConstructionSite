@@ -144,7 +144,7 @@ export default {
             .then(() => {
               // var url = 'http://121.36.106.18:38081/'
               // window.open(url,'_self')
-              if (this.loginForm.username === 'admin') {
+              if (this.loginForm.username === 'admin-1') {
                 this.$router.push('/index')
               } else {
                 window.location.href = 'http://121.36.106.18:38081/?siteId='+this.siteId
