@@ -61,16 +61,16 @@
           <!--<el-col :span="1.5">-->
             <!--<el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>-->
           <!--</el-col>-->
-          <el-col :span="1.5">
-            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
-          </el-col>
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>-->
+<!--          </el-col>-->
           <el-col :span="1.5">
             <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="userList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
           <!--<el-table-column label="工地ID" align="center" prop="constructionSiteId" />-->
           <!--<el-table-column label="工地名称" align="center" prop="constructionSiteName" />-->

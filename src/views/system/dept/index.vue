@@ -80,10 +80,10 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-
+<div>
     <el-table
       v-loading="loading"
-      :data="deptList"
+      :data="deptList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)"
       row-key="deptId"
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
@@ -123,7 +123,8 @@
         </template>
       </el-table-column>
     </el-table>
-
+<!--    <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />-->
+</div>
     <!-- 添加或修改部门对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -189,7 +190,9 @@
 import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild, queryInitData, setInitData } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import Cookies from "js-cookie";
 import axios from 'axios'
+import {decrypt} from "@/utils/jsencrypt";
 
 export default {
   name: "Dept",
@@ -198,16 +201,18 @@ export default {
     return {
       // 初始化输入
       proName: '',
+      username:'',
       // 遮罩层
       loading: true,
       // 显示搜索条件
-      showSearch: true,
+      showSearch: false,
       // 表格树数据
       deptList: [],
       // 部门树选项
       deptOptions: [],
       // 弹出层标题
       title: "",
+      total: '0',
       // 是否显示弹出层
       open: false,
       // 状态数据字典
@@ -218,6 +223,8 @@ export default {
       tableData: [],
       // 查询参数
       queryParams: {
+        pageNum: 1,
+        pageSize: 10,
         deptName: undefined,
         status: undefined
       },
@@ -252,6 +259,7 @@ export default {
     };
   },
   created() {
+    this.getCookie();
     this.getList();
     this.getDicts("sys_normal_disable").then(response => {
       this.statusOptions = response.data;
@@ -259,11 +267,19 @@ export default {
   },
 
   methods: {
+    getCookie() {
+      this.username = Cookies.get("username");
+      if(this.username =='admin-1'){
+        this.showSearch = true;
+      }
+    },
     /** 查询部门列表 */
     getList() {
       this.loading = true;
       listDept(this.queryParams).then(response => {
         this.deptList = this.handleTree(response.data, "deptId");
+        console.log('ceshi',response)
+        this.total = response.data.length;
         this.loading = false;
       });
     },
@@ -340,6 +356,7 @@ export default {
         if (res.code === 200) {
           this.$message.success('初始化成功！')
           loading.close()
+          this.dialogVisible = false
         }
       })
     },

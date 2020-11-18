@@ -53,22 +53,22 @@
 <!--          <el-col :span="1.5">-->
 <!--            <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>-->
 <!--          </el-col>-->
-          <el-col :span="1.5">
-            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
-          </el-col>
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>-->
+<!--          </el-col>-->
           <el-col :span="1.5">
             <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="userList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
 <!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="设备编号" align="center" prop="devId" />
           <el-table-column label="产权单位" align="center" prop="makefactory" />
           <el-table-column label="设备名称" align="center" prop="devName"  />
           <el-table-column label="设备型号" align="center" prop="deviceType" />
-          <el-table-column label="维修周期" align="center" prop="maintenanCycle"  />
+          <el-table-column label="维修周期（月）" align="center" prop="maintenanCycle"  />
           <el-table-column label="负责人" align="center" prop="personInCharge"  />
           <el-table-column label="联系方式" align="center" prop="phone"  />
           <el-table-column label="传输状态" align="center" prop="status" :show-overflow-tooltip="true" >
@@ -85,10 +85,12 @@
             <!--</template>-->
           <!--</el-table-column>-->
           <el-table-column label="进厂时间" align="center" prop="entryTime" >
+
             <!--<template slot-scope="scope">-->
               <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
             <!--</template>-->
           </el-table-column>
+          <el-table-column label="设备备案编号" align="center" prop="deviceCode" />
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
@@ -103,14 +105,14 @@
       </el-col>
     </el-row>
 
-  
+
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form"  label-width="120px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="产权单位" prop="makefactory">
-              <el-input v-model="form.makefactory" placeholder="产权单位" maxlength="11"  style="width:240px" />
+              <el-input v-model="form.makefactory" placeholder="产权单位" maxlength="200"  style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -142,7 +144,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="维修周期" prop="maintenanCycle">
+            <el-form-item label="维修周期（月）" prop="maintenanCycle">
               <el-input v-model="form.maintenanCycle" placeholder="维修周期" maxlength="50" style="width:240px" />
             </el-form-item>
           </el-col>
@@ -194,7 +196,11 @@
               </el-upload>
             </el-form-item>
           </el-col>
-
+          <el-col :span="12">
+            <el-form-item label="设备备案编号" prop="deviceCode">
+              <el-input v-model="form.deviceCode" placeholder="请输入设备备案编号" style="width:240px" />
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -462,7 +468,7 @@
         // 角色选项
         roleOptions: [],
         // 表单参数
-          
+
         form: {
           devId: '',
           deptId: '',
@@ -470,13 +476,14 @@
           deviceName: '',
           devName: '',
           siteName: '',
-          deviceType: '', 
-          maintenanCycle: '', 
+          deviceType: '',
+          maintenanCycle: '',
           personInCharge: '',
           phone: '',
           status: '',
           entryTime: '',
-          patentenclosure: ''
+          patentenclosure: '',
+          deviceCode:''
         },
         defaultProps: {
           children: "childs",
@@ -512,7 +519,7 @@
           people: '',
           transfer: '',
           proTime: '',
-          deptId: '',
+          deptId: 100,
         },
         // 表单校验
         // rules: {
@@ -641,6 +648,7 @@
             deptId: data.deptId,
           }
         }
+        this.queryParams.deptId = data.deptId;
         this.loading = true;
         listDev(params).then(response => {
           this.userList = response.rows;
@@ -806,6 +814,7 @@
           type: "warning",
         })
           .then(function () {
+            console.log("test",queryParams)
             return exportDev(queryParams);
           })
           .then((response) => {
@@ -848,7 +857,7 @@
         }
         departmentDev(params).then(response => {
           console.log("sss", response.data)
-          
+
           this.departmentList = response.data.childs
         });
       }

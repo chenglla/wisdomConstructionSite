@@ -58,9 +58,9 @@
           <el-col :span="1.5">
             <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
           </el-col> -->
-          <el-col :span="1.5">
-            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
-          </el-col>
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>-->
+<!--          </el-col>-->
           <el-col :span="1.5">
             <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
@@ -75,7 +75,7 @@
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading"  :data="dataList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
 
           <el-table-column label="设备编号" align="center" prop="id" />
           <el-table-column label="产权单位" align="center" prop="devFactory" :show-overflow-tooltip="true" />
@@ -652,7 +652,7 @@ export default {
       console.log("Aaaaa")
       var queryParams = this.queryParams;
       console.log("aaa", queryParams)
-      
+
       this.$confirm("是否下载数据对接模板?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

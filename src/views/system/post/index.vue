@@ -8,7 +8,7 @@
       <el-select v-model="queryParams.status" placeholder="岗位状态" clearable size="small"  style="width: 200px;margin-right: 10px">
         <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
       </el-select>
-      
+
       <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
       <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
     </div>
@@ -120,7 +120,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -333,7 +333,7 @@ export default {
         }).then(function() {
           return exportPost(queryParams);
         }).then(response => {
-          this.download(response.msg);
+        window.open(response.msg);
         }).catch(function() {});
     }
   }

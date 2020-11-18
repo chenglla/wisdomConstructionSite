@@ -6,7 +6,7 @@
         <div class="head-container">
           <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
-        <div class="head-container">
+        <div class="head-container" >
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
@@ -20,7 +20,7 @@
           <el-select v-model="queryParams.status" placeholder="用户状态" clearable size="small"  style="width: 200px;margin-right: 10px">
             <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
           </el-select>
-          
+
           <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">创建时间</span>
           <el-date-picker v-model="dateRange" size="small" style="width: 200px;margin-right: 10px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
 
@@ -58,12 +58,13 @@
           <el-col :span="1.5">
             <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
-          </el-col>
+<!--          <el-col :span="1.5">-->
+<!--            <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>-->
+<!--          </el-col>-->
           <el-col :span="1.5">
             <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
+           <span style="margin-left: 2rem;color: red"> &#10056;登录账号为：用户名称-用户编号，如张三-1234 </span>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
@@ -427,7 +428,7 @@ export default {
       this.queryParams.userName = ''
       this.queryParams.phonenumber = ''
       this.queryParams.status = ''
-      
+
       this.handleQuery();
     },
     // 多选框选中数据
@@ -536,7 +537,8 @@ export default {
           return exportUser(queryParams);
         })
         .then((response) => {
-          this.download(response.msg);
+          console.log('ceshi11',response)
+          window.open(response.msg);
         })
         .catch(function () {});
     },

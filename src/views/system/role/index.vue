@@ -8,7 +8,7 @@
       <el-select v-model="queryParams.status" placeholder="角色状态" clearable size="small" style="width: 200px;margin-right: 10px">
         <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
       </el-select>
-      
+
       <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">创建时间</span>
       <el-date-picker v-model="dateRange" size="small" style="width: 200px;margin-right: 10px" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
 
@@ -497,7 +497,7 @@ export default {
     },
     /** 提交按钮（数据权限） */
     submitDataScope: function() {
-      
+
       if (this.form.roleId != undefined) {
         //this.form.deptIds = this.getDeptAllCheckedKeys();
         dataScope(this.form).then(response => {
@@ -533,7 +533,7 @@ export default {
         }).then(function() {
           return exportRole(queryParams);
         }).then(response => {
-          this.download(response.msg);
+        window.open(response.msg);
         }).catch(function() {});
     }
   }

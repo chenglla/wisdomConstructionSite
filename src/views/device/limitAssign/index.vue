@@ -63,7 +63,7 @@
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="dataList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
 
            <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="项目序号" align="center" prop="constructionSiteId" />
