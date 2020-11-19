@@ -108,24 +108,24 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="设备厂商" prop="equipmentSource">
-              <el-input v-model="form.equipmentSource" placeholder="设备厂商" maxlength="11" />
+              <el-input v-model="form.equipmentSource" placeholder="设备厂商" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备名称"  prop="equipmentName">
-              <el-input v-model="form.equipmentName" placeholder="设备名称" maxlength="50" />
+              <el-input v-model="form.equipmentName" placeholder="设备名称" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="设备型号" prop="equipmentModel">
-              <el-input v-model="form.equipmentModel" placeholder="设备型号" maxlength="11" />
+              <el-input v-model="form.equipmentModel" placeholder="设备型号"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="维修周期" >
-              <el-input v-model="form.repairCycle" placeholder="维修周期" maxlength="50" />
+              <el-input v-model="form.repairCycle" placeholder="维修周期"  />
             </el-form-item>
           </el-col>
         </el-row>
@@ -172,7 +172,7 @@
 <!--          </el-col>-->
           <el-col :span="12">
             <el-form-item label="设备类型" >
-              <el-input v-model="form.equipmentName" placeholder="设备类型" maxlength="50" />
+              <el-input v-model="form.equipmentName" placeholder="设备类型"  />
             </el-form-item>
           </el-col>
         </el-row>

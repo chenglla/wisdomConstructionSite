@@ -112,7 +112,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="产权单位" prop="makefactory">
-              <el-input v-model="form.makefactory" placeholder="产权单位" maxlength="200"  style="width:240px" />
+              <el-input v-model="form.makefactory" placeholder="产权单位"   style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -126,7 +126,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="设备名称"  prop="devName">
-              <el-input v-model="form.devName" placeholder="设备名称" maxlength="50" style="width:240px" />
+              <el-input v-model="form.devName" placeholder="设备名称"  style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -140,12 +140,12 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="设备型号" prop="deviceType">
-              <el-input v-model="form.deviceType" placeholder="设备型号" maxlength="11" style="width:240px" />
+              <el-input v-model="form.deviceType" placeholder="设备型号"  style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="维修周期（月）" prop="maintenanCycle">
-              <el-input v-model="form.maintenanCycle" placeholder="维修周期" maxlength="50" style="width:240px" />
+              <el-input v-model="form.maintenanCycle" placeholder="维修周期"  style="width:240px" />
             </el-form-item>
           </el-col>
         </el-row>
