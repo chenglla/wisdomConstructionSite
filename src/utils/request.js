@@ -45,10 +45,18 @@ service.interceptors.response.use(res => {
         })
       })
     } else if (code === 500) {
-      Message({
-        message: msg,
-        type: 'error'
-      })
+      if(msg === 'String index out of range: -1') {
+        Message({
+          message: "请使用用户名-userId登录",
+          type: 'error'
+        })
+      } else {
+        Message({
+          message: msg,
+          type: 'error'
+        })
+      }
+      
       return Promise.reject(new Error(msg))
     } else if (code !== 200) {
       Notification.error({

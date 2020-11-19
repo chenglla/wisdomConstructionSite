@@ -113,19 +113,19 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="产权单位" prop="devFactory">
-              <el-input v-model="form.devFactory" placeholder="产权单位" maxlength="11" />
+              <el-input v-model="form.devFactory" placeholder="产权单位" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备名称"  prop="devName">
-              <el-input v-model="form.devName" placeholder="设备名称" maxlength="50" />
+              <el-input v-model="form.devName" placeholder="设备名称"  />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="设备型号" prop="devModel">
-              <el-input v-model="form.devModel" placeholder="设备型号" maxlength="11" />
+              <el-input v-model="form.devModel" placeholder="设备型号"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">

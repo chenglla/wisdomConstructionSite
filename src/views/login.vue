@@ -141,9 +141,10 @@ export default {
           }
           this.$store
             .dispatch("Login", this.loginForm)
-            .then(() => {
+            .then((res) => {
               // var url = 'http://121.36.106.18:38081/'
               // window.open(url,'_self')
+              
               if (this.loginForm.username === 'admin-1') {
                 this.$router.push('/index')
               } else {
@@ -155,7 +156,8 @@ export default {
               // this.$router.push({ path: "/index" });
               // this.$router.push({ path: this.redirect || "/" });
             })
-            .catch(() => {
+            .catch((e) => {
+              
               this.loading = false;
               this.getCode();
             });
