@@ -223,6 +223,7 @@ export default {
     ...mapState({
       username: state => state.user.name
     }),
+    
   },
   data() {
     return {
@@ -524,6 +525,7 @@ export default {
     },
   },
   created() {
+    
     this.getList();
     this.getTreeselect();
     // this.getDicts("sys_normal_disable").then((response) => {
@@ -557,6 +559,7 @@ export default {
     /** 查询部门下拉树结构 */
     getTreeselect() {
       // console.log(this.username)
+      
       var data = {
         username: this.username,
         status: 3
@@ -827,10 +830,9 @@ export default {
     },
 
     getDeparamentList() {
-      var username = localStorage.getItem("userName")
-      console.log("userName", username)
+      
       var params = {
-        username: username
+        username: this.username
       }
       getDeparament(params).then(response => {
         this.departmentList = response.data.childs
