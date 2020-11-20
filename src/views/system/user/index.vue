@@ -6,7 +6,7 @@
         <div class="head-container">
           <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
-        <div class="head-container" >
+        <div class="head-container header_tree" >
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
@@ -72,7 +72,7 @@
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" prop="userId" />
           <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" align="center" prop="nickName" :show-overflow-tooltip="true" />
+          <el-table-column label="岗位" align="center" prop="nickName" :show-overflow-tooltip="true" />
           <el-table-column label="部门" align="center" prop="dept.deptName" :show-overflow-tooltip="true" />
           <el-table-column label="手机号码" align="center" prop="phonenumber" width="120" />
           <el-table-column label="状态" align="center">
@@ -572,3 +572,13 @@ export default {
   },
 };
 </script>
+<style lang="css" scoped>
+.header_tree {
+  overflow:auto;
+  max-height: 600px;
+}
+.header_tree .el-tree {
+  min-width: 100%;
+  display: inline-block;
+}
+</style>
