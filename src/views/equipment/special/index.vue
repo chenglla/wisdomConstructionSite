@@ -850,10 +850,9 @@
         this.$refs.upload.submit();
       },
       getDepartmentList(){
-         var username = localStorage.getItem("userName")
-        console.log("userName",username)
+        
         var params = {
-           username: username
+           username: this.username
         }
         departmentDev(params).then(response => {
           console.log("sss", response.data)

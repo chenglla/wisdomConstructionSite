@@ -800,10 +800,9 @@ export default {
       this.$refs.upload.submit();
     },
     getDeparamentList() {
-      var username = localStorage.getItem("userName")
-      console.log("userName", username)
+     
       var params = {
-        username: username
+        username: this.username
       }
       getDeparament(params).then(response => {
         if(response.code === 200) {
