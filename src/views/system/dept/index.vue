@@ -1,5 +1,131 @@
 <template>
   <div class="app-container">
+    <div style="margin-bottom: 10px;" v-show="!showSearch">
+      <div class="baseInfo">项目情况:</div>
+      <el-row>
+        <el-col :span="4">
+          <el-tag type="danger" effect="dark">工程造价</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proCost}}万</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="danger" effect="dark">合同工期</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{hetongTime}}天</el-tag>       
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="danger" effect="dark">建筑规模</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proArea}}㎡</el-tag>        
+        </el-col>
+        </el-col>
+        <el-col :span="6">
+          <el-tag type="danger" effect="dark">工程类别</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{gongchengLeibie(baseInfo.protier)}}</el-tag>        
+        </el-col>
+        </el-col>
+        <el-col :span="6">
+          <el-tag type="danger" effect="dark">备案编号</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proCode}}</el-tag>        
+        </el-col>
+        </el-col>
+      </el-row>
+      <el-row style="margin-top:6px;">
+        <el-col :span="8">
+          <el-tag type="danger" effect="dark">建设单位</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.constructionUnitJs}}</el-tag>        
+        </el-col>
+        </el-col>
+        <el-col :span="8">
+          <el-tag type="danger" effect="dark">监理单位</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.constructionControlUnit}}</el-tag>        
+        </el-col>
+        </el-col>
+        <el-col :span="8">
+          <el-tag type="danger" effect="dark">施工单位</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.constructionUnitSg}}</el-tag>        
+        </el-col>
+        
+        </el-col>
+      </el-row>
+      <div class="updateInfo">
+        <el-button
+            type="primary"
+            size="medium"
+            @click="updateInfo"
+           
+          >修改</el-button>
+      </div>
+    </div>
+
+    <!-- 修改基本信息的Form -->
+    <el-dialog title="修改项目基本信息" :visible.sync="showUpdateInfo" width="65%" >
+      <el-form :model="baseInfo" ref="baseInfo" :inline="true" >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="工程造价" prop="proCost">
+              <el-input v-model="baseInfo.proCost" placeholder="请输入工程造价" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="建筑规模" prop="proArea">
+              <el-input v-model="baseInfo.proArea" placeholder="请输入建筑规模" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+          <el-form-item label="合同开始时间" prop="starttime">
+            <el-date-picker v-model="baseInfo.starttime" type="date" placeholder="选择开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+          </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="合同截止时间" prop="endtime">
+              <el-date-picker v-model="baseInfo.endtime" type="date" placeholder="选择截止日期" value-format="yyyy-MM-dd"></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        <el-row>
+          <el-col :span="12">
+          <el-form-item label="工程类别" prop="protier">
+              <el-select v-model="baseInfo.protier" placeholder="请选择工程类别" clearable>
+                <el-option
+                  v-for="item in typeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="备案编号" prop="proCode">
+              <el-input v-model="baseInfo.proCode" placeholder="请输入建筑规模" disabled/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="建设单位" prop="constructionUnitJs">
+              <el-input v-model="baseInfo.constructionUnitJs" placeholder="请输入工程造价" style="width:300px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="监理单位" prop="constructionControlUnit">
+              <el-input v-model="baseInfo.constructionControlUnit" placeholder="请输入工程造价" style="width:300px;"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="施工单位" prop="constructionUnitSg">
+              <el-input v-model="baseInfo.constructionUnitSg" placeholder="请输入工程造价" style="width:300px;"/>
+            </el-form-item>
+          </el-col>
+          
+        </el-row>
+        <div style="margin-left: 45%;">
+          <el-button type="primary"  @click="showUpdateInfo = false">返回</el-button>
+           <el-button type="primary"  @click="submitBaseInfo">提交</el-button>
+        </div> 
+        
+      </el-form>
+    </el-dialog>  
+
+
+    <!-- 查询 -->
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
       <el-form-item label="项目名称" prop="deptName">
         <el-input
@@ -187,7 +313,7 @@
 </template>
 
 <script>
-import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild, queryInitData, setInitData } from "@/api/system/dept";
+import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild, queryInitData, setInitData, getBaseInfo, updateBaseInfo, getTime } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import Cookies from "js-cookie";
@@ -199,6 +325,38 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      typeList: [
+        {
+          value: 1,
+          label: '省重点项目'
+        },
+        {
+          value: 2,
+          label: '市重点项目'
+        },
+        {
+          value: 3,
+          label: '一般项目'
+        },
+        {
+          value: 4,
+          label: '国家重点项目'
+        }
+      ],
+      showUpdateInfo: false,
+      hetongTime: '',
+      baseInfo: {
+        proCost: '',
+        proArea: '',
+        protier: '',
+        proCode: '',
+        constructionUnitJs: '',
+        constructionControlUnit: '',
+        constructionUnitSg: '',
+        starttime: '',
+        endtime: '',
+
+      },
       // 初始化输入
       proName: '',
       username:'',
@@ -261,6 +419,9 @@ export default {
   created() {
     this.getCookie();
     this.getList();
+    this.getBaseInfo();
+
+    // this.getTime();
     this.getDicts("sys_normal_disable").then(response => {
       this.statusOptions = response.data;
     });
@@ -429,6 +590,70 @@ export default {
           this.getList();
           this.msgSuccess("删除成功");
         }).catch(function() {});
+    },
+
+
+    getBaseInfo() {
+      //console.log("deptId", localStorage.getItem("deptId"))
+      var deptId = localStorage.getItem("deptId")
+      if(deptId !== '100') {
+        this.getTime()
+      }
+      getBaseInfo(deptId).then(res => {
+        console.log("list", res)
+        this.baseInfo.proCost = res.proCost
+        this.baseInfo.proArea = res.proArea
+        this.baseInfo.protier = res.protier
+        this.baseInfo.proCode = res.proCode
+        this.baseInfo.constructionUnitJs = res.constructionUnitJs
+        this.baseInfo.constructionControlUnit = res.constructionControlUnit
+        this.baseInfo.constructionUnitSg = res.constructionUnitSg
+        this.baseInfo.starttime = res.starttime
+        this.baseInfo.endtime = res.endtime
+      })
+    },
+    gongchengLeibie(num) {
+      if(num === 1) {
+        return '省重点项目'
+      } else if(num === 2) {
+        return '市重点项目'
+      } else if(num === 3) {
+        return '一般项目'
+      } else {
+        return '国家重点项目'
+      }
+    },
+    updateInfo() {
+      this.showUpdateInfo = true
+    },
+    submitBaseInfo() {
+      // console.log("deptId111", localStorage.getItem("deptId"))
+      var deptId = localStorage.getItem("deptId")
+      // console.log("baseInfo", this.baseInfo)
+      updateBaseInfo(deptId, this.baseInfo).then(res => {
+        console.log("Ceshishis,", res)
+        if(res.code === 200) {
+          this.$message({
+            message: "修改成功",
+            type: 'success'
+          });
+          this.showUpdateInfo = false
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'danger'
+          });
+        }
+        
+      })
+    },
+    getTime() {
+      var deptId = localStorage.getItem("deptId")
+      getTime(deptId).then(res => {
+        console.log("time", res)
+        var str = res.msg
+        this.hetongTime = str.slice(0, 3)
+      })
     }
   }
 };
@@ -437,5 +662,15 @@ export default {
   .input-init {
     width: 250px;
     margin-right: 10px;
+  }
+  .baseInfo {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  .updateInfo {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+    margin-top: 5px;
   }
 </style>

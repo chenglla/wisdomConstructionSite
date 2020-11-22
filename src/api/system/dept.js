@@ -93,3 +93,25 @@ export function getLeftColumn(data) {
   })
 }
 
+export function getBaseInfo(deptId) {
+  return request({
+    url: '/system/dept/getSysProData?deptId=' + deptId,
+    method: 'get'
+  })
+}
+
+export function updateBaseInfo(id, data) {
+  return request({
+    url: '/system/dept/updateSysProData?deptId=' + id,
+    method: 'get',
+    params: data
+  })
+}
+
+export function getTime(deptId) {
+  return request({
+    url: '/system/dept/getScheduleTime?deptId=' + deptId,
+    method: 'get'
+  })
+}
+
