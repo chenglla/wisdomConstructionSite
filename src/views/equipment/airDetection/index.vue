@@ -107,7 +107,7 @@
     </el-row>
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body class="addForm">
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
 
         <el-row>
@@ -850,5 +850,8 @@ export default {
 .header_tree .el-tree {
   min-width: 100%;
   display: inline-block;
+}
+.addForm >>> .el-form-item--medium .el-form-item_content {
+  width:60%;
 }
 </style>
