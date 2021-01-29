@@ -149,7 +149,8 @@ export default {
               if (this.loginForm.username === 'admin-1') {
                 this.$router.push('/index')
               } else {
-                window.location.href = 'http://121.36.106.18:38081/?siteId='+this.siteId
+                this.$router.push('/index')
+                // window.location.href = 'http://121.36.106.18:36081/?siteId='+this.siteId
               }
               
 
