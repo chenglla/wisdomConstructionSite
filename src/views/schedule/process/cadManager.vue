@@ -28,14 +28,13 @@
               :data="fileTable"
               class="file-table"
               stripe
-              :header-row-style="{ color: '#409eff' }"
-              :row-style="{ color: 'white' }"
+              
               :default-sort = "{prop: 'id', order: 'ascending'}"
             >
               <el-table-column label="文件名称" align="center" prop="name">
               </el-table-column>
-              <el-table-column prop="userName" label="更新者" width="200" align="center" />
-              <el-table-column label="首页轮播" align="center"  width="150" >
+              <el-table-column prop="userName" label="更新者" align="center" />
+              <el-table-column label="首页轮播" align="center"  >
                 <template slot-scope="scope">
                     <el-switch v-model="scope.row.statuss" active-value="1" inactive-value="0" disabled></el-switch>
                 </template> 
@@ -68,8 +67,8 @@
       </el-col>
     </el-row>
     <el-dialog :visible.sync="showUpload" title="上传文件" width="40%">
-      <div style="height: 55vh; overflow-y: scroll; ">
-        <el-form :model="uploadInfo" :rules="rules" ref="uploadInfo" label-width="1.5rem">
+      <div style="height: 413px; overflow-y: scroll; ">
+        <el-form :model="uploadInfo" :rules="rules" ref="uploadInfo" label-width="120px">
           <el-form-item label="文件名称" prop="name">
             <el-input v-model="uploadInfo.name" style="width: 50%"></el-input>
           </el-form-item>
@@ -140,8 +139,8 @@
       </div>
     </el-dialog>
     <el-dialog :visible.sync="showEdit" title="重命名" width="40%">
-      <div style="height: 55vh; overflow-y: scroll; ">
-        <el-form :model="currentInfo" :rules="rules" ref="currentInfo" label-width="1.5rem">
+      <div style="height: 413px; overflow-y: scroll; ">
+        <el-form :model="currentInfo" :rules="rules" ref="currentInfo" label-width="120px">
           <el-form-item label="文件名称" prop="name">
             <el-input v-model="currentInfo.name" style="width: 50%"></el-input>
           </el-form-item>
@@ -217,7 +216,7 @@
     </el-dialog>
     <el-dialog :visible.sync="showMove" title="移动文件" width="40%" >
       <div>
-        <el-form :model="moveInfo"  ref="moveInfo" label-width="1.5rem">
+        <el-form :model="moveInfo"  ref="moveInfo" label-width="120px">
            
             <el-form-item label="选择文件夹" prop="urlId" style="margin-bottom:10px;">
               <treeselect v-model="moveInfo.urlId" :options="treeData3" placeholder="请选择" :clearable="true" :show-count="true" :disable-branch-nodes="true"  style="width: 350px" @select="getSelectList2" />
@@ -254,9 +253,16 @@
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {changeDoc, docType, findDoc, getSite, insertDoc, toPdfFile, listFolder, getFolderInfo, addFolder, getFolderContent, delFile } from "@/api/system/dataManage";
+import { mapState } from 'vuex'
 
 export default {
   components: { Treeselect },
+  computed: {
+    ...mapState({ 
+      nodeState: state => state.nodeState,
+      nodeStateId: state => state.nodeStateId
+    }),
+  },
   data() {
     return {
         currentFolder: undefined,
@@ -374,6 +380,15 @@ export default {
       constructionSiteName: '石家庄宝能中心项目二标段',
       docTypeList: [],
       fileList: []
+    }
+  },
+  watch: {
+    // 根据名称筛选部门树
+    
+    "$store.state.task.nodeStateId"(old, newd) {
+      console.log("旧的", old)
+      console.log("新的", newd)
+      this.getListFolder()
     }
   },
   mounted() {
@@ -629,7 +644,7 @@ export default {
             this.treeData2 = res.data
             this.treeData3 = res.data
             this.treeData4 = res.data
-            // console.log("初始ID", this.treeData[0].id)
+            console.log("初始ID", this.treeData[0].id)
             var id = this.treeData[0].id
             this.currentNodeId = id
             this.getFolderList(id)
@@ -641,7 +656,7 @@ export default {
         siteId: localStorage.getItem('deptId')
       }
       getFolderContent(params).then((res) => {
-         this.fileTable = res.data.data
+         this.fileTable = res.data
       })
     },
     resetAll() {
@@ -662,10 +677,11 @@ export default {
     },
     handleNodeClick2() {},
     getFolderList(id) {
-        getFolderInfo(this.constructionSiteId, parseInt(id)).then((res) => {
+      var taskId = this.$store.state.task.nodeStateId
+        getFolderInfo(this.constructionSiteId, parseInt(id), taskId).then((res) => {
             // console.log("SSS",res.data.data)
-            if(res)
-            this.fileTable = res.data.data
+            
+            this.fileTable = res.data
         })
     },
     getSelectList(node, instanceId) {
@@ -739,7 +755,7 @@ export default {
 }
 
 .data_table {
-  height: 80%;
+  height: 100%;
   overflow-y: scroll;
   width: 100%;
   padding: 0 0.2rem;
@@ -748,26 +764,26 @@ export default {
 /*透明化整体*/
 .data_table >>> .el-table,
 .data_table >>> .el-table__expanded-cell {
-  background-color: transparent !important;
+  /* background-color: transparent !important; */
 }
 /*透明化行、单元格*/
 .data_table >>> .el-table th,
 .data_table >>> .el-table tr,
 .data_table >>> .el-table td {
-  background-color: transparent !important;
+  /* background-color: transparent !important; */
 }
 /*hover时样式*/
 .data_table >>> .el-table tbody tr:hover>td {
-  background-color: #367f7f78 !important
+  /* background-color: #367f7f78 !important */
 }
 
 /*偶数行样式*/
 .data_table >>> .el-table__row--striped td {
-  background-color: #45797b33 !important
+  /* background-color: #45797b33 !important */
 }
 /*奇数行样式*/
 .data_table >>> .el-table__row:not(.el-table__row--striped) {
-  background: #1439391c !important;
+  /* background: #1439391c !important; */
 }
 
 .type-list {

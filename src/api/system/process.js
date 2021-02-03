@@ -4,7 +4,7 @@ import request from '@/utils/request'
 
 export function getLeftTree(id) {
   return request({
-    url: `/schedule/task/board-tree?siteId=${id}`,
+    url: `/scheduleback/task/board-tree?siteId=${id}`,
     method: 'get'
   })
 }
@@ -12,7 +12,7 @@ export function getLeftTree(id) {
 // 任务方法
 export function taskList(data) {
   return request({
-    url: `/schedule/task/list`,
+    url: `/scheduleback/task/list`,
     method: 'get',
     params: data
   })
@@ -20,7 +20,7 @@ export function taskList(data) {
 
 export function addTask(data) {
   return request({
-    url: `/schedule/task`,
+    url: `/scheduleback/task`,
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function addTask(data) {
 // 节点方法
 export function nodeList(data) {
   return request({
-    url: `/scheduleManage/node/list`,
+    url: `/scheduleManageback/node/list`,
     method: 'get',
     params: data
   })
@@ -39,7 +39,7 @@ export function nodeList(data) {
 
 export function nodeTemplate(data) {
   return request({
-    url: `/scheduleManage/template/list`,
+    url: `/scheduleManageback/template/list`,
     method: 'get',
     params: data
   })
@@ -55,14 +55,14 @@ export function getTeamTree(id) {
 
 export function broadsideInfo(id) {
   return request({
-    url: `/scheduleManage/node/tree?taskId=${id}`,
+    url: `/scheduleManageback/node/tree?taskId=${id}`,
     method: 'get'
   })
 }
 
 export function addNodeTemplate(data) {
   return request({
-    url: `/scheduleManage/template`,
+    url: `/scheduleManageback/template`,
     method: 'post',
     data: data
   })
@@ -70,7 +70,7 @@ export function addNodeTemplate(data) {
 
 export function addNode(data) {
   return request({
-    url: `/scheduleManage/node`,
+    url: `/scheduleManageback/node`,
     method: 'post',
     data: data
   })
@@ -78,7 +78,7 @@ export function addNode(data) {
 
 export function putNode(data) {
   return request({
-    url: `/scheduleManage/node`,
+    url: `/scheduleManageback/node`,
     method: 'put',
     data: data
   })
@@ -86,7 +86,7 @@ export function putNode(data) {
 
 export function exportNodeTemplate(data) {
   return request({
-    url: `/scheduleManage/template/export`,
+    url: `/scheduleManageback/template/export`,
     method: 'get',
     params: data
   })
@@ -94,7 +94,7 @@ export function exportNodeTemplate(data) {
 
 export function exportNodeList(data) {
   return request({
-    url: `/scheduleManage/node/export`,
+    url: `/scheduleManageback/node/export`,
     method: 'get',
     params: data
   })
@@ -102,7 +102,7 @@ export function exportNodeList(data) {
 
 export function importNodeList(data) {
   return request({
-    url: `/scheduleManage/node/exportNode`,
+    url: `/scheduleManageback/node/exportNode`,
     method: 'post',
     params: data
   })
@@ -110,16 +110,25 @@ export function importNodeList(data) {
 
 export function delayList(id) {
   return request({
-    url: `/scheduleManage/delay/${id}`,
+    url: `/scheduleManageback/delay/${id}`,
     method: 'get'
   })
 }
 
 export function addDelay(data) {
   return request({
-    url: `/scheduleManage/delay`,
+    url: `/scheduleManageback/delay`,
     method: 'post',
     data: data
+  })
+}
+
+
+export function importNode(id, file) {
+  return request({
+    url: `/scheduleManageback/node/importData?taskId=${id}`,
+    method: 'post',
+    data: file
   })
 }
 

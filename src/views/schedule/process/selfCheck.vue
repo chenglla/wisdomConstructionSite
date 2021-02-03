@@ -167,8 +167,11 @@ export default {
     },
   components: { Treeselect },
   computed: {
-    ...mapState({ username: state => state.user.name  }),
-    },
+    ...mapState({ 
+      nodeState: state => state.nodeState,
+      nodeStateId: state => state.nodeStateId
+    }),
+  },
 
     
   data() {
@@ -445,11 +448,11 @@ export default {
   watch: {
     // 根据名称筛选部门树
     
-    selectNode(val, oldVal){
-      if(val.label !== oldVal.label) {
-        this.getNodeList()
-      }
-    },
+    "$store.state.task.nodeStateId"(old, newd) {
+      console.log("旧的", old)
+      console.log("新的", newd)
+      this.getSelfList()
+    }
   },
   mounted() {
        
@@ -496,7 +499,7 @@ export default {
     getSelfList() {
       var params = {
         // taskId: this.selectNode.id
-        taskId: 10
+        taskId: this.$store.state.task.nodeStateId
       }
       this.loading = true;
       getList(params).then((res) => {
@@ -607,7 +610,7 @@ export default {
       // this.queryParams.page = 1;
       //this.loading = true;
       // console.log("时间判断", this.timeArry)
-      this.queryParams.taskId = 10
+      this.queryParams.taskId = this.$store.state.task.nodeStateId
       this.queryParams.startTime = this.timeArry[0]
       this.queryParams.endTime = this.timeArry[1]
       getList(this.queryParams).then(response => {

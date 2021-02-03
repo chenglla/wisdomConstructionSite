@@ -253,9 +253,16 @@
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {changeDoc, docType, findDoc, getSite, insertDoc, toPdfFile, listFolder, getFolderInfo, addFolder, getFolderContent, delFile } from "@/api/system/dataManage";
+import { mapState } from 'vuex'
 
 export default {
   components: { Treeselect },
+  computed: {
+    ...mapState({ 
+      nodeState: state => state.nodeState,
+      nodeStateId: state => state.nodeStateId
+    }),
+  },
   data() {
     return {
         currentFolder: undefined,
@@ -373,6 +380,15 @@ export default {
       constructionSiteName: '石家庄宝能中心项目二标段',
       docTypeList: [],
       fileList: []
+    }
+  },
+  watch: {
+    // 根据名称筛选部门树
+    
+    "$store.state.task.nodeStateId"(old, newd) {
+      console.log("旧的", old)
+      console.log("新的", newd)
+      this.getListFolder()
     }
   },
   mounted() {
@@ -628,7 +644,7 @@ export default {
             this.treeData2 = res.data
             this.treeData3 = res.data
             this.treeData4 = res.data
-            // console.log("初始ID", this.treeData[0].id)
+            console.log("初始ID", this.treeData[0].id)
             var id = this.treeData[0].id
             this.currentNodeId = id
             this.getFolderList(id)
@@ -661,9 +677,10 @@ export default {
     },
     handleNodeClick2() {},
     getFolderList(id) {
-        getFolderInfo(this.constructionSiteId, parseInt(id)).then((res) => {
+      var taskId = this.$store.state.task.nodeStateId
+        getFolderInfo(this.constructionSiteId, parseInt(id), taskId).then((res) => {
             // console.log("SSS",res.data.data)
-            if(res)
+            
             this.fileTable = res.data
         })
     },

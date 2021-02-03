@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function findDoc(data) {
   return request({
-    url: '/doc/list',
+    url: '/docback/list',
     method: 'get',
     params: data
   })
@@ -10,7 +10,7 @@ export function findDoc(data) {
 
 export function insertDoc(data) {
   return request({
-    url: '/doc/insertDoc',
+    url: '/docback/insertDoc',
     method: 'post',
     params: data,
     dataType: 'json',
@@ -23,7 +23,7 @@ export function insertDoc(data) {
 
 export function changeDoc(data) {
   return request({
-    url: '/doc/changeDocInfo',
+    url: '/docback/changeDocInfo',
     method: 'put',
     data
   })
@@ -31,7 +31,7 @@ export function changeDoc(data) {
 
 export function docType(data) {
   return request({
-    url: '/docTypeDict/list',
+    url: '/docTypeDictback/list',
     method: 'get',
     params: data
   })
@@ -39,7 +39,7 @@ export function docType(data) {
 
 export function getSite(data) {
   return request({
-    url: '/getSite',
+    url: '/getSiteback',
     method: 'get',
     params: data
   })
@@ -47,7 +47,7 @@ export function getSite(data) {
 
 export function toPdfFile(data) {
   return request({
-    url: '/doc/toPdfFile',
+    url: '/docback/toPdfFile',
     method: 'get',
     params: data
   })
@@ -55,21 +55,21 @@ export function toPdfFile(data) {
 
 export function listFolder(proId) {
   return request({
-    url: `/document/folder/listFolder?proId=${proId}`,
+    url: `/documentback/folder/listFolder?proId=${proId}`,
     method: 'get'
   })
 }
 
-export function getFolderInfo(siteId, id) {
+export function getFolderInfo(siteId, id, taskId) {
   return request({
-    url: `/doc/listFolderContent?siteId=${siteId}&urlId=${id}`,
+    url: `/docback/listFolderContent?siteId=${siteId}&urlId=${id}&taskId=${taskId}`,
     method: 'get'
   })
 }
 
 export function addFolder(data) {
   return request({
-    url: "/document/folder",
+    url: "/documentback/folder",
     method: 'post',
     data:data
   })
@@ -77,7 +77,7 @@ export function addFolder(data) {
 
 export function getFolderContent(data) {
   return request({
-    url: "/doc/getFolderContent",
+    url: "/docback/getFolderContent",
     method: 'get',
     params:data
   })
@@ -85,7 +85,7 @@ export function getFolderContent(data) {
 
 export function delFile(id) {
   return request({
-    url: `/doc/deleteDocManagement?fileId=${id}`,
+    url: `/docback/deleteDocManagement?fileId=${id}`,
     method: 'delete'
   })
 }

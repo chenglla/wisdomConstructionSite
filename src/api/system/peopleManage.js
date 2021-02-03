@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询人员打卡列表
 export function list(data) {
   return request({
-    url: '/people/manage/list',
+    url: '/peopleback/manage/list',
     method: 'get',
     params: data
   })
@@ -11,7 +11,7 @@ export function list(data) {
 // 导出人员打卡列表
 export function getById(data) {
   return request({
-    url: '/people/manage/export',
+    url: '/peopleback/manage/export',
     method: 'get',
     params: data
   })
@@ -19,7 +19,7 @@ export function getById(data) {
 // 查询人员打卡列表
 export function manage(data) {
   return request({
-    url: '/people/manage',
+    url: '/peopleback/manage',
     method: 'put',
     params: data,
     dataType: 'json',
@@ -32,7 +32,7 @@ export function manage(data) {
 
 export function listDay(data) {
   return request({
-    url: '/attendance/people/listDay',
+    url: '/attendanceback/people/listDay',
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function listDay(data) {
 
 export function getCount(data) {
   return request({
-    url: '/attendance/people/getCount',
+    url: '/attendanceback/people/getCount',
     method: 'get',
     params: data
   })
@@ -63,7 +63,7 @@ export function getLeftColumn(data) {
 
 export function peopleInfo(data) {
   return request({
-    url: '/people/info/list',
+    url: '/peopleback/info/list',
     method: 'get',
     params: data
   })
@@ -71,14 +71,14 @@ export function peopleInfo(data) {
 
 export function getTeamTree(id) {
   return request({
-    url: `/people/teams/tree?siteId=${id}`,
+    url: `/peopleback/teams/tree?siteId=${id}`,
     method: 'get'
   })
 }
 
 export function addBanzu(data) {
   return request({
-    url: `/people/teams`,
+    url: `/peopleback/teams`,
     method: 'post',
     data: data
   })
@@ -86,7 +86,7 @@ export function addBanzu(data) {
 
 export function addPeople(data) {
   return request({
-    url: `/people/info`,
+    url: `/peopleback/info`,
     method: 'post',
     data: data
   })
@@ -94,7 +94,7 @@ export function addPeople(data) {
 
 export function putPeople(data) {
   return request({
-    url: `/people/info`,
+    url: `/peopleback/info`,
     method: 'put',
     data: data
   })
@@ -102,7 +102,7 @@ export function putPeople(data) {
 
 export function exportExcel(data) {
   return request({
-    url: `/people/info/export`,
+    url: `/peopleback/info/export`,
     method: 'get',
     params: data
   })
@@ -110,7 +110,7 @@ export function exportExcel(data) {
 
 export function importExcel(id, file) {
   return request({
-    url: `/people/info/importData?siteId=${id}`,
+    url: `/peopleback/info/importData?siteId=${id}`,
     method: 'post',
     data: file
   })
@@ -118,14 +118,14 @@ export function importExcel(id, file) {
 
 export function profession(id) {
   return request({
-    url: `/people/profession/list?siteId=${id}`,
+    url: `/peopleback/profession/list?siteId=${id}`,
     method: 'get'
   })
 }
 
 export function allPeopleName(data) {
   return request({
-    url: `/attendance/people/people-name-tel`,
+    url: `/attendanceback/people/people-name-tel`,
     method: 'get',
     params: data
   })
@@ -133,7 +133,7 @@ export function allPeopleName(data) {
 
 export function addDaKaPeople(data) {
   return request({
-    url: `/attendance/people/add`,
+    url: `/attendanceback/people/add`,
     method: 'post',
     data: data
   })
@@ -141,7 +141,7 @@ export function addDaKaPeople(data) {
 
 export function exportKaoqinExcel(data) {
   return request({
-    url: `/attendance/people/export`,
+    url: `/attendanceback/people/export`,
     method: 'get',
     params: data
   })
@@ -149,14 +149,14 @@ export function exportKaoqinExcel(data) {
 
 export function broadsideInfo(id) {
   return request({
-    url: `/people/info/broadside-info?siteId=${id}`,
+    url: `/peopleback/info/broadside-info?siteId=${id}`,
     method: 'get'
   })
 }
 
 export function leaderList(id, data) {
   return request({
-    url: `/people/info/attend-list?constructionSiteId=${id}`,
+    url: `/peopleback/info/attend-list?constructionSiteId=${id}`,
     method: 'get',
     params: data
   })
@@ -164,7 +164,7 @@ export function leaderList(id, data) {
 
 export function listByTime(data) {
   return request({
-    url: `/attendance/people/listByTime`,
+    url: `/attendanceback/people/listByTime`,
     method: 'get',
     params:data
   })
@@ -172,7 +172,7 @@ export function listByTime(data) {
 
 export function searchDaka(data) {
   return request({
-    url: `/attendance/people/list`,
+    url: `/attendanceback/people/list`,
     method: 'get',
     params:data
   })
@@ -180,7 +180,7 @@ export function searchDaka(data) {
 
 export function exportDaka(data) {
   return request({
-    url: `/attendance/people/export`,
+    url: `/attendanceback/people/export`,
     method: 'get',
     params:data
   })
@@ -188,7 +188,7 @@ export function exportDaka(data) {
 
 export function importDaka(id, file) {
   return request({
-    url: `/attendance/people/importData?siteId=${id}`,
+    url: `/attendanceback/people/importData?siteId=${id}`,
     method: 'post',
     data: file
   })
@@ -196,7 +196,7 @@ export function importDaka(id, file) {
 
 export function leaderCount(id, data) {
   return request({
-    url: `/attendance/people/leader-attend-count?siteId=${id}`,
+    url: `/attendanceback/people/leader-attend-count?siteId=${id}`,
     method: 'post',
     params: data
   })
@@ -205,21 +205,21 @@ export function leaderCount(id, data) {
 
 export function todayAttend(id) {
   return request({
-    url: `/attendance/people/today-attend?siteId=${id}`,
+    url: `/attendanceback/people/today-attend?siteId=${id}`,
     method: 'get'
   })
 }
 
 export function lastWeekCount(id) {
   return request({
-    url: `/attendance/people/lastWeek-count?siteId=${id}`,
+    url: `/attendanceback/people/lastWeek-count?siteId=${id}`,
     method: 'get'
   })
 }
 
 export function typeCount(data) {
   return request({
-    url: `/people/info/type-count`,
+    url: `/peopleback/info/type-count`,
     method: 'get',
     params: data
   })

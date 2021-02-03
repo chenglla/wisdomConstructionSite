@@ -9,7 +9,7 @@
       </el-col>
       <el-col :span="20" :xs="24">
         <div v-if="leafNode === false ">  
-          <task :selectNode="propData" v-if="propData"   @updateTree="updateTree"></task>
+          <task :selectNode="propData" v-if="propData"   @updateTree="updateTree" ></task>
         </div>
         <div v-else>
           <node :selectNode="propData" v-if="propData" @updateTree="updateTree"></node>
@@ -33,10 +33,12 @@ export default {
   name: "Porcess",
   components: { Task, Node },
   computed: {
-  ...mapState({
-    selectNode: state => state.selectNode
-  }),
-},
+    ...mapState({ 
+      isLeaf: state => state.isLeaf,
+      nodeState: state => state.nodeState,
+      nodeStateId: state => state.nodeStateId
+    }),
+  },
   data() {
     return {
       propData: {},
@@ -52,6 +54,18 @@ export default {
     };
   },
   watch: {
+    
+  //  "$store.state.task.isLeaf"(old, newd) {
+  //     console.log("旧的", old)
+  //     console.log("新的", newd)
+      
+  //   },
+    "$store.state.task.nodeStateId"(old, newd) {
+      console.log("旧的", old)
+      console.log("新的", newd)
+      console.log("当前页面是否是叶子节点", this.$store.state.task.isLeaf)
+      this.leafNode = this.$store.state.task.isLeaf
+    }
     
   },
   mounted() {
@@ -101,9 +115,12 @@ export default {
       console.log("立即获取", this.$store.state.task.nodeStateId)
       
       
-      if(data.children === null) {
+      if(data.display === 1) {
+        this.$store.commit('task/CHANGE_ISLEAF', true) 
         this.leafNode = true
+       
       } else {
+        this.$store.commit('task/CHANGE_ISLEAF', false) 
         this.leafNode = false
       }
      
