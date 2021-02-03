@@ -62,7 +62,7 @@
             style="font-size: 0.22rem;"
             stripe
             :header-row-style="{ color: '#409eff' }"
-            :row-style="{ color: 'white' }"
+            :row-style="{ color: '' }"
              @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column label="序号" width="80" type="index" align="center"/>
@@ -262,6 +262,7 @@
 
 import { listDay, getLeftColumn, treeselect, allPeopleName, addDaKaPeople, exportKaoqinExcel, broadsideInfo, getTeamTree, searchDaka, exportDaka, importDaka, listByTime } from '@/api/system/peopleManage'
 import Treeselect from "@riophae/vue-treeselect";
+import { mapState } from 'vuex'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 
@@ -269,8 +270,15 @@ export default {
   name: "serviceKq",
   components: { Treeselect },
   
+  computed: {
+    ...mapState({ 
+      nodeState: state => state.nodeState,
+      nodeStateId: state => state.nodeStateId
+    }),
+  },
   data() {
     return {
+
       pagesize:10,
       currentPage:1,
       fileList12: [],
@@ -382,7 +390,13 @@ export default {
     };
   },
   watch: {
+    // 根据名称筛选部门树
     
+    "$store.state.task.nodeStateId"(old, newd) {
+      console.log("旧的", old)
+      console.log("新的", newd)
+      this.getListDay()
+    }
   },
   created() {
     
@@ -461,6 +475,7 @@ export default {
     getListDay() {
       var params = {
         constructionSiteId: localStorage.getItem('deptId'),
+        taskId: this.$store.state.task.nodeStateId
       }
       listByTime(params).then((res) => {
         
@@ -472,7 +487,8 @@ export default {
 
     getAllName(data) {
       allPeopleName(data).then((res) => {
-        this.nameList = res.data.data
+        console.log("123", res.data)
+        this.nameList = res.data
       })
     },
    
@@ -600,7 +616,7 @@ export default {
             
             this.form.userSignStatus = 2
             addDaKaPeople(this.form).then((response) => {
-              if (response.data.code === 200) {
+              if (response.code === 200) {
                 this.$message({
                   type: 'success',
                   message: '打卡成功!'
@@ -687,25 +703,25 @@ export default {
 }
 .dataTable >>> .el-table,
 .dataTable >>> .el-table__expanded-cell {
-  background-color: transparent !important;
+  /* background-color: transparent !important; */
 }
 /*透明化行、单元格*/
 .dataTable >>> .el-table th,
 .dataTable >>> .el-table tr,
 .dataTable >>> .el-table td {
-  background-color: transparent !important;
+  /* background-color: transparent !important; */
 }
 /*hover时样式*/
 .dataTable >>> .el-table tbody tr:hover>td {
-  background-color: #367f7f78 !important
+  /* background-color: #367f7f78 !important */
 }
 
 /*偶数行样式*/
 .dataTable >>> .el-table__row--striped td {
-  background-color: #45797b33 !important
+  /* background-color: #45797b33 !important */
 }
 /*奇数行样式*/
 .dataTable >>> .el-table__row:not(.el-table__row--striped) {
-  background: #1439391c !important;
+  /* background: #1439391c !important; */
 }
 </style>

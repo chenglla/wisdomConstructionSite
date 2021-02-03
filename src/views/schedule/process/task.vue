@@ -4,16 +4,23 @@
         <div >
           <span style="color:red; font-size:20px;">{{selectNode.label}}</span>
         </div>
-        <div style="float:right;margin-right:10px">
+        <!-- <div style="float:right;margin-right:10px">
           <el-input v-model="queryParams.devModel" placeholder="请输入关键字" clearable size="small" style="width: 200px;margin-right: 10px"/>
           <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        </div>
+        </div> -->
        
 
         <el-row :gutter="10" class="mb8" style="margin-top:5px;">
-          <el-col :span="1.5">
+          <el-col :span="14">
             <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增任务</el-button>
+          </el-col>
+          <el-col :span="10">
+            <div style="margin-right:10px">
+              <el-input v-model="searchValue" placeholder="请输入任务名称" clearable size="small" style="width: 200px;margin-right: 10px"/>
+              <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+              <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+            </div>
           </el-col>
         </el-row>
 
@@ -64,7 +71,7 @@
           </el-table-column>
         </el-table>
 
-        <!-- <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" /> -->
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
       </el-col>
     </el-row>
 
@@ -155,6 +162,26 @@
             </el-form-item>
           </el-col>
         </el-row>
+         <el-row>
+          <el-col :span="12">
+            <el-form-item label="叶子节点"  prop="nodeFlag">
+              <el-radio-group v-model="form.nodeFlag">
+                <el-radio label="1">是</el-radio>
+                <el-radio label="0">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="实际结束时间"  prop="actualEndTime">
+               <el-date-picker
+                    v-model="form.actualEndTime"
+                    type="date"
+                    value-format="yyyy-MM-dd"
+                    placeholder="选择日期">
+                </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
             <el-col :span="24">
                 <el-form-item label="备注">
@@ -215,12 +242,16 @@ export default {
     },
   components: { Treeselect },
   computed: {
-    ...mapState({ username: state => state.user.name  }),
-    },
+     ...mapState({ 
+      nodeState: state => state.nodeState,
+      nodeStateId: state => state.nodeStateId
+    }),
+  },
 
     
   data() {
     return {
+      searchValue: '',
         selectNodeId: '',
         projectTotal: 4,
         noStart: 2,
@@ -290,6 +321,7 @@ export default {
           remarks: '',
           serialNumber: '',
           siteId: '',
+          nodeFlag: ''
 
       },
       defaultProps: {
@@ -336,18 +368,14 @@ export default {
     };
   },
   watch: {
-    // 根据名称筛选部门树
-    // selectNodeId(val, oldVal) {
-    //   console.log("selectNodeId-val", val)
-    //   console.log("selectNodeId-oldVal", oldVal)
-    // },
-    selectNode(val, oldVal){
-      console.log("task-val", val)
-      console.log("task-oldVal", oldVal)
-      if(val.label !== oldVal.label) {
-        this.getTaskList()
-      }
-    },
+   
+    "$store.state.task.nodeStateId"(old, newd) {
+      console.log("旧的", old)
+      console.log("新的", newd)
+      
+      this.getTaskList()
+    }
+    
   },
   mounted() {
       this.selectNodeId = localStorage.getItem('selectNodeId')
@@ -364,7 +392,7 @@ export default {
       // console.log("selectNodeId", localStorage.getItem("selectNodeId"))
       var params = {
         siteId: localStorage.getItem('deptId'),
-        parentId: this.selectNode.id
+        parentId: this.$store.state.task.nodeStateId
       }
       this.loading = true;
       taskList(params).then((res) => {
@@ -439,24 +467,24 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-
-      this.queryParams.page = 1;
-      //this.loading = true;
-      listDevice(this.queryParams).then(response => {
-        // this.dataList = response.rows;
-        // this.total = response.total;
-        // this.loading = false;
-      });
+      var params = {
+        label: this.searchValue,
+        parentId: this.$store.state.task.nodeStateId
+      }
+       this.loading = true;
+      taskList(params).then((res) => {
+        this.dataList = res.rows
+        this.total = res.total;
+        this.loading = false;
+      })
 
     },
     /** 重置按钮操作 */
     resetQuery() {
       // this.dateRange = [];
       // this.resetForm("queryForm");
-      this.queryParams.devFactory = ''
-      this.queryParams.devType = ''
-      this.queryParams.devModel = ''
-      this.handleQuery();
+      this.searchValue = ''
+      this.getTaskList();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -475,17 +503,18 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-        console.log(row)
-
-
-      this.form.id = row.id
-      this.form.devFactory = row.devFactory
-      this.form.devType = row.devType
-      this.form.devModel = row.devModel
-      this.form.content = row.content
-
-
-      this.open = true
+        console.log("chakan",row)
+        if(row.nodeFlag === 1) {
+          // 是叶子节点
+          console.log("是叶子节点")
+          this.$store.commit('task/CHANGE_ISLEAF', true) 
+          this.$store.commit('task/CHANGE_NODE_ID', row.id) 
+        } else {
+          // 不是叶子节点
+          console.log("不是叶子节点")
+          this.$store.commit('task/CHANGE_ISLEAF', false) 
+          this.$store.commit('task/CHANGE_NODE_ID', row.id) 
+        }
     },
     /** 重置密码按钮操作 */
 
@@ -493,7 +522,7 @@ export default {
     submitForm: function () {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          this.form.parentId = this.selectNode.id
+          this.form.parentId = this.$store.state.task.nodeStateId
             addTask(this.form).then((response) => {
               if (response.code === 200) {
                 this.$message({

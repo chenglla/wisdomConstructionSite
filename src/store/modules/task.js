@@ -1,6 +1,7 @@
 const state = {
     nodeState: {},
-    nodeStateId: ''
+    nodeStateId: '',
+    isLeaf: false
 }
 
 const mutations = {
@@ -9,6 +10,9 @@ const mutations = {
     },
     CHANGE_NODE_ID: (state, id) => {
       state.nodeStateId = id
+    },
+    CHANGE_ISLEAF: (state, status) => {
+      state.isLeaf = status
     }
 }
 
@@ -18,7 +22,7 @@ const actions = {
     },
     changeNodeId({ commit }, data) {
       commit('CHANGE_NODE', data)
-    }
+    },
 }
 
 export default {

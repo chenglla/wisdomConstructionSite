@@ -31,7 +31,7 @@
             <el-button type="primary"  size="mini" @click="downloadFile" v-hasPermi="['system:user:add']">下载模版</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary"  size="mini" @click="importNode" v-hasPermi="['system:user:add']">导入节点</el-button>
+            <el-button type="primary"  size="mini" @click="importNodeExcel" v-hasPermi="['system:user:add']">导入节点</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="primary"  size="mini" @click="exportExcel" v-hasPermi="['system:user:add']">导出EXCEL</el-button>
@@ -122,7 +122,7 @@
           <div class="dm-aside">
              
             <div class="head-container header_tree">
-            <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
+            <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all  />
             </div>
           </div>
        
@@ -312,21 +312,46 @@
       </div>
     </el-dialog>
 
+
+    <el-dialog :visible.sync="modelOpen" title="导入节点" width="30%" @close="cancelModel">
+      <div style="margin:0 auto; ">
+        <el-upload
+          style="margin-left:15%;margin-bottom:10px;"
+          class="upload-demo"
+          action=""
+          accept=".xls,.xlsx"
+          :limit="1"
+          drag
+          :on-change="handleChange"
+          :file-list="fileList12"
+          :auto-upload="false"
+          >
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传.xlsx文件</div>
+        </el-upload>
+        
+        </el-form>
+         <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="submitExcel">导入</el-button>
+            <el-button @click="cancelModel">取 消</el-button>
+          </div>
+      </div>
+    </el-dialog>
+
   
   </div>
 </template>
 
 <script>
 
-import { listDevice, getDevice, delDevice, addDevice, updateDevice, exportDevice } from "@/api/system/device";
-import { nodeList, nodeTemplate, getTeamTree, broadsideInfo, addNodeTemplate, addNode, putNode, exportNodeTemplate, exportNodeList, importNodeList, delayList, addDelay } from "@/api/system/process";
+import { nodeList, nodeTemplate, getTeamTree, broadsideInfo, addNodeTemplate, addNode, putNode, exportNodeTemplate, exportNodeList, importNodeList, delayList, addDelay, importNode } from "@/api/system/process";
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import { getLeftColumn } from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { mapState } from 'vuex'
-import { unionTypeAnnotation } from '@babel/types';
 
 export default {
   name: "Node",
@@ -349,6 +374,8 @@ export default {
     
   data() {
     return {
+      modelOpen: false,
+      fileList12: [],
       delayId: '',
       addDelayOpen: false,
       delayList: [],
@@ -627,7 +654,25 @@ export default {
     
   },
   methods: {
-    
+    cancelModel() {
+      this.modelOpen = false
+    },
+    handleChange(file, fileList) {
+      this.fileList12 = fileList
+    },
+    submitExcel() {
+      var id = this.$store.state.task.nodeStateId
+      const formData = new FormData()
+      formData.append('file', this.fileList12[0].raw)
+      importNode(id, formData).then((res) => {
+        console.log("导入的文件res", res)
+        if(res.data.code === 200) {
+          this.fileList12 = []
+          this.modelOpen = false
+          this.getNodeList()
+        }
+      })
+    },
     editEvent(row) {
       console.log("row", row)
       this.templateId = row.id
@@ -733,7 +778,7 @@ export default {
       var id = this.$store.state.task.nodeStateId
       var params = {
         taskId: id
-        // taskId: 10
+        
       }
       this.loading = true;
       nodeList(params).then((res) => {
@@ -743,25 +788,17 @@ export default {
       })
     },
     downloadFile() {
-      var params = {
-        siteId: localStorage.getItem('deptId')
-      }
-      exportNodeTemplate(params).then((res) => {
-        if(res.code === 200) {
-          window.location.href = res.msg
-        }
-        
-      })
+      window.location.href = 'http://121.36.106.18:38082/node_template.xlsx'
+      
     },
-    importNode() {
-      // var params = {
-      //   nodeTemplateId:
-      // }
-      // importNodeList()
+    importNodeExcel() {
+      var id = this.$store.state.task.nodeStateId
+      this.modelOpen = true;
+      this.actionUrl = `http://121.36.106.18:36080/scheduleManage/node/importData?taskId=${id}`
     },
     exportExcel() {
       var params = {
-        task: 10,
+        taskId: this.$store.state.task.nodeStateId,
       }
       exportNodeList(params).then((res) => {
         if(res.code === 200) {
@@ -776,68 +813,8 @@ export default {
       return data.label.indexOf(value) !== -1;
     },
     // 节点单击事件
-    handleNodeClick(data, node, e) {
-      console.log("data",data)
-      console.log(node)
-      console.log(e)
-      this.currentDeptName = data.name
-      
-      if(data.flag === null) {
-        var params = {
-          constructionSiteId: data.deptId,
-        }
-      } else if(data.flag === 1){
-        var params = {
-          constructionSiteId: data.deptId,
-          devType: data.name
-
-        }
-      } else {
-        var params = {
-          constructionSiteId: data.deptId,
-          type: data.name
-
-        }
-      }
-      this.loading = true;
-      listDevice(params).then(response => {
-        // this.dataList = response.rows;
-        // this.total = response.total;
-        // this.loading = false;
-      });
-
-    },
-    // 用户状态修改
-    handleStatusChange(row) {
-      let text = row.status === "0" ? "启用" : "停用";
-      this.$confirm(
-        '确认要"' + text + '' + '"该设备吗?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
-        .then(() => {
-          console.log("123")
-          var tmp = ''
-          if(row.status === '0') {
-            tmp = '1'
-          } else {
-            tmp = '0'
-          }
-          var form = {
-            id: row.id,
-            status: tmp
-          }
-
-          updateDevice(form);
-        })
-        .catch(function () {
-          console.log("456")
-          row.status = row.status === "0" ? "1" : "0";
-        });
-    },
+    
+    
     // 取消按钮
     cancel() {
       this.open = false;
@@ -1085,73 +1062,10 @@ export default {
     },
     
 
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const userIds = row.id ;
-      this.$confirm(
-        '是否确认删除该数据项?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
-        .then(function () {
-            // for(let i = 0; i < this.dataList.length; i++) {
-            //     let obj = this.dataList[i]
-            //     if(obj.userId === userIds) {
-            //         this.dataList.splice(i, 1)
-            //     }
-            // }
-          return delDevice(userIds);
-        })
-        .then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        })
-        .catch(function () {});
-    },
+  
     /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有用户数据项?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(function () {
-
-          return exportDevice(queryParams);
-        })
-        .then((response) => {
-
-
-          window.location.href = response.msg
-        })
-        .catch(function () {
-          console.log("789")
-        });
-    },
-    /**  下载按钮操作 */
-    handledown() {
-      console.log("Aaaaa")
-      var queryParams = this.queryParams;
-      console.log("aaa", queryParams)
-
-      this.$confirm("是否下载数据对接模板?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(function () {
-          return exportDevice(queryParams);
-        })
-        .then((response) => {
-          window.location.href = response.msg
-        })
-        .catch(function () {});
-    },
+   
+    
     
     /** 下载模板操作 */
     importTemplate() {
