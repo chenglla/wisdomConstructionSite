@@ -43,7 +43,7 @@ const user = {
         login(username, password, code, uuid).then(res => {
           setToken(res.token)
           console.log("登录的名字1", username)
-          localStorage.setItem("userName", user.userName)
+          localStorage.setItem("userName", username)
           commit('SET_TOKEN', res.token)
           commit('SET_SITEID', res.site_id)
           localStorage.setItem("deptId", res.site_id)

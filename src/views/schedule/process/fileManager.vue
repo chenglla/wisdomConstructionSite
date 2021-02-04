@@ -260,7 +260,8 @@ export default {
   computed: {
     ...mapState({ 
       nodeState: state => state.nodeState,
-      nodeStateId: state => state.nodeStateId
+      nodeStateId: state => state.nodeStateId,
+      otherId: state => state.otherId
     }),
   },
   data() {
@@ -377,7 +378,7 @@ export default {
       isActive2: false,
       isActive3: false,
       constructionSiteId: 1,
-      constructionSiteName: '石家庄宝能中心项目二标段',
+      constructionSiteName: '',
       docTypeList: [],
       fileList: []
     }
@@ -394,14 +395,14 @@ export default {
   mounted() {
     // this.$store.dispatch('changeMsg', '资料管理');
     this.getListFolder()
-    this.constructionSiteId = parseInt(window.localStorage.getItem('deptId'));
-    this.getConstructionSiteName(this.constructionSiteId);
+    this.constructionSiteId = parseInt(this.$store.state.task.otherId);
+    this.getConstructionSiteName(this.$store.state.task.otherId);
     this.refreshTable();
-    docType().then(response => {
-      for(var i=0;i<response.data.rows.length;i++) {
-        this.docTypeList.push(response.data.rows[i].name)
-      }
-    })
+    // docType().then(response => {
+    //   for(var i=0;i<response.data.rows.length;i++) {
+    //     this.docTypeList.push(response.data.rows[i].name)
+    //   }
+    // })
   },
   methods: {
     handleCurrentChange(val) {
@@ -525,7 +526,7 @@ export default {
 
         if(valid) {
           changeDoc(this.currentInfo).then(response => {
-            if(response.data.code === 200) {
+            if(response.code === 200) {
               this.$message({
                 type: 'success',
                 message: '修改成功！'
@@ -533,7 +534,7 @@ export default {
               this.refreshTable();
               this.showEdit = false;
             } else {
-              this.$message.error(response.data.msg)
+              this.$message.error(response.msg)
             }
           })
         } else {
@@ -637,23 +638,30 @@ export default {
     },
     
     getListFolder() {
-        var deptId = localStorage.getItem('deptId')
+        var deptId = this.$store.state.task.otherId
         listFolder(deptId).then((res) => {
             // console.log("Folder", res.data)
             this.treeData = res.data
             this.treeData2 = res.data
             this.treeData3 = res.data
             this.treeData4 = res.data
-            console.log("初始ID", this.treeData[0].id)
-            var id = this.treeData[0].id
-            this.currentNodeId = id
-            this.getFolderList(id)
+            
+            if(this.treeData.length === 0) {
+              console.log("空空如也")
+              this.fileTable = []
+            } else {
+              console.log("初始ID", this.treeData[0].id)
+              var id = this.treeData[0].id
+              this.currentNodeId = id
+              this.getFolderList(id)
+            }
+            
         })
     },
     searchFileByName() {
       var params = {
         fileName: this.searchFile,
-        siteId: localStorage.getItem('deptId')
+        siteId: this.$store.state.task.otherId
       }
       getFolderContent(params).then((res) => {
          this.fileTable = res.data
@@ -678,7 +686,7 @@ export default {
     handleNodeClick2() {},
     getFolderList(id) {
       var taskId = this.$store.state.task.nodeStateId
-        getFolderInfo(this.constructionSiteId, parseInt(id), taskId).then((res) => {
+        getFolderInfo(this.$store.state.task.otherId, parseInt(id), taskId).then((res) => {
             // console.log("SSS",res.data.data)
             
             this.fileTable = res.data
