@@ -9,10 +9,10 @@
       </el-col>
       <el-col :span="20" :xs="24">
         <div v-if="leafNode === false ">  
-          <task :selectNode="propData" v-if="propData"   @updateTree="updateTree" ></task>
+          <task :selectNode="propData"    @updateTree="updateTree" ></task>
         </div>
         <div v-else>
-          <node :selectNode="propData" v-if="propData" @updateTree="updateTree"></node>
+          <node :selectNode="propData"  @updateTree="updateTree"></node>
         </div>
       </el-col>
     </el-row>

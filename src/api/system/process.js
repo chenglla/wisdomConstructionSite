@@ -48,7 +48,7 @@ export function nodeTemplate(data) {
 
 export function getTeamTree(id) {
   return request({
-    url: `/people/teams/tree?siteId=${id}`,
+    url: `/peopleback/teams/tree?siteId=${id}`,
     method: 'get'
   })
 }

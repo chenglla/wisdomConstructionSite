@@ -53,9 +53,8 @@
           
           <el-table-column label="状态" align="center" prop="state" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
-                <el-tag  v-if="scope.row.state===0" type="success">正常</el-tag>
-                <el-tag  v-if="scope.row.state===1" type="warning">正常延期</el-tag>
-                <el-tag  v-if="scope.row.state===2" type="danger">异常延期</el-tag>
+                <el-tag  v-if="scope.row.state=== 0 " type="success">正常</el-tag>
+                <el-tag  v-if="scope.row.state=== 1 " type="warning">延期</el-tag>
             </template>
           </el-table-column>
           
@@ -71,7 +70,7 @@
           </el-table-column>
         </el-table>
 
-        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"  />
       </el-col>
     </el-row>
 
@@ -171,16 +170,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="实际结束时间"  prop="actualEndTime">
-               <el-date-picker
-                    v-model="form.actualEndTime"
-                    type="date"
-                    value-format="yyyy-MM-dd"
-                    placeholder="选择日期">
-                </el-date-picker>
-            </el-form-item>
-          </el-col>
+          
         </el-row>
         <el-row>
             <el-col :span="24">
@@ -363,6 +353,9 @@ export default {
         ],
         contactInformation: [
           { required: true, message: "联系方式不能为空", trigger: "blur" },
+        ],
+        planStartTime: [
+          { required: true, message: "计划开始时间不能为空", trigger: "blur" },
         ]
       },
     };
@@ -560,7 +553,7 @@ export default {
           return delDevice(userIds);
         })
         .then(() => {
-          this.getList();
+         
           this.msgSuccess("删除成功");
         })
         .catch(function () {});
@@ -626,7 +619,7 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-      this.getList();
+      
     },
     // 提交上传文件
     submitFileForm() {
