@@ -26,9 +26,10 @@
           <el-select v-model="queryParams.userSignStatus" placeholder="请选择" clearable size="small" style="width: 120px;margin-right: 10px">
             <el-option v-for="dict in signOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
           </el-select>
+          <br />
           <span style="font-size: 14px;margin-right: 10px">时间</span>
           <el-date-picker
-            style="width: 220px;margin-right: 10px"
+            style="width: 250px;margin-right: 10px"
             v-model="timeArry"
             type="daterange"
             value-format="yyyy-MM-dd"
@@ -106,7 +107,7 @@
     </el-row>
 
     <!-- 查看对话框 -->
-    <el-dialog title="查看信息" :visible.sync="viewOpen" width="800px" append-to-body class="addForm">
+    <el-dialog title="查看信息" :visible.sync="viewOpen" width="1200px" append-to-body class="addForm">
       <el-form ref="viewForm" :model="viewForm"  label-width="120px">
 
         <el-row>
@@ -273,7 +274,8 @@ export default {
   computed: {
     ...mapState({ 
       nodeState: state => state.nodeState,
-      nodeStateId: state => state.nodeStateId
+      nodeStateId: state => state.nodeStateId,
+      otherId: state => state.otherId
     }),
   },
   data() {
@@ -410,7 +412,7 @@ export default {
   },
   methods: {
     submitExcel() {
-      var id = localStorage.getItem('deptId')
+      var id = this.$store.state.task.otherId
       const formData = new FormData()
       formData.append('file', this.fileList12[0].raw)
       importDaka(id, formData).then((res) => {
@@ -434,7 +436,7 @@ export default {
       this.queryParams.teamId = node.id
     },
     getBanzu() {
-      var id = localStorage.getItem('deptId')
+      var id = this.$store.state.task.otherId
       getTeamTree(id).then((res) => {
         this.treeData = res.data.data
         
@@ -447,7 +449,7 @@ export default {
       if(this.selectTime !== '' && this.selectType !== '') {
         var data = {
           date: year,
-          siteId: localStorage.getItem('deptId'),
+          siteId: this.$store.state.task.otherId,
           userSignType: this.selectType
         }
         this.getAllName(data)
@@ -458,7 +460,7 @@ export default {
       if(this.selectTime !== '' && this.selectType !== '') {
         var data = {
           date: this.selectTime.split(" ")[0],
-          siteId: localStorage.getItem('deptId'),
+          siteId: this.$store.state.task.otherId,
           userSignType: this.selectType
         }
         this.getAllName(data)
@@ -466,7 +468,7 @@ export default {
     },
     
     getBroadsideInfo() {
-      var id = localStorage.getItem('deptId')
+      var id = this.$store.state.task.otherId
       broadsideInfo(id).then((res) => {
         this.deptOptions = res.data
       })
@@ -474,7 +476,7 @@ export default {
      /** 查询用户列表 */
     getListDay() {
       var params = {
-        constructionSiteId: localStorage.getItem('deptId'),
+        constructionSiteId: this.$store.state.task.otherId,
         taskId: this.$store.state.task.nodeStateId
       }
       listByTime(params).then((res) => {
@@ -520,7 +522,7 @@ export default {
       
       // this.loading = true;
       searchDaka(params).then(response => {
-        this.userList = response.data.rows;
+        this.userList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -562,7 +564,7 @@ export default {
       
       this.loading = true;
       listByTime(this.queryParams).then(response => {
-        this.userList = response.data.rows
+        this.userList = response.rows
         this.loading = false
         this.queryParamsUserclass = undefined
       });
@@ -637,11 +639,11 @@ export default {
     inExport() {
       this.modelOpen = true;
       this.title = "导入文件"
-      this.actionUrl = `http://121.36.106.18:36080/people/info/importData?siteId=${localStorage.getItem('deptId')}`
+      this.actionUrl = `http://121.36.106.18:36080/people/info/importData?siteId=${this.$store.state.task.otherId}`
     },
     handleExport() {
       var params = {
-        constructionSiteId: localStorage.getItem('deptId'),
+        constructionSiteId: this.$store.state.task.otherId,
         deptName: this.currentUserSignCompanyName
       }
       exportDaka(params).then((res) => {

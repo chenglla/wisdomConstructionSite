@@ -397,11 +397,11 @@ export default {
     this.constructionSiteId = parseInt(window.localStorage.getItem('deptId'));
     this.getConstructionSiteName(this.constructionSiteId);
     this.refreshTable();
-    docType().then(response => {
-      for(var i=0;i<response.data.rows.length;i++) {
-        this.docTypeList.push(response.data.rows[i].name)
-      }
-    })
+    // docType().then(response => {
+    //   for(var i=0;i<response.data.rows.length;i++) {
+    //     this.docTypeList.push(response.data.rows[i].name)
+    //   }
+    // })
   },
   methods: {
     handleCurrentChange(val) {
@@ -525,7 +525,7 @@ export default {
 
         if(valid) {
           changeDoc(this.currentInfo).then(response => {
-            if(response.data.code === 200) {
+            if(response.code === 200) {
               this.$message({
                 type: 'success',
                 message: '修改成功！'
@@ -533,7 +533,7 @@ export default {
               this.refreshTable();
               this.showEdit = false;
             } else {
-              this.$message.error(response.data.msg)
+              this.$message.error(response.msg)
             }
           })
         } else {

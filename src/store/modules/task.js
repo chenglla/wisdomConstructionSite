@@ -1,7 +1,8 @@
 const state = {
     nodeState: {},
     nodeStateId: '',
-    isLeaf: false
+    isLeaf: false,
+    otherId: ''
 }
 
 const mutations = {
@@ -13,6 +14,9 @@ const mutations = {
     },
     CHANGE_ISLEAF: (state, status) => {
       state.isLeaf = status
+    },
+    CHANGE_OTHERID: (state, id) => {
+      state.otherId = id
     }
 }
 

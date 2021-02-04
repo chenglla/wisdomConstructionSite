@@ -25,13 +25,13 @@
 
         <el-row :gutter="10" class="mb8" style="margin-top:15px;clear:both;">
           <el-col :span="1.5">
-            <el-button type="primary"  size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">编辑节点</el-button>
+            <el-button type="primary"  size="mini" @click="handleAdd" v-if="!isAdmin" v-hasPermi="['system:user:add']">编辑节点</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="primary"  size="mini" @click="downloadFile" v-hasPermi="['system:user:add']">下载模版</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary"  size="mini" @click="importNodeExcel" v-hasPermi="['system:user:add']">导入节点</el-button>
+            <el-button type="primary"  size="mini" @click="importNodeExcel" v-if="!isAdmin" v-hasPermi="['system:user:add']">导入节点</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="primary"  size="mini" @click="exportExcel" v-hasPermi="['system:user:add']">导出EXCEL</el-button>
@@ -236,13 +236,13 @@
       </el-form>
      
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitViewForm">确 定</el-button>
+        <el-button type="primary" v-if="!isAdmin" @click="submitViewForm">确 定</el-button>
         <el-button @click="cancelView">取 消</el-button>
       </div>
     </el-dialog>
 
     <el-dialog title="延缓说明" :visible.sync="delayOpen" width="1000px"  append-to-body>
-      <el-button size="mini" type="primary" class="margin-bottom: 10px;" @click="showAddDelay">新增延期</el-button>
+      <el-button size="mini" type="primary" class="margin-bottom: 10px;" v-if="!isAdmin" @click="showAddDelay">新增延期</el-button>
       <el-table  :data="delayList" >
 
           <el-table-column label="编号" align="center" type="index" />
@@ -308,7 +308,7 @@
      
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitDelayForm">确 定</el-button>
-        <el-button @click="cancelView">取 消</el-button>
+        <el-button @click="cancelDelay">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -374,6 +374,7 @@ export default {
     
   data() {
     return {
+      isAdmin: false,
       modelOpen: false,
       fileList12: [],
       delayId: '',
@@ -400,11 +401,11 @@ export default {
           teamId: '',
         },
         viewFormRules: {
-          actualEndTime: [
-            { required: true, message: "实际结束时间不能为空", trigger: "blur" },
+          planStartTime: [
+            { required: true, message: "计划结束时间不能为空", trigger: "blur" },
           ],
-          labactualStartTimeel: [
-            { required: true, message: "实际结束时间不能为空", trigger: "blur" },
+          planEndTime: [
+            { required: true, message: "计划结束时间不能为空", trigger: "blur" },
           ]
         },
         nodeForm: {
@@ -641,6 +642,12 @@ export default {
     
   },
   mounted() {
+        if(localStorage.getItem('userName') === 'admin-1') {
+          
+          this.isAdmin = true
+        } else {
+          this.isAdmin = false
+        }
          
         this.getNodeList();
         
@@ -662,7 +669,7 @@ export default {
       formData.append('file', this.fileList12[0].raw)
       importNode(id, formData).then((res) => {
         console.log("导入的文件res", res)
-        if(res.data.code === 200) {
+        if(res.code === 200) {
           this.fileList12 = []
           this.modelOpen = false
           this.getNodeList()
@@ -823,6 +830,9 @@ export default {
     cancelView() {
       this.viewDialog = false;
       
+    },
+    cancelDelay() {
+      this.addDelayOpen = false
     },
     // 表单重置
     reset() {

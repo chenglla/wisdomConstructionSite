@@ -14,6 +14,7 @@ const getters = {
   siteId: state => state.user.siteId,
   nodeState: state => state.nodeState,
   nodeStateId: state => state.nodeStateId,
-  isLeaf: state => state.isLeaf
+  isLeaf: state => state.isLeaf,
+  otherId: state => state.otherId
 }
 export default getters

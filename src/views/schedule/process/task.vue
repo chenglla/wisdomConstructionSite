@@ -13,7 +13,7 @@
 
         <el-row :gutter="10" class="mb8" style="margin-top:5px;">
           <el-col :span="14">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:user:add']">新增任务</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-if="!isAdmin" v-hasPermi="['system:user:add']">新增任务</el-button>
           </el-col>
           <el-col :span="10">
             <div style="margin-right:10px">
@@ -53,8 +53,9 @@
           
           <el-table-column label="状态" align="center" prop="state" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
-                <el-tag  v-if="scope.row.state=== 0 " type="success">正常</el-tag>
-                <el-tag  v-if="scope.row.state=== 1 " type="warning">延期</el-tag>
+                <el-tag  v-if="scope.row.state===0" type="success">正常</el-tag>
+                <el-tag  v-if="scope.row.state===1" type="warning">正常延期</el-tag>
+                <el-tag  v-if="scope.row.state===2" type="danger">异常延期</el-tag>
             </template>
           </el-table-column>
           
@@ -241,12 +242,13 @@ export default {
     
   data() {
     return {
+      isAdmin: false,
       searchValue: '',
         selectNodeId: '',
-        projectTotal: 4,
-        noStart: 2,
-        doing: 1,
-        complete: 1,
+        projectTotal: '',
+        noStart: '',
+        doing: '',
+        complete: '',
         currentDeptName: '',
 
 
@@ -371,7 +373,14 @@ export default {
     
   },
   mounted() {
-      this.selectNodeId = localStorage.getItem('selectNodeId')
+    
+    if(localStorage.getItem('userName') === 'admin-1') {
+      
+      this.isAdmin = true
+    } else {
+      this.isAdmin = false
+    }
+    this.selectNodeId = localStorage.getItem('selectNodeId')
   },
   created() {
    

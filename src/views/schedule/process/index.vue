@@ -112,6 +112,7 @@ export default {
 
       this.$store.commit('task/CHANGE_NODE', data)  
       this.$store.commit('task/CHANGE_NODE_ID', data.id) 
+      this.$store.commit('task/CHANGE_OTHERID', data.otherId) 
       console.log("立即获取", this.$store.state.task.nodeStateId)
       
       
