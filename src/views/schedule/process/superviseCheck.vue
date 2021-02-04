@@ -31,7 +31,12 @@
         </div>
        
 
-        
+         <el-row :gutter="10" class="mb8" style="margin-top:15px;clear:both;">
+          <el-col :span="1.5">
+            <el-button type="primary"  size="mini" @click="handleAdd" v-if="!isAdmin" v-hasPermi="['system:user:add']">新增监督检查记录</el-button>
+          </el-col>
+         
+        </el-row>
 
         
 
@@ -643,11 +648,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-        this.open = true;
-        this.title = "设置节点计划";
-        console.log(this.form)
-        // this.reset()
-        // this.form.siteId = localStorage.getItem("deptId")
+        
 
     },
     addNodePlan() {
