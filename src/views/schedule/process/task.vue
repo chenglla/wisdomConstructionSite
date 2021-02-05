@@ -24,11 +24,11 @@
           </el-col>
         </el-row>
 
-        <el-row :gutter="10" class="mb8" style="margin-top:5px;margin-bottom: 6px;">
+        <!-- <el-row :gutter="10" class="mb8" style="margin-top:5px;margin-bottom: 6px;">
           <el-col :span="1.5">
            共计单位工程{{projectTotal}}个，未开始{{noStart}}个，进行中{{doing}}个，已完成{{complete}}个
           </el-col>
-        </el-row>
+        </el-row> -->
 
 
 

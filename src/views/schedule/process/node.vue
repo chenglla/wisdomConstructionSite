@@ -2,14 +2,14 @@
   <div class="app-container">
     
     <el-row :gutter="20">
-        <div style="margin-top:5px;margin-bottom: 6px;">
+        <!-- <div style="margin-top:5px;margin-bottom: 6px;">
            <el-row :gutter="10" class="mb8" >
               <el-col :span="1.5">
               计划工期{{projectPlanDays}}天，已进行{{doingDays}}天
               </el-col>
           </el-row>
-        </div>
-        <br />
+        </div> -->
+        <!-- <br /> -->
         <div style="margin-right:10px;">
           <span style="font-size: 14px;margin-right: 10px">节点名称</span><el-input v-model="queryParams.label" placeholder="请输入关键字" clearable size="small" style="width: 200px;margin-right: 10px"/>
           <span style="font-size: 14px;margin-right: 10px">进度</span><el-select v-model="queryParams.progress" placeholder="请选择进度" clearable  style="width: 200px;margin-right: 10px">
