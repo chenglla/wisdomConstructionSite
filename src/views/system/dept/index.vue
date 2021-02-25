@@ -253,10 +253,10 @@
 </div>
     <!-- 添加或修改部门对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
-          <el-col :span="24" v-if="form.parentId !== 0">
-            <el-form-item label="上级部门" prop="parentId">
+          <el-col :span="24" >
+            <el-form-item label="上级部门" prop="parentId" v-if="showParent === true">
               <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
             </el-form-item>
           </el-col>
@@ -280,15 +280,41 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="联系电话" prop="phone">
+            <el-form-item label="负责人电话" prop="phone">
               <el-input v-model="form.phone" placeholder="请输入联系电话"  />
+            </el-form-item>
+          </el-col>
+        </el-row>
+         <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系人" prop="entLinkName">
+              <el-input v-model="form.entLinkName" placeholder="请输入联系人姓名"  />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人电话" prop="entLinkMobile">
+              <el-input v-model="form.entLinkMobile" placeholder="请输入联系人电话"  />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱"  />
+            <el-form-item label="企业名称" prop="entName">
+              <el-input v-model="form.entName" placeholder="请输入企业名称"  />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="企业地址" prop="entAlladdress">
+              <el-input v-model="form.entAlladdress" placeholder="请输入企业地址"  />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        
+        <el-row>
+          <el-col :span="12">
+             <el-form-item label="企业工商号" prop="orgcode">
+              <el-input v-model="form.orgcode" placeholder="请输入企业工商织号"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -303,6 +329,7 @@
             </el-form-item>
           </el-col>
         </el-row>
+        
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -325,6 +352,7 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      showParent: true,
       typeList: [
         {
           value: 1,
@@ -547,6 +575,11 @@ export default {
       this.reset();
       getDept(row.deptId).then(response => {
         this.form = response.data;
+        if(this.form.parentId === 0 || this.form.parentId === 100) {
+          this.showParent = false
+        } else {
+          this.showParent = true
+        }
         this.open = true;
         this.title = "修改部门";
       });

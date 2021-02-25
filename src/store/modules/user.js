@@ -1,5 +1,6 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import Cookies from "js-cookie";
 
 const user = {
   state: {
@@ -86,6 +87,10 @@ const user = {
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
           removeToken()
+          Cookies.remove('username')
+          Cookies.remove('rememberMe')
+          Cookies.remove('password')
+          Cookies.remove('username')
           resolve()
         }).catch(error => {
           reject(error)
