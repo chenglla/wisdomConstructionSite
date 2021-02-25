@@ -15,14 +15,16 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
-          <span style="font-size: 14px;margin-right: 10px">类型</span><el-select v-model="queryParams.from" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
+          <!-- <span style="font-size: 14px;margin-right: 10px">类型</span><el-select v-model="queryParams.from" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in progressList" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>
-          </el-select>
+          </el-select> -->
          
-         <span style="font-size: 14px;margin-right: 10px">检查结果</span> <el-select v-model="queryParams.result" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
+         <span style="font-size: 14px;margin-right: 10px">检查结果</span> 
+         <!-- <el-select v-model="queryParams.result" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in stateList" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>
-          </el-select>
-           <br />
+          </el-select> -->
+           <el-input v-model="queryParams.result" placeholder="请输入关键字" clearable size="small" style="width: 200px;margin-right: 10px"/>
+           <!-- <br /> -->
           <span style="font-size: 14px;margin-right: 10px">处理结果</span> <el-select v-model="queryParams.processResult" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in state2List" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>
           </el-select>
@@ -31,9 +33,9 @@
         </div>
 
          <el-row :gutter="10" class="mb8" style="margin-top:15px;clear:both;">
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="primary"  size="mini" @click="handleAdd" v-if="!isAdmin" v-hasPermi="['system:user:add']">新增自检记录</el-button>
-          </el-col>
+          </el-col> -->
          
         </el-row>
        
@@ -220,17 +222,21 @@ export default {
           }
         ],
         state2List: [
-          {
-            value: 0,
+         {
+            value: 1,
             label: '未处理'
           },
           {
-            value: 1,
-            label: '处理中'
+            value: 2,
+            label: '正在处理'
           },
           {
-             value: 2,
+             value: 3,
             label: '已处理'
+          },
+          {
+             value: 4,
+            label: '预警'
           }
         ],
         nodePlan: false,
@@ -639,7 +645,7 @@ export default {
       this.timeArry = []
       this.queryParams.startTime = ''
       this.queryParams.endTime = ''
-      this.handleQuery();
+      this.getSelfList();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {

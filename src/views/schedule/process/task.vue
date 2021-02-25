@@ -94,10 +94,18 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="施工单位">
+            <!-- <el-form-item label="施工单位">
                 <el-select v-model="form.constructionUnit" placeholder="请选择施工单位" style="width:250px;">
                     <el-option v-for="dict in constructionUnitList" :key="dict" :label="dict" :value="dict" ></el-option>
                 </el-select>
+            </el-form-item> -->
+
+             <el-form-item label="选择单位" >
+              <el-select v-model="selectValue" placeholder="请选择" clearable size="small" style="width: 250px" ref="selectTree">
+                <el-option style="height: auto;" :value="optionValue" :label="optionValue">
+                  <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree2" @node-click="handleNodeClick2" />
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -213,8 +221,8 @@
 <script>
 
 
-import { listDevice, getDevice, delDevice, addDevice, updateDevice, exportDevice } from "@/api/system/device";
 import { taskList, addTask } from "@/api/system/process";
+import { broadsideInfo } from '@/api/system/peopleManage';
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -242,6 +250,8 @@ export default {
     
   data() {
     return {
+      selectValue: undefined,
+      optionValue: undefined,
       isAdmin: false,
       searchValue: '',
         selectNodeId: '',
@@ -388,6 +398,37 @@ export default {
     
   },
   methods: {
+
+     getBroadsideInfo() {
+      var id = localStorage.getItem('deptId')
+      broadsideInfo(id).then((res) => {
+        console.log("打印deptOptions", res.data.data)
+        this.deptOptions = res.data
+        // var arr = res.data.data[0].childs
+        // var tmp = []
+        // for(let i = 0; i < arr.length; i++) {
+        //   tmp.push(arr[i].name)
+        // }
+        // this.constructionUnitList = [...new Set(tmp)]
+        
+      })
+    },
+
+    handleNodeClick2(data, node, nodeData){
+     console.log("打印data", data)
+     console.log("打印node", node)
+     console.log("打印nodeData", nodeData)
+     this.selectValue = data
+     this.optionValue = data.name
+      setTimeout(() => {
+          this.$refs.selectTree.blur()
+      }, 50)
+   },
+
+   filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
   
     getTaskList() {
       // console.log("task", this.selectNodeId)
@@ -501,6 +542,7 @@ export default {
         console.log(this.form)
         this.reset()
         this.form.siteId = localStorage.getItem("deptId")
+        this.getBroadsideInfo()
 
     },
     /** 修改按钮操作 */
@@ -525,6 +567,7 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           this.form.parentId = this.$store.state.task.nodeStateId
+          this.form.constructionUnit = this.optionValue
             addTask(this.form).then((response) => {
               if (response.code === 200) {
                 this.$message({

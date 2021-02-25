@@ -72,7 +72,9 @@
 
           <el-table-column label="操作" align="center"  class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="handleUpdate(scope.row)" >详情</el-button>
+              <el-button size="mini" type="text" @click="handleEdit(scope.row)" >修改</el-button>
+                <el-button size="mini" type="text" @click="handleUpdate(scope.row)" >详情</el-button>
+                <el-button size="mini" type="text" @click="handleDel(scope.row)" >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -140,6 +142,79 @@
       </div>
     </el-dialog>
 
+
+     <!-- 添加或修改参数配置对话框 -->
+    <el-dialog title="新增监督检查" :visible.sync="checkOpen" width="1000px"  append-to-body>
+      <el-form ref="checkForm" :model="checkForm" :rules="checkFormRules" label-width="160px" >
+          <el-row>
+              <el-col :span="12">
+                  <el-form-item  label="检查内容" prop="content">
+                      <el-input v-model="checkForm.content" placeholder="请输入检查内容" style="width:250px;"/>
+                  </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                  <el-form-item  label="检查机构" prop="organization">
+                    <el-input v-model="checkForm.organization" placeholder="请输入检查机构" style="width:250px;"/>
+                  </el-form-item>
+              </el-col>
+          </el-row>
+           
+          <el-row>
+              <el-col :span="12">
+                  <el-form-item  label="检查时间" prop="checkTime">
+                    <el-date-picker v-model="checkForm.checkTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  style="width:250px;"/>
+                  </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                  <el-form-item  label="检查结果" prop="result">
+                    
+                    <el-select v-model="checkForm.result" placeholder="请选择检查结果" style="width:250px;">
+                      <el-option label="正常" value="正常" />
+                      <el-option label="整改" value="整改" />
+                      <el-option label="停工整改" value="停工整改" />
+                    </el-select>
+                  </el-form-item>
+              </el-col>
+          </el-row>
+
+          <el-row>
+              <el-col :span="12">
+                  <el-form-item  label="类型" prop="type">
+                      <el-input v-model="checkForm.type" placeholder="请输入类型" style="width:250px;" />
+                  </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                  <el-form-item  label="回复情况" prop="reply">
+                    <el-select v-model="checkForm.reply" placeholder="请选择回复情况" style="width:250px;">
+                      <el-option label="已回复" value="已回复" />
+                      <el-option label="未回复" value="未回复" />
+                    </el-select>
+                  </el-form-item>
+              </el-col>
+          </el-row>
+
+          <el-row>
+              <el-col :span="12">
+                  <el-form-item  label="回复时间" prop="replyTime">
+                    <el-date-picker v-model="checkForm.replyTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd" style="width:250px;" />
+                  </el-form-item>
+              </el-col>
+              <!-- <el-col :span="12">
+                  <el-form-item  label="回复内容" prop="replyTime">
+                    <el-input v-model="form.type" placeholder="请输入类型" :disabled="true"/>
+                  </el-form-item>
+              </el-col> -->
+              
+          </el-row>
+
+      </el-form>
+     
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="cancelCheck">取 消</el-button>
+      </div>
+    </el-dialog>
+
   
 
    
@@ -149,7 +224,7 @@
 <script>
 
 
-import { getList, nodeList, nodeTemplate, getTeamTree, broadsideInfo } from "@/api/system/superviseCheck";
+import { getList, nodeList, nodeTemplate, getTeamTree, broadsideInfo,  addSuperviseCheck, updateSuperviseCheck, delSuperviseCheck } from "@/api/system/superviseCheck";
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -179,6 +254,21 @@ export default {
     
   data() {
     return {
+      isAdmin: false,
+      checkForm: {
+        checkTime: '',
+        content: '',
+        endTime: '',
+        id: '',
+        organization: '',
+        reply: '',
+        replyTime: '',
+        result: '',
+        startTime: '',
+        taskId: '',
+        type: ''
+      },
+      checkOpen: false,
         
         nodeForm: {
           id: '',
@@ -449,6 +539,14 @@ export default {
           { required: true, message: "节点名称不能为空", trigger: "blur" },
         ]
       },
+       checkFormRules: {
+        organization: [
+          { required: true, message: "检查机构不能为空", trigger: "blur" },
+        ],
+        content: [
+          { required: true, message: "检查内容不能为空", trigger: "blur" },
+        ]
+      }
     };
   },
   watch: {
@@ -461,7 +559,12 @@ export default {
     }
   },
   mounted() {
-       
+       if(localStorage.getItem('userName') === 'admin-1') {
+          
+          this.isAdmin = true
+        } else {
+          this.isAdmin = false
+        }
   },
   created() {
 
@@ -469,6 +572,36 @@ export default {
 
   },
   methods: {
+    handleDel(row) {
+      // console.log("删除", row)
+      delSuperviseCheck(row.id).then((res) => {
+        console.log("123", res)
+        if(res.code === 200) {
+           this.$message({
+              type: 'success',
+              message: '删除成功！'
+            })
+            this.getSelfList();
+        } else {
+          this.$message({
+              type: 'error',
+              message: '删除失败！'
+            })
+        }
+      })
+    },
+    handleEdit(row) {
+      this.checkOpen = true
+      this.checkForm = row
+    },
+     handleAdd() {
+       console.log("123")
+        this.checkOpen = true
+    },
+    cancelCheck() {
+      this.checkOpen = false;
+      this.reset();
+    },
     getBroadsideInfo() {
       var id = localStorage.getItem('deptId')
       var id = 10
@@ -599,16 +732,19 @@ export default {
     
     // 表单重置
     reset() {
-      this.form = {
-        id: undefined,
-        devFactory: undefined,
-        devType: undefined,
-        devModel: undefined,
-        content: undefined,
-        status: undefined
-
-      };
-      this.resetForm("form");
+     this.checkForm = {
+        checkTime: '',
+        content: '',
+        endTime: '',
+        id: '',
+        organization: '',
+        reply: '',
+        replyTime: '',
+        result: '',
+        startTime: '',
+        taskId: '',
+        type: ''
+      }
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -646,11 +782,7 @@ export default {
       this.single = selection.length != 1;
       this.multiple = !selection.length;
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-        
-
-    },
+    
     addNodePlan() {
       this.nodePlan = true;
       this.title = "新增节点计划";
@@ -669,28 +801,40 @@ export default {
     /** 提交按钮 */
     submitForm: function () {
 
-      this.$refs["form"].validate((valid) => {
+      this.$refs["checkForm"].validate((valid) => {
         if (valid) {
-          if (this.form.id != undefined) {
-            updateDevice(this.form).then((response) => {
+          this.checkForm.taskId = this.$store.state.task.nodeStateId
+          
+          if(this.checkForm.id === '') {
+            addSuperviseCheck(this.checkForm).then((response) => {
+              console.log("resp", response)
               if (response.code === 200) {
-                this.msgSuccess("修改成功");
-                this.open = false;
+                 this.$message({
+                  type: 'success',
+                  message: '新增成功！'
+                })
+                this.checkOpen = false;
                 this.reset()
-                this.getList();
+                this.getSelfList();
               }
             });
           } else {
-            addDevice(this.form).then((response) => {
+            updateSuperviseCheck(this.checkForm).then((response) => {
+              console.log("resp", response)
               if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.open = false;
+                 this.$message({
+                  type: 'success',
+                  message: '更新成功！'
+                })
+                this.checkOpen = false;
                 this.reset()
-                this.getList();
+                this.getSelfList();
               }
             });
           }
+
         }
+        
       });
     },
     /** 删除按钮操作 */

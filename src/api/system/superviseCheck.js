@@ -106,6 +106,30 @@ export function importNodeList(data) {
   })
 }
 
+export function addSuperviseCheck(data) {
+  return request({
+    url: `/scheduleManageback/supervise`,
+    method: 'post',
+    data: data
+  })
+}
+
+export function updateSuperviseCheck(data) {
+  return request({
+    url: `/scheduleManageback/supervise`,
+    method: 'put',
+    data: data
+  })
+}
+
+export function delSuperviseCheck(id) {
+  return request({
+    url: `/scheduleManageback/supervise/${id}`,
+    method: 'delete'
+  })
+}
+
+
 
 
 
