@@ -7,7 +7,7 @@
           <!--<el-input v-model="deptName" placeholder="请输入公司名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />-->
         <!--</div>-->
         <div class="head-container header_tree" >
-          <el-tree :data="deptOptions" :props="defaultProps" :default-expand-all="expends" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
+          <el-tree :data="deptOptions" :props="defaultProps" :default-expand-all="true" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
       <!--用户数据-->
@@ -66,25 +66,24 @@
 <!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="设备编号" align="center" prop="devId" />
           <el-table-column label="产权单位" align="center" prop="makefactory" />
-          <el-table-column label="设备名称" align="center" prop="devName"  />
+          <el-table-column label="设备名称" align="center" prop="deviceName"  />
           <el-table-column label="设备型号" align="center" prop="deviceType" />
-          <el-table-column label="维修周期（月）" align="center" prop="maintenanCycle"  />
-          <el-table-column label="负责人" align="center" prop="personInCharge"  />
-          <el-table-column label="联系方式" align="center" prop="phone"  />
-          <el-table-column label="传输状态" align="center" prop="status" :show-overflow-tooltip="true" >
+          <el-table-column label="检修时间" align="center" prop="checkTime"  />
+          <el-table-column label="负责人" align="center" prop="checkUser"  />
+          <!-- <el-table-column label="联系方式" align="center" prop="phone"  /> -->
+          <!-- <el-table-column label="传输状态" align="center" prop="status" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
               <el-tag  v-if="scope.row.status===0" type="success">正常</el-tag>
-<!--              <el-tag  v-if="scope.row.transfer==='故障'" type="danger">故障</el-tag>-->
               <el-tag  v-if="scope.row.status===1" type="danger">停用</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <!--<el-table-column label="手机号码" align="center" prop="phonenumber" width="120" />-->
           <!--<el-table-column label="状态" align="center">-->
             <!--<template slot-scope="scope">-->
               <!--<el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>-->
             <!--</template>-->
           <!--</el-table-column>-->
-          <el-table-column label="进厂时间" align="center" prop="entryTime" >
+          <el-table-column label="进厂时间" align="center" prop="ifactoryTime" >
 
             <!--<template slot-scope="scope">-->
               <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
@@ -125,8 +124,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设备名称"  prop="devName">
-              <el-input v-model="form.devName" placeholder="设备名称"  style="width:240px" />
+            <el-form-item label="设备名称"  prop="deviceName">
+              <el-input v-model="form.deviceName" placeholder="设备名称"  style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -144,15 +143,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="维修周期（月）" prop="maintenanCycle">
-              <el-input v-model="form.maintenanCycle" placeholder="维修周期"  style="width:240px" />
+            <el-form-item label="检修时间" prop="checkTime">
+              <el-date-picker v-model="form.checkTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="检修时间"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="personInCharge">
-              <el-input v-model="form.personInCharge" placeholder="请输入负责人名称" style="width:240px" />
+            <el-form-item label="负责人" prop="checkUser">
+              <el-input v-model="form.checkUser" placeholder="请输入负责人名称" style="width:240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -168,8 +167,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="进厂时间" prop="entryTime">
-              <el-date-picker v-model="form.entryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="进厂时间"></el-date-picker>
+            <el-form-item label="进厂时间" prop="ifactoryTime">
+              <el-date-picker v-model="form.ifactoryTime" size="small" style="width: 240px" value-format="yyyy-MM-dd" type="date"  placeholder="进厂时间"></el-date-picker>
             </el-form-item>
           </el-col>
           <!--<el-col :span="12">-->
