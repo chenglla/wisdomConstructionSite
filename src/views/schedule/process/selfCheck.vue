@@ -79,12 +79,12 @@
           </el-table-column>
         </el-table>
 
-        <!-- <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" /> -->
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
       </el-col>
     </el-row>
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog title="详情" :visible.sync="open" width="1500px"  append-to-body>
+    <!-- <el-dialog title="详情" :visible.sync="open" width="1500px"  append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="160px" >
           <el-row>
               <el-col :span="12">
@@ -144,6 +144,155 @@
         
         <el-button @click="cancel">取 消</el-button>
       </div>
+    </el-dialog> -->
+
+
+    <el-dialog :visible.sync="open" title="详细信息" width="60%">
+      <div class="divDialog" style="height: 55vh; overflow-y: scroll;">
+
+        <el-form :model="uploadInfo2"  ref="uploadInfo2" label-width="160px">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="发起人:" prop="fromUser">
+                 <el-input v-model="uploadInfo2.fromUser"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="接收人:" prop="toUser">
+                 <el-input v-model="uploadInfo2.toUser"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="抄送人:" prop="ccPeople">
+                 <el-input v-model="uploadInfo2.ccPeople"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="事件类型:" prop="checkType">
+                 <el-input v-model="uploadInfo2.checkType"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="详细类型:" prop="checkTypeOffspring">
+                 <el-input v-model="uploadInfo2.checkTypeOffspring"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="记录时间:" prop="startTime">
+                 <el-input v-model="uploadInfo2.startTime"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="一级进度:" prop="planName">
+                 <el-input v-model="uploadInfo2.planName"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="二级进度:" prop="sectionName">
+                 <el-input v-model="uploadInfo2.sectionName"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="事件详情:" prop="context">
+                 <el-input type="textarea" v-model="uploadInfo2.context"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="发起问题照片:" prop="imageUrl">
+                 
+
+              <el-image
+                  v-if="uploadInfo2.imageUrl !== null"
+                :src="uploadInfo2.imageUrl"
+                >
+                
+              </el-image>
+              <span v-else>暂无图片</span>
+              </el-form-item>
+            </el-col>
+            
+          </el-row>
+
+           <el-row>
+            <el-col :span="24">
+              <el-form-item label="发起问题视频:" prop="videoUrl">
+                
+
+                 <video  v-if="uploadInfo2.videoUrl !== null" :src="uploadInfo2.videoUrl" controls></video>
+                 <span v-else>暂无视频</span>
+              </el-form-item>
+            </el-col>
+            
+          </el-row>
+
+          <el-divider></el-divider>
+
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="处理时间:" prop="endTime">
+                 <el-input v-model="dealDatail.endTime"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+           
+          </el-row>
+
+           <el-row>
+            
+            <el-col :span="24">
+              <el-form-item label="处理结果:" prop="tiltPercentageOne">
+                 <el-input type="textarea" v-model="dealDatail.context"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+         
+
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="处理结果照片:" prop="safetyAndQualityProcessList">
+                
+
+              <el-image
+                 v-if="dealDatail.imageUrl !== null"
+                :src="dealDatail.imageUrl"
+                >
+              </el-image>
+              <span v-else>暂无图片</span>
+              </el-form-item>
+            </el-col>
+           
+          </el-row>
+
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="处理结果视频:" prop="safetyAndQualityProcessList">
+                 <video  v-if="dealDatail.videoUrl !== null" :src="dealDatail.videoUrl" controls></video>
+                 <span v-else>暂无视频</span>
+              </el-image>
+              </el-form-item>
+            </el-col>
+           
+          </el-row>
+
+         
+
+         
+
+        </el-form>
+      </div>
     </el-dialog>
 
   
@@ -155,7 +304,7 @@
 <script>
 
 
-import { getList, nodeList, nodeTemplate, getTeamTree, broadsideInfo } from "@/api/system/selfCheck";
+import { getList, nodeList, nodeTemplate, getTeamTree, broadsideInfo, getPicInfo } from "@/api/system/selfCheck";
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -185,6 +334,26 @@ export default {
     
   data() {
     return {
+      dealDatail : {
+        context: '',
+        endTime: '',
+        imageUrl: null,
+        videoUrl: null
+      },
+      uploadInfo2: {
+        ccPeople: '',
+        checkType: '',
+        checkTypeOffspring: '',
+        context: '',
+        flag: '',
+        fromUser: '',
+        handingTime:'',
+        imageUrl: '',
+        toUser: '',
+        processStatus: '',
+        planName: '',
+        sectionName: ''
+      },
         
         nodeForm: {
           id: '',
@@ -309,51 +478,7 @@ export default {
       deptOptions: [],
       currentDeptName: '',
       // 设备树选项
-      deviceOptions: [{
-        id: 100,
-        label: "企业总览",
-        children: [{
-          id: 200,
-          label: "河北创巨圆科技发展有限公司",
-          children: [{
-            id: 101,
-            label: "特种设备",
-            children: [{
-              id: 102,
-              label: "起重机"
-            }, {
-              id: 103,
-              label: "塔吊"
-            }, {
-              id: 104,
-              label: "升降机"
-            }, {
-              id: 105,
-              label: "物料提升机"
-            }]
-          }, {
-            id: 201,
-            label: "视频设备",
-            children: [{
-              id: 202,
-              label: "摄像头"
-            }, {
-              id: 203,
-              label: "人脸识别设备"
-            }]
-          }, {
-            id: 301,
-            label: "环境检测设备",
-            children: [{
-              id: 302,
-              label: "水质检测设备"
-            }, {
-              id: 303,
-              label: "大气采样设备"
-            }]
-          }]
-        }]
-      }],
+      
       // 是否显示弹出层
       open: false,
       // 部门名称
@@ -669,7 +794,18 @@ export default {
     handleUpdate(row) {
       console.log(row)
       this.open = true
-      this.form = row
+      this.getSuiShouPaiInfoById(row.id)
+    },
+
+    getSuiShouPaiInfoById(id) {
+      getPicInfo(id).then((res) => {
+        console.log("随手拍的数据", res)
+        var resData = res.data
+        if(resData.safetyAndQualityProcessList.length !== 0) {
+        this.dealDatail = resData.safetyAndQualityProcessList[0]
+      }
+      this.uploadInfo2 = resData
+      })
     },
     /** 重置密码按钮操作 */
 
