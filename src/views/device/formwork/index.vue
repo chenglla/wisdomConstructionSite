@@ -77,7 +77,7 @@
 
         <el-table v-loading="loading"  :data="dataList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
 
-          <el-table-column label="设备编号" align="center" prop="id" />
+          <el-table-column label="设备备案编号" align="center" prop="id" />
           <el-table-column label="产权单位" align="center" prop="devFactory" :show-overflow-tooltip="true" />
           <el-table-column label="设备类型" align="center" prop="devType" :show-overflow-tooltip="true" />
           <el-table-column label="设备型号" align="center" prop="devModel" :show-overflow-tooltip="true" />

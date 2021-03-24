@@ -66,6 +66,8 @@
           </el-table-column> -->
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
+              <el-button size="mini" type="text" @click="handleEdit(scope.row)" >修改</el-button>
+              <el-button size="mini" type="text" @click="handleDel(scope.row)" >删除</el-button>
               <el-button size="mini" type="text" @click="handleUpdate(scope.row)" >工作记录</el-button>
             </template>
           </el-table-column>
@@ -109,7 +111,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="合同款项">
+            <el-form-item label="合同款项" prop="contractPayment">
               <el-input v-model="form.contractPayment"  placeholder="请输入合同款项" ></el-input>
             </el-form-item>
           </el-col>
@@ -174,8 +176,8 @@
           <el-col :span="12">
             <el-form-item label="叶子节点"  prop="nodeFlag">
               <el-radio-group v-model="form.nodeFlag">
-                <el-radio label="1">是</el-radio>
-                <el-radio label="0">否</el-radio>
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -221,7 +223,7 @@
 <script>
 
 
-import { taskList, addTask } from "@/api/system/process";
+import { taskList, addTask, putTask, delTask, getInfo } from "@/api/system/process";
 import { broadsideInfo } from '@/api/system/peopleManage';
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
@@ -360,15 +362,31 @@ export default {
       },
       // 表单校验
       rules: {
+        label: [
+          { required: true, message: "项目名称不能为空", trigger: "blur" },
+        ],
+        serialNumber: [
+          { required: true, message: "编号不能为空", trigger: "blur" },
+        ],
+        
         leadingCadre: [
-          { required: true, message: "负责人呢不能为空", trigger: "blur" },
+          { required: true, message: "负责人不能为空", trigger: "blur" },
+        ],
+        contractPayment: [
+          { required: true, message: "合同款项不能为空", trigger: "blur" },
         ],
         contactInformation: [
           { required: true, message: "联系方式不能为空", trigger: "blur" },
         ],
         planStartTime: [
           { required: true, message: "计划开始时间不能为空", trigger: "blur" },
-        ]
+        ],
+        planEndTime: [
+          { required: true, message: "计划结束时间不能为空", trigger: "blur" },
+        ],
+        nodeFlag: [
+          { required: true, message: "计划结束时间不能为空", trigger: "blur" },
+        ],
       },
     };
   },
@@ -391,6 +409,7 @@ export default {
       this.isAdmin = false
     }
     this.selectNodeId = localStorage.getItem('selectNodeId')
+     this.getBroadsideInfo()
   },
   created() {
    
@@ -542,10 +561,40 @@ export default {
         console.log(this.form)
         this.reset()
         this.form.siteId = localStorage.getItem("deptId")
-        this.getBroadsideInfo()
+       
 
     },
     /** 修改按钮操作 */
+    handleEdit(row) {
+      console.log("编辑", row)
+      
+      getInfo(row.id).then((res) => {
+        console.log("编辑数据", res.data)
+        this.form = res.data
+        this.selectValue = res.data.constructionUnit
+        this.optionValue = res.data.constructionUnit
+        this.title = '编辑'
+        this.open = true
+
+      })
+    },
+    handleDel(row) {
+      delTask(row.id).then((res) => {
+        if(res.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          })
+          this.getTaskList();
+          this.$emit('updateTree','updateTree');
+        } else {
+          this.$message({
+            type: 'error',
+            message: '删除失败！'
+          })
+        }
+      })
+    },
     handleUpdate(row) {
         console.log("chakan",row)
         if(row.nodeFlag === 1) {
@@ -568,6 +617,7 @@ export default {
         if (valid) {
           this.form.parentId = this.$store.state.task.nodeStateId
           this.form.constructionUnit = this.optionValue
+          if(this.form.id === '') {
             addTask(this.form).then((response) => {
               if (response.code === 200) {
                 this.$message({
@@ -580,6 +630,21 @@ export default {
                 this.$emit('updateTree','updateTree');
               }
             });
+          } else {
+            putTask(this.form).then((response) => {
+              if (response.code === 200) {
+                this.$message({
+                  type: 'success',
+                  message: '修改成功！'
+                })
+                this.open = false;
+                this.reset()
+                this.getTaskList();
+                this.$emit('updateTree','updateTree');
+              }
+            });
+          }
+            
         }
       });
     },

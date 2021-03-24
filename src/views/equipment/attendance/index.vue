@@ -35,7 +35,7 @@
             <!--<el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
           <!--</el-form-item>-->
           <!--<el-form-item label="设备型号" prop="phonenumber">-->
-            <!--<el-input v-model="queryParams.devModel" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+            <!--<el-input v-model="queryParams.devModel" placeholder="请输入设备备案编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
           <!--</el-form-item>-->
           <!--<el-form-item label="状态" prop="status">-->
             <!--<el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">-->
@@ -190,7 +190,7 @@
           </el-col>
 <!--          <el-col :span="12">-->
 <!--            <el-form-item label="资质证明" >-->
-<!--              &lt;!&ndash;              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />&ndash;&gt;-->
+<!--              &lt;!&ndash;              <el-input v-model="form.equipmentID" placeholder="设备备案编号" maxlength="11" />&ndash;&gt;-->
 <!--              <el-upload-->
 <!--                class="upload-demo"-->
 <!--                multiple-->
@@ -737,7 +737,7 @@ export default {
     handleDelete(row) {
       const userIds = row.id ;
       this.$confirm(
-        '是否确认删除设备编号为"' + userIds + '"的数据项?',
+        '是否确认删除设备备案编号为"' + userIds + '"的数据项?',
         "警告",
         {
           confirmButtonText: "确定",

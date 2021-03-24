@@ -103,6 +103,7 @@
                 :normalizer="normalizer"
                 :show-count="true"
                 placeholder="选择上级菜单"
+                noOptionsText="目前没有菜单，请先创建"
               />
             </el-form-item>
           </el-col>

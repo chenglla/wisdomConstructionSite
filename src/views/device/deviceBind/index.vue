@@ -13,8 +13,8 @@
       <!--用户数据-->
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="设备编号" prop="deviceNO">
-            <el-input v-model="queryParams.deviceNO" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备备案编号" prop="deviceNO">
+            <el-input v-model="queryParams.deviceNO" placeholder="请输入设备备案编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
           <el-form-item label="设备名称" prop="deviceName">
             <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
@@ -56,7 +56,7 @@
         <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
           
            <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="设备编号" align="center" prop="equipmentID" />
+          <el-table-column label="设备备案编号" align="center" prop="equipmentID" />
           <el-table-column label="设备名称" align="center" prop="equipmentName" :show-overflow-tooltip="true" />
           <el-table-column label="负责人" align="center" prop="people" :show-overflow-tooltip="true" />
           <el-table-column label="状态" align="center">
@@ -88,8 +88,8 @@
         <el-row>
 
           <el-col :span="12">
-            <el-form-item label="设备编号" prop="equipmentID">
-              <el-input v-model="form.equipmentID" placeholder="设备编号"/>
+            <el-form-item label="设备备案编号" prop="equipmentID">
+              <el-input v-model="form.equipmentID" placeholder="设备备案编号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">

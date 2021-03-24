@@ -14,7 +14,7 @@
       <el-col :span="20" :xs="24">
         <div v-show="showSearch" style="padding: 10px">
           <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备名称</span><el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 200px;margin-right: 10px" />
-          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备编号</span><el-input v-model="queryParams.devId" placeholder="请输入设备编号" clearable size="small" style="width: 200px;margin-right: 10px"  />
+          <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">设备备案编号</span><el-input v-model="queryParams.devId" placeholder="请输入设备备案编号" clearable size="small" style="width: 200px;margin-right: 10px"  />
           <span style="font-size: 14px;color: #606266;font-weight: 700;margin-right: 10px">状态</span>
           <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 200px;margin-right: 10px">
             <el-option v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
@@ -26,8 +26,8 @@
           <!--<el-form-item label="设备名称" prop="devName">-->
             <!--<el-input v-model="queryParams.devName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
           <!--</el-form-item>-->
-          <!--<el-form-item label="设备编号" prop="devId">-->
-            <!--<el-input v-model="queryParams.devId" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
+          <!--<el-form-item label="设备备案编号" prop="devId">-->
+            <!--<el-input v-model="queryParams.devId" placeholder="请输入设备备案编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />-->
           <!--</el-form-item>-->
           <!--<el-form-item label="状态" prop="status">-->
             <!--<el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">-->
@@ -64,7 +64,7 @@
 
         <el-table v-loading="loading" :data="userList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
 <!--          <el-table-column type="selection" width="50" align="center" />-->
-          <el-table-column label="设备编号" align="center" prop="devId" />
+          <el-table-column label="设备备案编号" align="center" prop="deviceCode" />
           <el-table-column label="产权单位" align="center" prop="makefactory" />
           <el-table-column label="设备名称" align="center" prop="deviceName"  />
           <el-table-column label="设备型号" align="center" prop="deviceType" />
@@ -89,7 +89,7 @@
               <!--<span>{{ parseTime(scope.row.createTime) }}</span>-->
             <!--</template>-->
           </el-table-column>
-          <el-table-column label="设备备案编号" align="center" prop="deviceCode" />
+          
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
@@ -180,7 +180,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="资质证明" >
-<!--              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />-->
+<!--              <el-input v-model="form.equipmentID" placeholder="设备备案编号" maxlength="11" />-->
               <el-upload
                 v-model="form.patentenclosure"
                 ref="upload"
@@ -718,7 +718,7 @@
         this.queryParams.devId = ''
         this.queryParams.status = ''
         // this.resetForm("queryForm");
-        this.handleQuery();
+        this.getList();
       },
       // 多选框选中数据
       handleSelectionChange(selection) {
@@ -787,7 +787,7 @@
       handleDelete(row) {
         const devId = row.devId;
         this.$confirm(
-          '是否确认删除设备编号为"' + devId + '"的数据项?',
+          '是否确认删除设备备案编号为"' + devId + '"的数据项?',
           "警告",
           {
             confirmButtonText: "确定",

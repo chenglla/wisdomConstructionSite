@@ -101,8 +101,8 @@
         <el-row>
 
           <el-col :span="12">
-            <el-form-item label="设备编号" prop="equipmentID">
-              <el-input v-model="form.equipmentID" placeholder="设备编号"  />
+            <el-form-item label="设备备案编号" prop="equipmentID">
+              <el-input v-model="form.equipmentID" placeholder="设备备案编号"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">

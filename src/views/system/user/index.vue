@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!--部门数据-->
+      <!--单位数据-->
       <el-col :span="4" :xs="24">
         <div class="head-container">
-          <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
+          <el-input v-model="deptName" placeholder="请输入单位名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
         </div>
         <div class="head-container header_tree" >
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
@@ -108,8 +108,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <treeselect v-model="form.deptId" :options="deptOptions"  :show-count="true" placeholder="请选择归属部门" />
+            <el-form-item label="归属单位" prop="deptId">
+              <treeselect v-model="form.deptId" :options="deptOptions"  :show-count="true" placeholder="请选择归属单位" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -159,7 +159,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色" prop="roleIds">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择">
+              <el-select v-model="form.roleIds" multiple :multiple-limit="1" placeholder="请选择">
                 <el-option v-for="item in roleOptions" :key="item.roleId" :label="item.roleName" :value="item.roleId" :disabled="item.status == 1"></el-option>
               </el-select>
             </el-form-item>
@@ -169,7 +169,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="岗位" prop="postIds">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
+              <el-select v-model="form.postIds" multiple :multiple-limit="1" placeholder="请选择">
                 <el-option v-for="item in postOptions" :key="item.postId" :label="item.postName" :value="item.postId" :disabled="item.status == 1"></el-option>
               </el-select>
             </el-form-item>
@@ -256,11 +256,11 @@ export default {
       userList: null,
       // 弹出层标题
       title: "",
-      // 部门树选项
+      // 单位树选项
       deptOptions: undefined,
       // 是否显示弹出层
       open: false,
-      // 部门名称
+      // 单位名称
       deptName: undefined,
       // 默认密码
       initPassword: undefined,
@@ -313,7 +313,7 @@ export default {
           { required: true, message: "用户昵称不能为空", trigger: "blur" },
         ],
         deptId: [
-          { required: true, message: "归属部门不能为空", trigger: "blur" },
+          { required: true, message: "归属单位不能为空", trigger: "blur" },
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
@@ -342,7 +342,7 @@ export default {
     };
   },
   watch: {
-    // 根据名称筛选部门树
+    // 根据名称筛选单位树
     deptName(val) {
       this.$refs.tree.filter(val);
     },
@@ -372,7 +372,7 @@ export default {
         }
       );
     },
-    /** 查询部门下拉树结构 */
+    /** 查询单位下拉树结构 */
     getTreeselect() {
       treeselect().then((response) => {
         this.deptOptions = response.data;

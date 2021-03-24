@@ -26,6 +26,21 @@ export function addTask(data) {
   })
 }
 
+export function putTask(data) {
+  return request({
+    url: `/scheduleback/task`,
+    method: 'put',
+    data: data
+  })
+}
+
+export function delTask(id) {
+  return request({
+    url: `/scheduleback/task/${id}`,
+    method: 'delete'
+  })
+}
+
 
 
 // 节点方法
@@ -84,6 +99,15 @@ export function putNode(data) {
   })
 }
 
+
+export function delNode(id) {
+  return request({
+    url: `/scheduleManageback/node/${id}`,
+    method: 'delete'
+  })
+}
+
+
 export function exportNodeTemplate(data) {
   return request({
     url: `/scheduleManageback/template/export`,
@@ -129,6 +153,23 @@ export function importNode(id, file) {
     url: `/scheduleManageback/node/importData?taskId=${id}`,
     method: 'post',
     data: file
+  })
+}
+
+
+export function getInfo(id) {
+  return request({
+    url: `/scheduleback/task/${id}`,
+    method: 'get'
+  })
+}
+
+
+export function getBanzuPeople(data) {
+  return request({
+    url: `/peopleback/teams/nameFromTeam`,
+    method: 'get',
+    params: data
   })
 }
 
