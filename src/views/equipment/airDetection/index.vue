@@ -67,7 +67,7 @@
 
         <el-table v-loading="loading" :data="userList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="设备编号" align="center" prop="id" />
+          <el-table-column label="设备备案编号" align="center" prop="deviceCode" />
           <el-table-column label="产权单位" align="center" prop="devFactory" />
           <el-table-column label="设备名称" align="center" prop="devName"  />
           <el-table-column label="设备型号" align="center" prop="devModel" />
@@ -766,7 +766,7 @@ export default {
     handleDelete(row) {
       const userIds = row.id;
       this.$confirm(
-        '是否确认删除设备编号为"' + userIds + '"的数据项?',
+        '是否确认删除设备备案编号为"' + userIds + '"的数据项?',
         "警告",
         {
           confirmButtonText: "确定",

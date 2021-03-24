@@ -4,7 +4,13 @@
       <div class="baseInfo">项目情况:</div>
       <el-row>
         <el-col :span="4">
-          <el-tag type="danger" effect="dark">工程造价</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proCost}}万</el-tag>
+          <el-tag type="danger" effect="dark">项目名称</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proName}}万</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="danger" effect="dark">备案编号</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proCode}}</el-tag>        
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="danger" effect="dark">工程类别</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{gongchengLeibie(baseInfo.protier)}}</el-tag>        
         </el-col>
         <el-col :span="4">
           <el-tag type="danger" effect="dark">合同工期</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{hetongTime}}天</el-tag>       
@@ -13,12 +19,10 @@
           <el-tag type="danger" effect="dark">建筑规模</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proArea}}㎡</el-tag>        
         </el-col>
         </el-col>
-        <el-col :span="6">
-          <el-tag type="danger" effect="dark">工程类别</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{gongchengLeibie(baseInfo.protier)}}</el-tag>        
+        
         </el-col>
-        </el-col>
-        <el-col :span="6">
-          <el-tag type="danger" effect="dark">备案编号</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proCode}}</el-tag>        
+        <el-col :span="4">
+          <el-tag type="danger" effect="dark">工程造价</el-tag><el-tag style="margin-left:20px;" effect="dark" type="warning">{{baseInfo.proCost}}万</el-tag>
         </el-col>
         </el-col>
       </el-row>
@@ -49,33 +53,20 @@
 
     <!-- 修改基本信息的Form -->
     <el-dialog title="修改项目基本信息" :visible.sync="showUpdateInfo" width="65%" >
-      <el-form :model="baseInfo" ref="baseInfo" :inline="true" >
+      <el-form :model="baseInfo" ref="baseInfo" :inline="true"  label-width="120px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="工程造价" prop="proCost">
-              <el-input v-model="baseInfo.proCost" placeholder="请输入工程造价" />
+            <el-form-item label="项目名称" prop="proName">
+              <el-input v-model="baseInfo.proName" placeholder="请输入项目名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="建筑规模" prop="proArea">
-              <el-input v-model="baseInfo.proArea" placeholder="请输入建筑规模" />
+            <el-form-item label="项目地址" prop="addressAll">
+              <el-input v-model="baseInfo.addressAll" placeholder="请输入项目地址" />
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row>
-          <el-col :span="12">
-          <el-form-item label="合同开始时间" prop="starttime">
-            <el-date-picker v-model="baseInfo.starttime" type="date" placeholder="选择开始日期" value-format="yyyy-MM-dd"></el-date-picker>
-          </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="合同截止时间" prop="endtime">
-              <el-date-picker v-model="baseInfo.endtime" type="date" placeholder="选择截止日期" value-format="yyyy-MM-dd"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        
         <el-row>
           <el-col :span="12">
           <el-form-item label="工程类别" prop="protier">
@@ -95,6 +86,73 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row>
+          <el-col :span="12">
+          <el-form-item label="计划开始时间" prop="starttime">
+            <el-date-picker v-model="baseInfo.starttime" type="date" placeholder="选择开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+          </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="计划截止时间" prop="endtime">
+              <el-date-picker v-model="baseInfo.endtime" type="date" placeholder="选择截止日期" value-format="yyyy-MM-dd"></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+          <el-form-item label="备案时间" prop="checkTime">
+            <el-date-picker v-model="baseInfo.checkTime" type="date" placeholder="选择备案时间" value-format="yyyy-MM-dd"></el-date-picker>
+          </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="施工合同编号" prop="contractcode">
+                <el-input v-model="baseInfo.contractcode" placeholder="请输入施工合同编号" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="工程造价" prop="proCost">
+              <el-input v-model="baseInfo.proCost" placeholder="请输入工程造价" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="建筑规模" prop="proArea">
+              <el-input v-model="baseInfo.proArea" placeholder="请输入建筑规模" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+         <el-row>
+          <el-col :span="12">
+            <el-form-item label="地下面积" prop="bottomArea">
+              <el-input v-model="baseInfo.bottomArea" placeholder="请输入地下面积" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="地下层数" prop="bottomTier">
+              <el-input v-model="baseInfo.bottomTier" placeholder="请输入地下层数" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="基坑深度(米)" prop="deeps">
+              <el-input v-model="baseInfo.deeps" placeholder="请输入基坑深度" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="建筑高度(米)" prop="proHigh">
+              <el-input v-model="baseInfo.proHigh" placeholder="请输入建筑高度" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        
         
         <el-row>
           <el-col :span="12">
@@ -252,20 +310,20 @@
     </el-table>
 <!--    <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />-->
 </div>
-    <!-- 添加或修改部门对话框 -->
+    <!-- 添加或修改单位对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="24" >
-            <el-form-item label="上级部门" prop="parentId" v-if="showParent === true">
-              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
+            <el-form-item label="上级单位" prop="parentId" v-if="showParent === true">
+              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" noOptionsText="目前没有单位，请先创建" placeholder="选择上级单位" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="部门名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+            <el-form-item label="单位名称" prop="deptName">
+              <el-input v-model="form.deptName" placeholder="请输入单位名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -319,7 +377,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门状态">
+            <el-form-item label="单位状态">
               <el-radio-group v-model="form.status">
                 <el-radio
                   v-for="dict in statusOptions"
@@ -384,6 +442,24 @@ export default {
         constructionUnitSg: '',
         starttime: '',
         endtime: '',
+        proName: '',
+        addressAll: '',
+        bottomArea: '',
+        bottomTier: '',
+        checkTime: '',
+        contractcode: '',
+        deeps: '',
+        proArea: '',
+        fstate: '',
+        proHigh: '',
+        protype: '',
+        protypeS: '',
+        protypeT: '',
+        radiu: '',
+        structural: '',
+        tierAll: '',
+        wincode: '',
+
 
       },
       // 初始化输入
@@ -395,7 +471,7 @@ export default {
       showSearch: false,
       // 表格树数据
       deptList: [],
-      // 部门树选项
+      // 单位树选项
       deptOptions: [],
       // 弹出层标题
       title: "",
@@ -420,10 +496,10 @@ export default {
       // 表单校验
       rules: {
         parentId: [
-          { required: true, message: "上级部门不能为空", trigger: "blur" }
+          { required: true, message: "上级单位不能为空", trigger: "blur" }
         ],
         deptName: [
-          { required: true, message: "部门名称不能为空", trigger: "blur" }
+          { required: true, message: "单位名称不能为空", trigger: "blur" }
         ],
         orderNum: [
           { required: true, message: "菜单顺序不能为空", trigger: "blur" }
@@ -463,7 +539,7 @@ export default {
         this.showSearch = true;
       }
     },
-    /** 查询部门列表 */
+    /** 查询单位列表 */
     getList() {
       this.loading = true;
       listDept(this.queryParams).then(response => {
@@ -473,7 +549,7 @@ export default {
         this.loading = false;
       });
     },
-    /** 转换部门数据结构 */
+    /** 转换单位数据结构 */
     normalizer(node) {
       if (node.children && !node.children.length) {
         delete node.children;
@@ -566,7 +642,7 @@ export default {
         this.form.parentId = row.deptId;
       }
       this.open = true;
-      this.title = "添加部门";
+      this.title = "添加单位";
       listDept().then(response => {
 	        this.deptOptions = this.handleTree(response.data, "deptId");
       });
@@ -582,7 +658,7 @@ export default {
           this.showParent = true
         }
         this.open = true;
-        this.title = "修改部门";
+        this.title = "修改单位";
       });
       listDeptExcludeChild(row.deptId).then(response => {
 	        this.deptOptions = this.handleTree(response.data, "deptId");
@@ -635,15 +711,16 @@ export default {
       }
       getBaseInfo(deptId).then(res => {
         console.log("list", res)
-        this.baseInfo.proCost = res.proCost
-        this.baseInfo.proArea = res.proArea
-        this.baseInfo.protier = res.protier
-        this.baseInfo.proCode = res.proCode
-        this.baseInfo.constructionUnitJs = res.constructionUnitJs
-        this.baseInfo.constructionControlUnit = res.constructionControlUnit
-        this.baseInfo.constructionUnitSg = res.constructionUnitSg
-        this.baseInfo.starttime = res.starttime
-        this.baseInfo.endtime = res.endtime
+        this.baseInfo = res
+        // this.baseInfo.proCost = res.proCost
+        // this.baseInfo.proArea = res.proArea
+        // this.baseInfo.protier = res.protier
+        // this.baseInfo.proCode = res.proCode
+        // this.baseInfo.constructionUnitJs = res.constructionUnitJs
+        // this.baseInfo.constructionControlUnit = res.constructionControlUnit
+        // this.baseInfo.constructionUnitSg = res.constructionUnitSg
+        // this.baseInfo.starttime = res.starttime
+        // this.baseInfo.endtime = res.endtime
       })
     },
     gongchengLeibie(num) {

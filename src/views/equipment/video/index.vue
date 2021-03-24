@@ -24,8 +24,8 @@
           <el-form-item label="设备名称" prop="userName">
             <el-input v-model="queryParams.equipmentName" placeholder="请输入设备名称" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
-          <el-form-item label="设备编号" prop="phonenumber">
-            <el-input v-model="queryParams.equipmentID" placeholder="请输入设备编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
+          <el-form-item label="设备备案编号" prop="phonenumber">
+            <el-input v-model="queryParams.equipmentID" placeholder="请输入设备备案编号" clearable size="small" style="width: 240px" @keyup.enter.native="handleQuery" />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="queryParams.status" placeholder="设备状态" clearable size="small" style="width: 240px">
@@ -62,7 +62,7 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="设备编号" align="center" prop="equipmentID" />
+          <el-table-column label="设备备案编号" align="center" prop="equipmentID" />
           <el-table-column label="设备厂商" align="center" prop="equipmentSource" />
           <el-table-column label="设备名称" align="center" prop="equipmentName"  />
           <el-table-column label="设备型号" align="center" prop="equipmentModel" />
@@ -159,7 +159,7 @@
         <el-row>
 <!--          <el-col :span="12">-->
 <!--            <el-form-item label="资质证明" >-->
-<!--              &lt;!&ndash;              <el-input v-model="form.equipmentID" placeholder="设备编号" maxlength="11" />&ndash;&gt;-->
+<!--              &lt;!&ndash;              <el-input v-model="form.equipmentID" placeholder="设备备案编号" maxlength="11" />&ndash;&gt;-->
 <!--              <el-upload-->
 <!--                class="upload-demo"-->
 <!--                multiple-->
@@ -796,7 +796,7 @@ export default {
     handleDelete(row) {
       const userIds = row.equipmentID || this.ids;
       this.$confirm(
-        '是否确认删除设备编号为"' + userIds + '"的数据项?',
+        '是否确认删除设备备案编号为"' + userIds + '"的数据项?',
         "警告",
         {
           confirmButtonText: "确定",
