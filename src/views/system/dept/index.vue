@@ -115,12 +115,12 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="工程造价" prop="proCost">
+            <el-form-item label="工程造价(万元)" prop="proCost">
               <el-input v-model="baseInfo.proCost" placeholder="请输入工程造价" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="建筑规模" prop="proArea">
+            <el-form-item label="建筑规模(㎡)" prop="proArea">
               <el-input v-model="baseInfo.proArea" placeholder="请输入建筑规模" />
             </el-form-item>
           </el-col>
