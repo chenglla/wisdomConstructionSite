@@ -4,7 +4,7 @@
     <el-row :gutter="20">
         
         <div style="margin-top:5px;margin-bottom:10px;">
-          <span style="font-size: 14px;margin-right: 10px">检查内容</span><el-input v-model="queryParams.content" placeholder="请输入关键字" clearable size="small" style="width: 200px;margin-right: 10px"/>
+          <!-- <span style="font-size: 14px;margin-right: 10px">检查内容</span><el-input v-model="queryParams.content" placeholder="请输入关键字" clearable size="small" style="width: 200px;margin-right: 10px"/> -->
           <span style="font-size: 14px;margin-right: 10px">检查时间</span>
           <el-date-picker
             style="width: 250px;margin-right: 10px"
@@ -79,7 +79,7 @@
           </el-table-column>
         </el-table>
 
-        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getSelfList" />
       </el-col>
     </el-row>
 
@@ -820,7 +820,7 @@ export default {
                 this.msgSuccess("修改成功");
                 this.open = false;
                 this.reset()
-                this.getList();
+                this.getSelfList();
               }
             });
           } else {
@@ -829,7 +829,7 @@ export default {
                 this.msgSuccess("新增成功");
                 this.open = false;
                 this.reset()
-                this.getList();
+                this.getSelfList();
               }
             });
           }
@@ -858,7 +858,7 @@ export default {
           return delDevice(userIds);
         })
         .then(() => {
-          this.getList();
+          this.getSelfList();
           this.msgSuccess("删除成功");
         })
         .catch(function () {});
@@ -924,7 +924,7 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-      this.getList();
+      this.getSelfList();
     },
     // 提交上传文件
     submitFileForm() {

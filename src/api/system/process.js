@@ -83,18 +83,20 @@ export function addNodeTemplate(data) {
   })
 }
 
-export function addNode(data) {
+export function addNode(params, data) {
   return request({
     url: `/scheduleManageback/node`,
     method: 'post',
+    params: params,
     data: data
   })
 }
 
-export function putNode(data) {
+export function putNode(params, data) {
   return request({
     url: `/scheduleManageback/node`,
     method: 'put',
+    params: params,
     data: data
   })
 }
