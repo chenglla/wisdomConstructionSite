@@ -150,7 +150,7 @@ export default {
                 this.$router.push('/index')
               } else {
                 this.$router.push('/index')
-                // window.location.href = 'http://121.36.106.18:36081/?siteId='+this.siteId
+                // window.location.href = 'http://121.36.106.18:38081/?siteId='+this.siteId
               }
               
 

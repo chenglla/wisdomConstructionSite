@@ -1002,7 +1002,7 @@ export default {
     importNodeExcel() {
       var id = this.$store.state.task.nodeStateId
       this.modelOpen = true;
-      this.actionUrl = `http://121.36.106.18:36080/scheduleManage/node/importData?taskId=${id}`
+      this.actionUrl = `http://121.36.106.18:38080/scheduleManage/node/importData?taskId=${id}`
     },
     exportExcel() {
       var params = {
