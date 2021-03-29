@@ -59,15 +59,23 @@
           <el-table-column label="计划工期" align="center" prop="planDays" :show-overflow-tooltip="true" />
           <el-table-column label="实际开始时间" align="center" prop="actualStartTime" :show-overflow-tooltip="true" />
           <el-table-column label="实际结束时间" align="center" prop="actualEndTime" :show-overflow-tooltip="true" />
-          <el-table-column label="实际工期" align="center" prop="actualDays" :show-overflow-tooltip="true" />
+          <!-- <el-table-column label="实际工期" align="center" prop="actualDays" :show-overflow-tooltip="true" /> -->
 
-          <el-table-column label="状态" align="center" prop="state" :show-overflow-tooltip="true" >
-            <template slot-scope="scope">
-                <el-tag  v-if="scope.row.state=== 0" type="success">正常</el-tag>
-                <el-tag  v-if="scope.row.state=== 1" type="warning">延期</el-tag>
-                
-            </template>
-          </el-table-column>
+           <el-table-column label="开工延期" align="center" prop="classification" :show-overflow-tooltip="true" >
+              <template slot-scope="scope">
+                  <el-tag  v-if="scope.row.classification=== 0" type="success">否</el-tag>
+                  <el-tag  v-if="scope.row.classification=== 1" type="warning">是</el-tag>
+              </template>
+            </el-table-column>
+
+           <el-table-column label="状态" align="center" prop="state" :show-overflow-tooltip="true" >
+              <template slot-scope="scope">
+                  <el-tag  v-if="scope.row.state=== 1" type="success">开工延期</el-tag>
+                  <el-tag  v-if="scope.row.state=== 2" type="warning">施工延期</el-tag>
+                  <el-tag  v-if="scope.row.state=== 3" type="danger">全部延期</el-tag>
+                  <el-tag  v-if="scope.row.state=== 4" type="danger">未知</el-tag>
+              </template>
+            </el-table-column>
           
           <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope">
@@ -195,6 +203,34 @@
                 </el-form-item>
             </el-col>
           </el-row>
+
+
+          <el-row>
+              <el-col :span="12">
+                   <el-form-item label="开工延期" prop="classification">
+                    <el-radio-group v-model="nodeForm.classification">
+                      <el-radio :label="1">是</el-radio>
+                      <el-radio :label="0">否</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+              </el-col>
+              <el-col :span="12" v-if="nodeForm.classification === 1">
+                  <el-form-item  label="状态" prop="state">
+                    <el-select v-model="nodeForm.state" placeholder="请选择状态" clearable size="small" style="width: 240px">
+                      <el-option v-for="dict in statusOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    </el-select>
+                  </el-form-item>
+              </el-col>
+          </el-row>
+
+          <el-row v-if="nodeForm.classification === 1">
+              <el-col :span="24">
+                  <el-form-item  label="说明" prop="delayInfo">
+                    <el-input type="textarea" v-model="nodeForm.delayInfo" style="width: 90%; "></el-input>
+                  </el-form-item>
+              </el-col>
+             
+          </el-row>
         
         </el-col>
         
@@ -277,6 +313,33 @@
                   </el-form-item>
               </el-col>
           </el-row>
+
+          <el-row>
+              <el-col :span="12">
+                   <el-form-item label="开工延期" prop="classification">
+                    <el-radio-group v-model="viewForm.classification">
+                      <el-radio :label="1">是</el-radio>
+                      <el-radio :label="0">否</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+              </el-col>
+              <el-col :span="12" v-if="viewForm.classification === 1">
+                  <el-form-item  label="状态" prop="state">
+                    <el-select v-model="viewForm.state" placeholder="请选择状态" clearable size="small" style="width: 240px">
+                      <el-option v-for="dict in statusOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    </el-select>
+                  </el-form-item>
+              </el-col>
+          </el-row>
+
+          <el-row v-if="viewForm.classification === 1">
+              <el-col :span="24">
+                  <el-form-item  label="说明" prop="delayInfo">
+                    <el-input type="textarea" v-model="viewForm.delayInfo" style="width: 90%; "></el-input>
+                  </el-form-item>
+              </el-col>
+             
+          </el-row>
          
         
        
@@ -292,7 +355,7 @@
     </el-dialog>
 
     <el-dialog title="延缓说明" :visible.sync="delayOpen" width="1000px"  append-to-body>
-      <el-button size="mini" type="primary" class="margin-bottom: 10px;" v-if="!isAdmin" @click="showAddDelay">新增延期</el-button>
+      <el-button size="mini" type="primary" class="margin-bottom: 10px;" v-if="!isAdmin" @click="showAddDelay">新增施工延期</el-button>
       <el-table  :data="delayList" >
 
           <el-table-column label="编号" align="center" type="index" />
@@ -302,6 +365,13 @@
             <template slot-scope="scope">
                 <el-tag  v-if="scope.row.state===0" type="danger">异常延期</el-tag>
                 <el-tag  v-if="scope.row.state===1" type="success">正常延期</el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="类别" align="center" prop="classification" >
+            <template slot-scope="scope">
+                <el-tag  v-if="scope.row.classification===0" type="danger">开工延期</el-tag>
+                <el-tag  v-if="scope.row.classification===1" type="success">施工延期</el-tag>
             </template>
           </el-table-column>
           
@@ -437,6 +507,11 @@ export default {
       currentTemplateName: '',
       viewDialog: false,
         recordsList: [],
+        nodeDelayForm: {
+          state: undefined,
+          nodeId: '',
+          explain: ''
+        },
         viewForm:{
           id: '',
           actualEndTime: '',
@@ -450,6 +525,9 @@ export default {
           planStartTime: '',
           taskId: '',
           teamId: null,
+          classification: undefined,
+          state: undefined,
+          delayInfo: ''
         },
         viewFormRules: {
           label: [
@@ -466,6 +544,9 @@ export default {
           ],
           planEndTime: [
             { required: true, message: "计划结束时间不能为空", trigger: "blur" },
+          ],
+          classification: [
+            { required: true, message: "开工延期设置不能为空", trigger: "blur" },
           ]
         },
         nodeForm: {
@@ -480,7 +561,14 @@ export default {
           planStartTime: '',
           planEndTime: '',
           actualStartTime: '',
-          actualEndTime: ''
+          actualEndTime: '',
+          classification: undefined,
+          state: undefined,
+          delayInfo: ''
+        },
+        nodeAddDelayForm: {
+          state: undefined,
+          explain: ''
         },
         delayForm:{
           startTime: '',
@@ -683,6 +771,12 @@ export default {
         ],
         planEndTime: [
           { required: true, message: "计划结束时间不能为空", trigger: "blur" },
+        ],
+        classification: [
+            { required: true, message: "开工延期设置不能为空", trigger: "blur" },
+          ],
+          state: [
+            { required: true, message: "状态设置不能为空", trigger: "blur" },
         ],
 
       },
@@ -940,7 +1034,7 @@ export default {
     },
     cancelView() {
       this.viewDialog = false;
-      
+      this.getNodeList()
     },
     cancelDelay() {
       this.addDelayOpen = false
@@ -1068,7 +1162,7 @@ export default {
                 this.addDelayOpen = false;
                 this.getDelayList(this.delayId)
                 this.delayId = ''
-                
+                this.getNodeList();
                 //this.getBroadsideInfo()
                 
                 this.resetDelay()
@@ -1082,6 +1176,7 @@ export default {
       console.log(row)
       this.viewDialog = true
       this.viewForm = row
+      this.nodeDelayForm.nodeId = row.id
       this.title = '修改节点'
     },
     handleDel(row) {
@@ -1181,10 +1276,14 @@ export default {
        }
        
        console.log("提交的node", this.nodeForm)
+       console.log("提交的node延期", this.nodeAddDelayForm)
+       var params = {
+         state: this.nodeForm.state
+       }
       this.$refs["nodeForm"].validate((valid) => {
        
         if (valid) {
-             addNode(this.nodeForm).then((response) => {
+             addNode(params, this.nodeForm).then((response) => {
                console.log("打印res",)
               if (response.code === 200) {
               
@@ -1206,10 +1305,17 @@ export default {
     submitViewForm: function () {
        this.nodeForm.taskId = this.$store.state.task.nodeStateId
        console.log("提交的node", this.viewForm)
+       console.log("提交的node延期", this.nodeDelayForm)
+      
+       var params = {
+         nodeId: this.nodeDelayForm.nodeId,
+        explain: this.viewForm.delayInfo,
+        state: this.viewForm.state
+      }
       this.$refs["viewForm"].validate((valid) => {
        
         if (valid) {
-             putNode(this.viewForm).then((response) => {
+             putNode(params, this.viewForm).then((response) => {
               if (response.code === 200) {
               
                 this.$message({
