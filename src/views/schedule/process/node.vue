@@ -838,9 +838,13 @@ export default {
       var id = this.$store.state.task.nodeStateId
       const formData = new FormData()
       formData.append('file', this.fileList12[0].raw)
-      importNode(id, formData).then((res) => {
+      importNode(id, 0, formData).then((res) => {
         console.log("导入的文件res", res)
         if(res.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '导入成功！'
+          })
           this.fileList12 = []
           this.modelOpen = false
           this.getNodeList()
@@ -1002,7 +1006,7 @@ export default {
     importNodeExcel() {
       var id = this.$store.state.task.nodeStateId
       this.modelOpen = true;
-      this.actionUrl = `http://121.36.106.18:38080/scheduleManage/node/importData?taskId=${id}`
+      this.actionUrl = `http://121.36.106.18:36080/scheduleManage/node/importData?taskId=${id}`
     },
     exportExcel() {
       var params = {
@@ -1268,6 +1272,14 @@ export default {
    
 
     submitNodeForm: function () {
+      console.log("当前用户", localStorage.getItem('userName'))
+      var loginName = localStorage.getItem('userName')
+      var fromUser = ''
+      if(loginName.indexOf('-') === -1) {
+        fromUser = loginName
+      } else {
+        fromUser = loginName.split('-')[0]
+      }
        this.nodeForm.taskId = this.$store.state.task.nodeStateId
        if(this.selectParentId === '') {
          this.nodeForm.parentId = 0
@@ -1278,6 +1290,7 @@ export default {
        console.log("提交的node", this.nodeForm)
        console.log("提交的node延期", this.nodeAddDelayForm)
        var params = {
+         fromUser: fromUser,
          state: this.nodeForm.state
        }
       this.$refs["nodeForm"].validate((valid) => {
@@ -1303,14 +1316,24 @@ export default {
       });
     },
     submitViewForm: function () {
+
+      console.log("当前用户", localStorage.getItem('userName'))
+      var loginName = localStorage.getItem('userName')
+      var fromUser = ''
+      if(loginName.indexOf('-') === -1) {
+        fromUser = loginName
+      } else {
+        fromUser = loginName.split('-')[0]
+      }
        this.nodeForm.taskId = this.$store.state.task.nodeStateId
        console.log("提交的node", this.viewForm)
        console.log("提交的node延期", this.nodeDelayForm)
       
        var params = {
-         nodeId: this.nodeDelayForm.nodeId,
+        nodeId: this.nodeDelayForm.nodeId,
         explain: this.viewForm.delayInfo,
-        state: this.viewForm.state
+        state: this.viewForm.state,
+        fromUser: fromUser
       }
       this.$refs["viewForm"].validate((valid) => {
        

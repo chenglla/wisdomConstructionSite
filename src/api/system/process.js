@@ -150,9 +150,9 @@ export function addDelay(data) {
 }
 
 
-export function importNode(id, file) {
+export function importNode(id, parentId, file) {
   return request({
-    url: `/scheduleManageback/node/importData?taskId=${id}`,
+    url: `/scheduleManageback/node/importData?taskId=${id}&parentId=${parentId}`,
     method: 'post',
     data: file
   })

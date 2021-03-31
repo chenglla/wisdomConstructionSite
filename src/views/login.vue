@@ -143,14 +143,14 @@ export default {
             .dispatch("Login", this.loginForm)
             .then((res) => {
              
-              // var url = 'http://121.36.106.18:38081/'
+              // var url = 'http://121.36.106.18:36081/'
               // window.open(url,'_self')
               
               if (this.loginForm.username === 'admin-1') {
                 this.$router.push('/index')
               } else {
                 this.$router.push('/index')
-                // window.location.href = 'http://121.36.106.18:38081/?siteId='+this.siteId
+                // window.location.href = 'http://121.36.106.18:36081/?siteId='+this.siteId
               }
               
 
