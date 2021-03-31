@@ -617,14 +617,18 @@ export default {
         proid: row.guid,
         proName: row.pro_name
       }
-      setInitData(data).then((res) => {
+      setInitData(data).then((res, reject) => {
         console.log(res.code)
         if (res.code === 200) {
           this.$message.success('初始化成功！')
           loading.close()
           this.dialogVisible = false
-        }
-      })
+        } 
+      }).catch(e => {
+        
+        loading.close()
+      
+      }) 
     },
     /** 搜索按钮操作 */
     handleQuery() {
