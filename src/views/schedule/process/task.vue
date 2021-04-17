@@ -174,10 +174,10 @@
         </el-row>
          <el-row>
           <el-col :span="12">
-            <el-form-item label="叶子节点"  prop="nodeFlag">
+            <el-form-item label="任务计划"  prop="nodeFlag">
               <el-radio-group v-model="form.nodeFlag">
-                <el-radio :label="1">是</el-radio>
-                <el-radio :label="0">否</el-radio>
+                <el-radio :label="1">节点计划</el-radio>
+                <el-radio :label="0">子任务</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -365,16 +365,16 @@ export default {
         label: [
           { required: true, message: "项目名称不能为空", trigger: "blur" },
         ],
-        serialNumber: [
-          { required: true, message: "编号不能为空", trigger: "blur" },
-        ],
+        // serialNumber: [
+        //   { required: true, message: "编号不能为空", trigger: "blur" },
+        // ],
         
         leadingCadre: [
           { required: true, message: "负责人不能为空", trigger: "blur" },
         ],
-        contractPayment: [
-          { required: true, message: "合同款项不能为空", trigger: "blur" },
-        ],
+        // contractPayment: [
+        //   { required: true, message: "合同款项不能为空", trigger: "blur" },
+        // ],
         contactInformation: [
           { required: true, message: "联系方式不能为空", trigger: "blur" },
         ],

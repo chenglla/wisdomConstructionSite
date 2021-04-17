@@ -45,9 +45,9 @@
                 <template slot-scope="scope">
                   <el-button type="primary" size="mini"  @click="editInfo(scope.$index, scope.row)" >重命名</el-button>
                   <el-button type="info" size="mini"  @click="delInfo(scope.$index, scope.row)" >删除</el-button>
-                  <el-button type="success" size="mini"  @click="downloadFile(scope.row.url)" >下载</el-button>
+                  <el-button type="success" size="mini"  @click="downloadFile(scope.row.lookUrl)" >下载</el-button>
                   <el-button type="danger" size="mini"  @click="moveFile(scope.$index, scope.row)" >移动</el-button>
-                  <el-button type="warning" size="mini"  @click="downloadFile(scope.row.url)" >分享</el-button>
+                  <el-button type="warning" size="mini"  @click="downloadFile(scope.row.lookUrl)" >分享</el-button>
 
                 </template>
               </el-table-column>

@@ -25,8 +25,13 @@
 
         <el-row :gutter="10" class="mb8" style="margin-top:15px;clear:both;">
           <el-col :span="1.5">
-            <el-button type="primary"  size="mini" @click="handleAdd" v-if="!isAdmin" v-hasPermi="['system:user:add']">编辑节点</el-button>
-          </el-col>
+            <el-button type="primary"  size="mini" @click="addNodePlan" v-if="!isAdmin" v-hasPermi="['system:user:add']">新增节点</el-button>
+          </el-col> 
+          <el-col :span="1.5">
+            <el-button type="primary"  size="mini" @click="handleAdd" v-if="!isAdmin" v-hasPermi="['system:user:add']">选择节点</el-button>
+          </el-col> 
+          
+         
           <el-col :span="1.5">
             <el-button type="primary"  size="mini" @click="downloadFile" v-hasPermi="['system:user:add']">下载模版</el-button>
           </el-col>
@@ -61,19 +66,18 @@
           <el-table-column label="实际结束时间" align="center" prop="actualEndTime" :show-overflow-tooltip="true" />
           <!-- <el-table-column label="实际工期" align="center" prop="actualDays" :show-overflow-tooltip="true" /> -->
 
-           <el-table-column label="开工延期" align="center" prop="classification" :show-overflow-tooltip="true" >
+           <!-- <el-table-column label="开工延期" align="center" prop="classification" :show-overflow-tooltip="true" >
               <template slot-scope="scope">
                   <el-tag  v-if="scope.row.classification=== 0" type="success">否</el-tag>
                   <el-tag  v-if="scope.row.classification=== 1" type="warning">是</el-tag>
               </template>
-            </el-table-column>
+            </el-table-column> -->
 
            <el-table-column label="状态" align="center" prop="state" :show-overflow-tooltip="true" >
               <template slot-scope="scope">
-                  <el-tag  v-if="scope.row.state=== 1" type="success">开工延期</el-tag>
-                  <el-tag  v-if="scope.row.state=== 2" type="warning">施工延期</el-tag>
-                  <el-tag  v-if="scope.row.state=== 3" type="danger">全部延期</el-tag>
-                  <el-tag  v-if="scope.row.state=== 4" type="danger">未知</el-tag>
+                  <el-tag  v-if="scope.row.state=== 1" type="success">正常</el-tag>
+                  <el-tag  v-if="scope.row.state=== 0" type="warning">异常</el-tag>
+                  
               </template>
             </el-table-column>
           
@@ -81,7 +85,7 @@
             <template slot-scope="scope">
               <el-button size="mini" type="text" @click="handleView(scope.row)" >修改</el-button>
               <el-button size="mini" type="text" @click="handleDel(scope.row)" >删除</el-button>
-              <el-button size="mini" type="text" @click="handleUpdate(scope.row)" >查看延缓说明</el-button>
+              <el-button size="mini" type="text" @click="handleUpdate(scope.row)" >查看延期说明</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -92,19 +96,20 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
-     
+<!--      
       <div style="margin-bottom:10px;">
         <el-button type="primary" size="mini" @click="addNodePlan">新增节点计划</el-button>
-      </div>
+      </div> -->
       <vxe-table
           resizable
           ref="xTable1"
           :data="tableData"
            border="false"
-           :edit-config="{trigger: 'click', mode: 'row'}"
+           
            :activeMethod="activeMethod"
           :tree-config="{children: 'children', expandAll: true}"
           :checkbox-config="{labelField: 'name', }"
+         
           @checkbox-change="selectChangeEvent">
           
           <!-- <vxe-table-column type="checkbox" ></vxe-table-column> -->
@@ -114,13 +119,40 @@
           <vxe-table-column type="checkbox" title="施工阶段" width="400" tree-node></vxe-table-column>
           <vxe-table-column title="操作" width="100" show-overflow>
             <template v-slot="{ row }" >
-              <vxe-button   @click="editEvent(row)" v-if="row.hasOwnProperty('templateName')">选择</vxe-button>
+              <vxe-button   @click="editEvent(row)" v-if="row.hasOwnProperty('templateName')" :disabled="recordsList.length === 0">选择</vxe-button>
             </template>
           </vxe-table-column>
         </vxe-table>
-      <div slot="footer" class="dialog-footer">
+      <!-- <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+      </div> -->
+    </el-dialog>
+
+    <el-dialog
+      title="创建模板"
+      :visible.sync="dialogVisible"
+      width="30%"
+    >
+      <span>是否创建新的模板</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="noAddTemplate">否</el-button>
+        <el-button type="primary" @click="addTemplate">是</el-button>
+      </span>
+    </el-dialog>
+
+    
+
+     <el-dialog title="新增模版" :visible.sync="templateOpen"   append-to-body>
+      <el-form ref="templateForm" :model="templateForm" :rules="templateFormRules" label-width="160px" >  
+        <el-form-item  label="模板名称" prop="templateName">
+          <el-input v-model="templateForm.templateName" placeholder="请输入模板名字" ></el-input>
+        </el-form-item>
+      </el-form>
+     
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitTemplateForm">确 定</el-button>
+        <el-button @click="cancelTemplate">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -191,7 +223,7 @@
           </el-row>
           
          
-          <el-row>
+          <!-- <el-row>
             <el-col :span="12">
                 <el-form-item  label="实际开始时间" prop="actualStartTime">
                   <el-date-picker v-model="nodeForm.actualStartTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />
@@ -202,10 +234,10 @@
                   <el-date-picker v-model="nodeForm.actualEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />
                 </el-form-item>
             </el-col>
-          </el-row>
+          </el-row> -->
 
 
-          <el-row>
+          <!-- <el-row>
               <el-col :span="12">
                    <el-form-item label="开工延期" prop="classification">
                     <el-radio-group v-model="nodeForm.classification">
@@ -230,7 +262,7 @@
                   </el-form-item>
               </el-col>
              
-          </el-row>
+          </el-row> -->
         
         </el-col>
         
@@ -309,12 +341,12 @@
               </el-col>
               <el-col :span="12">
                   <el-form-item  label="实际结束时间" prop="actualEndTime">
-                    <el-date-picker v-model="viewForm.actualEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />
+                    <el-date-picker v-model="viewForm.actualEndTime" align="right" type="date" placeholder="选择日期"   value-format="yyyy-MM-dd"  />
                   </el-form-item>
               </el-col>
           </el-row>
 
-          <el-row>
+          <!-- <el-row>
               <el-col :span="12">
                    <el-form-item label="开工延期" prop="classification">
                     <el-radio-group v-model="viewForm.classification">
@@ -339,7 +371,7 @@
                   </el-form-item>
               </el-col>
              
-          </el-row>
+          </el-row> -->
          
         
        
@@ -354,7 +386,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="延缓说明" :visible.sync="delayOpen" width="1000px"  append-to-body>
+    <el-dialog title="延期说明" :visible.sync="delayOpen" width="1000px"  append-to-body>
       <el-button size="mini" type="primary" class="margin-bottom: 10px;" v-if="!isAdmin" @click="showAddDelay">新增施工延期</el-button>
       <el-table  :data="delayList" >
 
@@ -381,8 +413,8 @@
         </el-table>
     </el-dialog>
 
-    <!-- 延缓说明新增 -->
-     <el-dialog title="新增延缓说明" :visible.sync="addDelayOpen" width="1000px"  append-to-body>
+    <!-- 延期说明新增 -->
+     <el-dialog title="新增延期说明" :visible.sync="addDelayOpen" width="1000px"  append-to-body>
       <el-form ref="delayForm" :model="delayForm" :rules="delayFormRules" label-width="160px" >
 
            <el-row>
@@ -432,7 +464,6 @@
       </div>
     </el-dialog>
 
-
     <el-dialog :visible.sync="modelOpen" title="导入节点" width="30%" @close="cancelModel">
       <div style="margin:0 auto; ">
         <el-upload
@@ -458,6 +489,8 @@
           </div>
       </div>
     </el-dialog>
+
+    
 
   
   </div>
@@ -494,6 +527,16 @@ export default {
     
   data() {
     return {
+      dialogVisible: false,
+      templateOpen: false,
+      templateForm: {
+        templateName: ''
+      },
+      templateFormRules: {
+        templateName: [
+            { required: true, message: "模板名称不能为空", trigger: "blur" },
+          ],
+      },
       disabled: true,
       isAdmin: false,
       modelOpen: false,
@@ -545,9 +588,9 @@ export default {
           planEndTime: [
             { required: true, message: "计划结束时间不能为空", trigger: "blur" },
           ],
-          classification: [
-            { required: true, message: "开工延期设置不能为空", trigger: "blur" },
-          ]
+          // classification: [
+          //   { required: true, message: "开工延期设置不能为空", trigger: "blur" },
+          // ]
         },
         nodeForm: {
           id: '',
@@ -772,12 +815,12 @@ export default {
         planEndTime: [
           { required: true, message: "计划结束时间不能为空", trigger: "blur" },
         ],
-        classification: [
-            { required: true, message: "开工延期设置不能为空", trigger: "blur" },
-          ],
-          state: [
-            { required: true, message: "状态设置不能为空", trigger: "blur" },
-        ],
+        // classification: [
+        //     { required: true, message: "开工延期设置不能为空", trigger: "blur" },
+        //   ],
+        //   state: [
+        //     { required: true, message: "状态设置不能为空", trigger: "blur" },
+        // ],
 
       },
       delayFormRules: {
@@ -828,6 +871,12 @@ export default {
     
   },
   methods: {
+    
+    addTemplate() {
+      // 输入模板名字
+      console.log("是")
+      this.templateOpen = true
+    },
     cancelModel() {
       this.modelOpen = false
     },
@@ -853,7 +902,9 @@ export default {
     },
     editEvent(row) {
       console.log("row", row)
-      this.templateId = row.id
+      console.log("最终的", this.recordsList)
+      this.dialogVisible = true
+      // this.templateId = row.id
     },
 
     nameChangeEvent ({ column }) {
@@ -930,6 +981,9 @@ export default {
       console.log("columnIndex", columnIndex)
     },
     panduanObj(id, arr, paramsObj) {
+      console.log("id", id)
+      console.log("arr", arr)
+      console.log("objparams", paramsObj)
       var params = {}
       for(var i = 0; i < arr.length; i++) {
         var obj = arr[i]
@@ -947,6 +1001,8 @@ export default {
       return params;
     },
     dealData(arr, allArr) {
+      console.log("arr", arr)
+      console.log("allarr", allArr)
       var params = []
       var currentParentId = ''
       var obj = {}
@@ -969,18 +1025,25 @@ export default {
       console.log("最终的", params)
       return params;
     },
+  
     
-    selectChangeEvent ({ records, indeterminates  }) {
+    selectChangeEvent ({ records, indeterminates   }) {
       console.info(`勾选${records.length}个树形节点`, records)
-      // console.log(indeterminates)
+      console.log(indeterminates)
       var allArr = []
-      for(var i = 0; i < indeterminates.length; i++) {
-        var obj = indeterminates[i]
-        if(obj.hasOwnProperty('templateName')) {
-          allArr = obj.children
-          break;
+      if(indeterminates.length === 0) {
+        allArr = records[1]
+        records.shift()
+      } else {
+        for(var i = 0; i < indeterminates.length; i++) {
+          var obj = indeterminates[i]
+          if(obj.hasOwnProperty('templateName')) {
+            allArr = obj.children
+            break;
+          }
         }
       }
+      
       // console.log('全部数组', allArr)
       this.recordsList = this.dealData(records, allArr)
       // this.recordsList = records
@@ -1031,6 +1094,10 @@ export default {
     cancel() {
       this.open = false;
       
+    },
+    cancelTemplate() {
+      this.templateOpen = false
+      this.templateForm.templateName = ''
     },
     cancelPlan() {
       this.nodePlan = false;
@@ -1108,7 +1175,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
         this.open = true;
-        this.title = "设置节点计划";
+        this.title = "模版选择";
         this.getNodeTemplate()
         //console.log(this.form)
         // this.reset()
@@ -1151,7 +1218,7 @@ export default {
     },
     submitDelayForm() {
       this.delayForm.nodeId = this.delayId
-      console.log("新增延缓", this.delayForm)
+      console.log("新增延期", this.delayForm)
       this.$refs["delayForm"].validate((valid) => {
        
         if (valid) {
@@ -1221,12 +1288,15 @@ export default {
     },
     
 
-    importNodeListByTemplate(id) {
+    importNodeListByTemplate(id, flag) {
+      console.log("倒入", id)
       var params = {
         nodeTemplateId: id,
-        taskId: this.$store.state.task.nodeStateId
+        taskId: this.$store.state.task.nodeStateId,
+        flag: flag
       }
       importNodeList(params).then((res) => {
+        console.log("123AAA121", res)
         if (res.code === 200) {
           this.$message({
             type: 'success',
@@ -1234,23 +1304,49 @@ export default {
           })
           this.getNodeList()
           this.templateId = ''
+          this.recordsList = []
+          this.templateForm.templateName = ''
         }
       })
+      .catch((e) => {
+        console.log("e", e)
+      }) 
     },
     getSelectEvent() {
       let selectRecords = this.$refs.xTable1.getCheckboxRecords()
       console.log("123", selectRecords)
     },
-    /** 提交按钮 */
-    submitForm: function () {
-      if(this.templateId === '') {
-        var params = {
-          children: this.recordsList,
-          siteId: localStorage.getItem('deptId'),
-          templateName: this.currentTemplateName
-        }
-        console.log("提交的数据", params)
-        addNodeTemplate(params).then((response) => {
+    noAddTemplate() {
+      // 取消对话框，并生成节点
+      console.log("否")
+       var params = {
+        children: this.recordsList,
+        siteId: localStorage.getItem('deptId'),
+        templateName: this.templateForm.templateName
+      }
+      console.log("提交的数据123不新增", params)
+      addNodeTemplate(params).then((response) => {
+          console.log("测试res", response.data)
+          this.templateId = response.data
+        
+          if (response.code === 200) {
+            this.importNodeListByTemplate(this.templateId.toString(), false)
+            this.templateOpen = false
+            this.dialogVisible = false
+            this.open = false;
+          }
+        })
+      this.dialogVisible = false
+
+    },
+    submitTemplateForm() {
+      var params = {
+        children: this.recordsList,
+        siteId: localStorage.getItem('deptId'),
+        templateName: this.templateForm.templateName
+      }
+      console.log("提交的数据123", params)
+      addNodeTemplate(params).then((response) => {
           console.log("测试res", response.data)
           this.templateId = response.data
         
@@ -1259,16 +1355,41 @@ export default {
               type: 'success',
               message: '新增模版成功！'
             })
-            this.importNodeListByTemplate(this.templateId.toString())
+            this.importNodeListByTemplate(this.templateId.toString(), true)
+            this.templateOpen = false
+            this.dialogVisible = false
             this.open = false;
           }
         })
-      } else {
-        this.importNodeListByTemplate(this.templateId.toString())
-        this.open = false;
-      }
-      
     },
+    /** 提交按钮 */
+    // submitForm: function () {
+    //   if(this.templateId === '') {
+    //     var params = {
+    //       children: this.recordsList,
+    //       siteId: localStorage.getItem('deptId'),
+    //       templateName: this.currentTemplateName
+    //     }
+    //     console.log("提交的数据", params)
+    //     addNodeTemplate(params).then((response) => {
+    //       console.log("测试res", response.data)
+    //       this.templateId = response.data
+        
+    //       if (response.code === 200) {
+    //         this.$message({
+    //           type: 'success',
+    //           message: '新增模版成功！'
+    //         })
+    //         this.importNodeListByTemplate(this.templateId.toString())
+    //         this.open = false;
+    //       }
+    //     })
+    //   } else {
+    //     this.importNodeListByTemplate(this.templateId.toString())
+    //     this.open = false;
+    //   }
+      
+    // },
    
 
     submitNodeForm: function () {
