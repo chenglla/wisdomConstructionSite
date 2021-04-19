@@ -53,9 +53,8 @@
           
           <el-table-column label="状态" align="center" prop="state" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
-                <el-tag  v-if="scope.row.state===0" type="success">正常</el-tag>
-                <el-tag  v-if="scope.row.state===1" type="warning">正常延期</el-tag>
-                <el-tag  v-if="scope.row.state===2" type="danger">异常延期</el-tag>
+                <el-tag  v-if="scope.row.state=== 1" type="success">正常</el-tag>
+                <el-tag  v-if="scope.row.state=== 0" type="warning">异常</el-tag>
             </template>
           </el-table-column>
           
@@ -150,10 +149,11 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="实际开始时间"  prop="actualStartTime">
+        <el-row v-if="xiugai === true">
+          <el-col :span="12" >
+            <el-form-item label="实际开始时间"  prop="actualStartTime" >
                <el-date-picker
+                    :disabled="disabled"
                     v-model="form.actualStartTime"
                     type="date"
                     value-format="yyyy-MM-dd"
@@ -162,8 +162,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="实际结束时间"  prop="actualEndTime">
+            <el-form-item label="实际结束时间"  prop="actualEndTime" >
                <el-date-picker
+                    :disabled="disabled"
                     v-model="form.actualEndTime"
                     type="date"
                     value-format="yyyy-MM-dd"
@@ -252,6 +253,8 @@ export default {
     
   data() {
     return {
+      xiugai: false,
+      disabled: true,
       selectValue: undefined,
       optionValue: undefined,
       isAdmin: false,
@@ -561,7 +564,7 @@ export default {
         console.log(this.form)
         this.reset()
         this.form.siteId = localStorage.getItem("deptId")
-       
+       this.xiugai = false
 
     },
     /** 修改按钮操作 */
@@ -575,6 +578,7 @@ export default {
         this.optionValue = res.data.constructionUnit
         this.title = '编辑'
         this.open = true
+        this.xiugai = true
 
       })
     },

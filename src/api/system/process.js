@@ -149,6 +149,20 @@ export function addDelay(data) {
   })
 }
 
+export function updateDelay(data) {
+  return request({
+    url: `/scheduleManageback/delay`,
+    method: 'put',
+    data: data
+  })
+}
+
+export function delDelay(id) {
+  return request({
+    url: `/scheduleManageback/delay/${id}`,
+    method: 'delete'
+  })
+}
 
 export function importNode(id, parentId, file) {
   return request({
