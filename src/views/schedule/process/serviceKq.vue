@@ -26,7 +26,7 @@
           <el-select v-model="queryParams.userSignStatus" placeholder="请选择" clearable size="small" style="width: 120px;margin-right: 10px">
             <el-option v-for="dict in signOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
           </el-select>
-          <br />
+          
           <span style="font-size: 14px;margin-right: 10px">时间</span>
           <el-date-picker
             style="width: 250px;margin-right: 10px"
@@ -37,6 +37,13 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
+          <br />
+          <span style="font-size: 14px;margin-right: 10px">节点名称</span>
+          <el-select v-model="selectValue" placeholder="请选择" clearable size="small" ref="selectTree">
+            <el-option style="height: auto;" :value="optionValue" :label="optionValue">
+              <el-tree :data="deptOptions2" :props="defaultProps2" :expand-on-click-node="false" :filter-node-method="filterNode2" ref="tree2" @node-click="handleNodeClick2" />
+            </el-option>
+          </el-select>
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button  type="primary" icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
         </div>
@@ -261,7 +268,7 @@
 
 <script>
 
-import { listDay, getLeftColumn, treeselect, allPeopleName, addDaKaPeople, exportKaoqinExcel, broadsideInfo, getTeamTree, searchDaka, exportDaka, importDaka, listByTime } from '@/api/system/peopleManage'
+import { listDay, getLeftColumn, treeselect, allPeopleName, addDaKaPeople, exportKaoqinExcel, broadsideInfo, broadsideInfo2, getTeamTree, searchDaka, exportDaka, importDaka, listByTime } from '@/api/system/peopleManage'
 import Treeselect from "@riophae/vue-treeselect";
 import { mapState } from 'vuex'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -280,7 +287,8 @@ export default {
   },
   data() {
     return {
-
+      selectValue: undefined,
+      optionValue: undefined,
       pagesize:10,
       currentPage:1,
       fileList12: [],
@@ -323,6 +331,7 @@ export default {
         title: "",
         // 部门树选项
         deptOptions: [],
+        deptOptions2: [],
         // 是否显示弹出层
         open: false,
 
@@ -360,7 +369,10 @@ export default {
             children: "childs",
             label: "name",
         },
-      
+        defaultProps2: {
+            children: "children",
+            label: "label",
+        },
         // 查询参数
         queryParams: {
             
@@ -369,7 +381,8 @@ export default {
             userSignType: '',
             userSignClass: undefined,
             startTime: '',
-            endTime: ''
+            endTime: '',
+            nodeId: ''
         },
       // 表单校验
       rules: {
@@ -409,6 +422,7 @@ export default {
       this.getListDay()
       this.getBanzu()
       this.getBroadsideInfo()
+      this.getBroadsideInfo2()
   },
   methods: {
     submitExcel() {
@@ -436,11 +450,24 @@ export default {
       this.queryParams.teamId = node.id
     },
     getBanzu() {
+      console.log("班组")
       var id = this.$store.state.task.otherId
       getTeamTree(id).then((res) => {
-        this.treeData = res.data.data
+        console.log("sasa", res.data)
+        this.treeData = res.data
         
       })
+    },
+
+    handleNodeClick2(data, node, nodeData){
+      console.log("打印data", data)
+      console.log("打印node", node)
+      console.log("打印nodeData", nodeData)
+      this.selectValue = data
+      this.optionValue = data.label
+        setTimeout(() => {
+            this.$refs.selectTree.blur()
+        }, 50)
     },
     getUserSignTime(val) {
       console.log("CurrentTime", val)
@@ -470,7 +497,16 @@ export default {
     getBroadsideInfo() {
       var id = this.$store.state.task.otherId
       broadsideInfo(id).then((res) => {
+        console.log("树形结构", res.data)
         this.deptOptions = res.data
+      })
+    },
+    getBroadsideInfo2() {
+      
+      var id = this.$store.state.task.nodeStateId
+      broadsideInfo2(id).then((res) => {
+        console.log("自检记录", res.data)
+        this.deptOptions2 = res.data
       })
     },
      /** 查询用户列表 */
@@ -502,6 +538,10 @@ export default {
     
     // 筛选节点
     filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    filterNode2(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
@@ -544,6 +584,10 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       console.log("timeArry", this.timeArry)
+      
+      if(this.selectValue !== undefined) {
+        this.queryParams.nodeId = this.selectValue.id
+      }
       this.queryParams.startTime = this.timeArry[0]
       this.queryParams.endTime = this.timeArry[1]
       if(this.queryParams.startTime !== null && this.queryParams.startTime === this.queryParams.endTime) {
@@ -581,6 +625,10 @@ export default {
       this.queryParams.startTime = ''
       this.queryParams.endTime = ''
       this.timeArry = []
+      this.queryParams.teamId = undefined
+      this.queryParams.nodeId = ''
+      this.selectValue = undefined
+      this.optionValue = undefined
       
       this.getListDay();
     },
