@@ -544,7 +544,7 @@ export default {
       this.loading = true;
       listDept(this.queryParams).then(response => {
         this.deptList = this.handleTree(response.data, "deptId");
-        console.log('ceshi',response)
+        console.log('ceshi',this.deptList)
         this.total = response.data.length;
         this.loading = false;
       });

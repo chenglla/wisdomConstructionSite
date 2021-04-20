@@ -43,6 +43,7 @@ const user = {
       return new Promise((resolve, reject) => {
         login(username, password, code, uuid).then(res => {
           setToken(res.token)
+          console.log("asa", res)
           console.log("登录的名字1", username)
           localStorage.setItem("userName", username)
           commit('SET_TOKEN', res.token)
