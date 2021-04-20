@@ -431,7 +431,8 @@ export default {
       formData.append('file', this.fileList12[0].raw)
       importDaka(id, formData).then((res) => {
         console.log("导入的文件res", res)
-        if(res.data.code === 200) {
+        if(res.code === 200) {
+          this.$message.success('导入成功！')
           this.fileList12 = []
           this.modelOpen = false
           this.getListDay()
@@ -513,9 +514,9 @@ export default {
     getListDay() {
       var params = {
         constructionSiteId: this.$store.state.task.otherId,
-        taskId: this.$store.state.task.nodeStateId
+        // taskId: this.$store.state.task.nodeStateId
       }
-      listByTime(params).then((res) => {
+      searchDaka(params).then((res) => {
         
           this.userList = res.rows
           

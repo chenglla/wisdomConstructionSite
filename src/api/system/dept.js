@@ -115,3 +115,27 @@ export function getTime(deptId) {
   })
 }
 
+
+export function listDeptSingle(query) {
+  return request({
+    url: '/singleProject/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function addDeptSingle(data) {
+  return request({
+    url: '/singleProject',
+    method: 'post',
+    data: data
+  })
+}
+
+export function updateDeptSingle(data) {
+  return request({
+    url: '/singleProject',
+    method: 'put',
+    data: data
+  })
+}
