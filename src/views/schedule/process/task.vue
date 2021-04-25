@@ -153,7 +153,7 @@
           <el-col :span="12" >
             <el-form-item label="实际开始时间"  prop="actualStartTime" >
                <el-date-picker
-                    :disabled="disabled"
+                    
                     v-model="form.actualStartTime"
                     type="date"
                     value-format="yyyy-MM-dd"
@@ -164,7 +164,7 @@
           <el-col :span="12">
             <el-form-item label="实际结束时间"  prop="actualEndTime" >
                <el-date-picker
-                    :disabled="disabled"
+                   
                     v-model="form.actualEndTime"
                     type="date"
                     value-format="yyyy-MM-dd"
@@ -633,6 +633,8 @@ export default {
 
     /** 提交按钮 */
     submitForm: function () {
+      console.log("提交对数据", this.form)
+      
       this.$refs["form"].validate((valid) => {
         if (valid) {
           this.form.parentId = this.$store.state.task.nodeStateId
@@ -651,18 +653,28 @@ export default {
               }
             });
           } else {
-            putTask(this.form).then((response) => {
-              if (response.code === 200) {
-                this.$message({
-                  type: 'success',
-                  message: '修改成功！'
-                })
-                this.open = false;
-                this.reset()
-                this.getTaskList();
-                this.$emit('updateTree','updateTree');
-              }
-            });
+             
+            if(this.form.actualEndTime !== null && this.form.actualStartTime === null) {
+             
+              this.$message.error('请先选择实际开始时间');
+
+              return;
+            } else {
+         
+              putTask(this.form).then((response) => {
+                if (response.code === 200) {
+                  this.$message({
+                    type: 'success',
+                    message: '修改成功！'
+                  })
+                  this.open = false;
+                  this.reset()
+                  this.getTaskList();
+                  this.$emit('updateTree','updateTree');
+                }
+              });
+            }
+            
           }
             
         }

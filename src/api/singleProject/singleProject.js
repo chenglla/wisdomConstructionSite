@@ -9,6 +9,14 @@ export function listSingleProject(query) {
   })
 }
 
+export function listSingleProjectTree(query) {
+  return request({
+    url: '/singleProject/treeselect',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询单体工程详细
 export function getSingleProject(id) {
   return request({

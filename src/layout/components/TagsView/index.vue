@@ -146,6 +146,13 @@ export default {
       })
     },
     closeSelectedTag(view) {
+      console.log("ASASAA", view)
+      if(view.title === '进度管理') {
+        this.$store.commit('task/CHANGE_NODE', {})  
+        this.$store.commit('task/CHANGE_NODE_ID', '') 
+        this.$store.commit('task/CHANGE_OTHERID', '') 
+        this.$store.commit('task/CHANGE_ISLEAF', false) 
+      }
       this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view)
