@@ -212,14 +212,19 @@
           <el-row>
             <el-col :span="12">
               <el-form-item  label="计划开始时间" prop="planStartTime">
-                  <el-date-picker v-model="nodeForm.planStartTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />
+                  <el-date-picker v-model="nodeForm.planStartTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
                 <el-form-item  label="计划结束时间" prop="planEndTime">
-                  <el-date-picker v-model="nodeForm.planEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />                    
+                  <el-date-picker v-model="nodeForm.planEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  :picker-options="pickerOptions"/>                    
                 </el-form-item>
             </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item label="单位工程" prop="singleSiteIds">
+              <treeselect v-model="nodeForm.singleSiteIds" :options="singleList" :multiple="true" placeholder="请选择单体"  />
+            </el-form-item>
           </el-row>
           
          
@@ -323,12 +328,12 @@
            <el-row>
               <el-col :span="12">
                   <el-form-item  label="计划开始时间" prop="planStartTime">
-                      <el-date-picker v-model="viewForm.planStartTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />
+                      <el-date-picker v-model="viewForm.planStartTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  :picker-options="pickerOptions"/>
                   </el-form-item>
               </el-col>
               <el-col :span="12">
                   <el-form-item  label="计划结束时间" prop="planEndTime">
-                    <el-date-picker v-model="viewForm.planEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />                    
+                    <el-date-picker v-model="viewForm.planEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  :picker-options="pickerOptions"/>                    
                   </el-form-item>
               </el-col>
               
@@ -344,6 +349,11 @@
                     <el-date-picker v-model="viewForm.actualEndTime" align="right" type="date" placeholder="选择日期"   value-format="yyyy-MM-dd"  />
                   </el-form-item>
               </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item label="单位工程" prop="singleSiteIds">
+              <treeselect v-model="viewForm.singleSiteIds" :options="singleList" :multiple="true" placeholder="请选择单体"  />
+            </el-form-item>
           </el-row>
 
           <!-- <el-row>
@@ -505,7 +515,8 @@
 
 <script>
 
-import { nodeList, nodeTemplate, getTeamTree, broadsideInfo, addNodeTemplate, addNode, putNode, delNode, exportNodeTemplate, exportNodeList, importNodeList, delayList, addDelay, updateDelay, delDelay, importNode, getBanzuPeople } from "@/api/system/process";
+import { nodeList, getInfo, nodeTemplate, getTeamTree, broadsideInfo, addNodeTemplate, addNode, putNode, delNode, exportNodeTemplate, exportNodeList, importNodeList, delayList, addDelay, updateDelay, delDelay, importNode, getBanzuPeople } from "@/api/system/process";
+import { listSingleProjectTree } from "@/api/singleProject/singleProject";
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -534,6 +545,16 @@ export default {
     
   data() {
     return {
+      pickerOptions: {
+        disabledDate: (time) => {
+          return this.selectTime(time);//调用方法
+        }
+      },
+      taskStartTime: '',
+      taskEndTime: '',
+      selectValue: undefined,
+      optionValue: undefined,
+      singleList: [],
       dialogVisible: false,
       templateOpen: false,
       templateForm: {
@@ -578,7 +599,8 @@ export default {
           teamId: null,
           classification: undefined,
           state: undefined,
-          delayInfo: ''
+          delayInfo: '',
+          singleSiteIds: []
         },
         viewFormRules: {
           label: [
@@ -616,7 +638,8 @@ export default {
           classification: undefined,
           state: undefined,
           delayInfo: '',
-          siteId: ''
+          siteId: '',
+          singleSiteIds: []
         },
         nodeAddDelayForm: {
           state: undefined,
@@ -780,6 +803,10 @@ export default {
         children: "children",
         label: "label",
       },
+      defaultProps2: {
+        children: "children",
+        label: "spName",
+      },
       // 用户导入参数
       upload: {
         // 是否显示弹出层（用户导入）
@@ -861,6 +888,7 @@ export default {
       console.log("旧的", old)
       console.log("新的", newd)
       this.getNodeList()
+      this.getTaskInfo();
     }
     
   },
@@ -873,13 +901,46 @@ export default {
         }
          
         this.getNodeList();
+        this.getTaskInfo();
         this.getBanZu()
+        this.getSingleList()
   },
   created() {
     
     
   },
   methods: {
+    selectTime(time) {
+      var timeStamp = 1 * 24 * 60 * 60 * 1000
+      return time.getTime() > new Date(this.taskEndTime).getTime() || time.getTime() < new Date(this.taskStartTime).getTime() - timeStamp
+    },
+    handleNodeClick2(data, node, nodeData){
+      console.log("打印data", data)
+      console.log("打印node", node)
+      console.log("打印nodeData", nodeData)
+      this.selectValue = data
+      this.optionValue = data.label
+        setTimeout(() => {
+            this.$refs.selectTree.blur()
+        }, 50)
+    },
+    getSelectList(node, instanceId) {
+      console.log("node", node)
+      console.log("instanceId", instanceId)
+      console.log("选择", this.nodeForm.singleSiteIds)
+      // this.uploadInfo.urlId = node.id
+      // this.fileType = node.label
+      // this.uploadInfo.format = node.label
+    },
+    getSingleList() {
+      var params = {
+        constructionSiteId: localStorage.getItem("deptId")
+      }
+      listSingleProjectTree(params).then((res) => {
+        console.log("121212121", res)
+        this.singleList = res.data
+      })
+    },
     
     addTemplate() {
       // 输入模板名字
@@ -1056,6 +1117,14 @@ export default {
       // console.log('全部数组', allArr)
       this.recordsList = this.dealData(records, allArr)
       // this.recordsList = records
+    },
+    getTaskInfo() {
+      var id = this.$store.state.task.nodeStateId
+      getInfo(id).then((res) => {
+        console.log("sasasa", res)
+        this.taskStartTime = res.data.planStartTime
+        this.taskEndTime = res.data.planEndTime
+      })
     },
     getNodeList() {
       
@@ -1466,6 +1535,8 @@ export default {
    
 
     submitNodeForm: function () {
+      console.log("单体数据", this.singleList)
+      console.log("提交数据", this.nodeForm.singleSiteIds)
       console.log("当前用户", localStorage.getItem('userName'))
       var loginName = localStorage.getItem('userName')
       var fromUser = ''
@@ -1533,18 +1604,27 @@ export default {
       this.$refs["viewForm"].validate((valid) => {
        
         if (valid) {
-             putNode(params, this.viewForm).then((response) => {
-              if (response.code === 200) {
-              
-                this.$message({
-                  type: 'success',
-                  message: '修改成功！'
-                })
-                this.viewDialog = false;
-                this.getNodeList()
-               this.resetView()
-              }
-            }); 
+             console.log('sasaasasasasasasa')
+             if(this.viewForm.actualEndTime !== null && this.viewForm.actualStartTime === null) {
+             
+                this.$message.error('请先选择实际开始时间');
+
+                return;
+            } else {
+              putNode(params, this.viewForm).then((response) => {
+                if (response.code === 200) {
+                
+                  this.$message({
+                    type: 'success',
+                    message: '修改成功！'
+                  })
+                  this.viewDialog = false;
+                  this.getNodeList()
+                this.resetView()
+                }
+              }); 
+            }
+             
           }
        
       });

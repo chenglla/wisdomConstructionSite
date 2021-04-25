@@ -5,7 +5,7 @@
         <el-tab-pane label="项目情况" name="first" :key="'first'" class="label_top">
           <project-info v-if="info"></project-info>
         </el-tab-pane>
-        <el-tab-pane label="项目管理" name="second" :key="'second'" class="label_top">
+        <el-tab-pane label="参建单位" name="second" :key="'second'" class="label_top">
           <project-manager v-if="manager"></project-manager>
         </el-tab-pane>
        

@@ -56,11 +56,11 @@
         <el-table v-loading="loading"  :data="dataList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" @selection-change="handleSelectionChange">
 
           <el-table-column label="序号" type="index" align="center" prop="sort" />
-          <el-table-column label="检查内容" align="center" prop="content" :show-overflow-tooltip="true" />
-          <el-table-column label="检查人员" align="center" prop="person"  />
-          <el-table-column label="检查时间" align="center" prop="checkTime" :show-overflow-tooltip="true" />
+          <!-- <el-table-column label="内容" align="center" prop="content" :show-overflow-tooltip="true" /> -->
+          <el-table-column label="发起人" align="center" prop="person"  />
+          <el-table-column label="发起时间" align="center" prop="checkTime" :show-overflow-tooltip="true" />
           <el-table-column label="来源" align="center" prop="from" :show-overflow-tooltip="true" />
-          <el-table-column label="检查结果" align="center" prop="result" :show-overflow-tooltip="true" />
+          <el-table-column label="内容" align="center" prop="result"  width="250"/>
           <!-- <el-table-column label="检查结果" align="center" prop="result" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
                 <el-tag  v-if="scope.row.result===0" type="danger">整改</el-tag>
@@ -69,14 +69,15 @@
           </el-table-column> -->
 
           <el-table-column label="接收人" align="center" prop="receiver" :show-overflow-tooltip="true" />
-          <el-table-column label="处理结果" align="center" prop="processResult" :show-overflow-tooltip="true" />
-          <!-- <el-table-column label="处理结果" align="center" prop="processResult" :show-overflow-tooltip="true" >
+          <!-- <el-table-column label="处理结果" align="center" prop="processResult" :show-overflow-tooltip="true" /> -->
+          <el-table-column label="处理结果" align="center" prop="processResult" :show-overflow-tooltip="true" >
             <template slot-scope="scope">
-                <el-tag  v-if="scope.row.processResult===0" type="info">未处理</el-tag>
-                <el-tag  v-if="scope.row.processResult===1" type="danger">处理中</el-tag>
-                <el-tag  v-if="scope.row.processResult===2" type="success">已处理</el-tag>
+                <el-tag  v-if="scope.row.processResult==='未处理'" type="info">未处理</el-tag>
+                <el-tag  v-if="scope.row.processResult==='正在处理'" type="danger">处理中</el-tag>
+                <el-tag  v-if="scope.row.processResult==='已处理'" type="success">已完成</el-tag>
+                <!-- <el-tag  v-if="scope.row.processResult==='已处理'" type="success">已完成</el-tag> -->
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column label="处理时间" align="center" prop="processTime" :show-overflow-tooltip="true" />
 
           <el-table-column label="操作" align="center"  class-name="small-padding fixed-width">
