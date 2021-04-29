@@ -106,6 +106,7 @@ export default {
     }
   },
   created() {
+    console.log("SAA", this.$router)
     this.getCode();
     this.getCookie();
   },

@@ -76,10 +76,36 @@ export function getTeamTree(id) {
   })
 }
 
+
+export function getBanzuList(data) {
+  return request({
+    url: `/peopleback/teams/list`,
+    method: 'get',
+    params: data
+  })
+}
+
+
 export function addBanzu(data) {
   return request({
     url: `/peopleback/teams`,
     method: 'post',
+    data: data
+  })
+}
+
+export function updateBanzu(data) {
+  return request({
+    url: `/peopleback/teams`,
+    method: 'put',
+    data: data
+  })
+}
+
+export function delBanzu(data) {
+  return request({
+    url: `/peopleback/teams`,
+    method: 'put',
     data: data
   })
 }

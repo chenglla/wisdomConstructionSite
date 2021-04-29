@@ -15,9 +15,9 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
-          <span style="font-size: 14px;margin-right: 10px">类型</span><el-select v-model="queryParams.from" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
+          <!-- <span style="font-size: 14px;margin-right: 10px">类型</span><el-select v-model="queryParams.from" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in progressList" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>
-          </el-select>
+          </el-select> -->
          
          <span style="font-size: 14px;margin-right: 10px">检查结果</span> <el-select v-model="queryParams.result" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in stateList" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>

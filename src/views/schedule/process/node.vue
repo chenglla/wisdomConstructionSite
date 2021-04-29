@@ -12,12 +12,12 @@
         <!-- <br /> -->
         <div style="margin-right:10px;">
           <span style="font-size: 14px;margin-right: 10px">节点名称</span><el-input v-model="queryParams.label" placeholder="请输入关键字" clearable size="small" style="width: 200px;margin-right: 10px"/>
-          <span style="font-size: 14px;margin-right: 10px">进度</span><el-select v-model="queryParams.progress" placeholder="请选择进度" clearable  style="width: 200px;margin-right: 10px">
+          <span style="font-size: 14px;margin-right: 10px">进度</span><el-select v-model="queryParams.progressStr" placeholder="请选择进度" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in progressList" :key="dict.value" :label="dict.label" :value="dict.value" ></el-option>
           </el-select>
-         <span style="font-size: 14px;margin-right: 10px">状态</span> <el-select v-model="queryParams.state" placeholder="请选择状态" clearable  style="width: 200px;margin-right: 10px">
+         <!-- <span style="font-size: 14px;margin-right: 10px">状态</span> <el-select v-model="queryParams.state" placeholder="请选择状态" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in stateList" :key="dict.value" :label="dict.label" :value="dict.value" ></el-option>
-          </el-select>
+          </el-select> -->
           <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
          
@@ -218,6 +218,18 @@
             <el-col :span="12">
                 <el-form-item  label="计划结束时间" prop="planEndTime">
                   <el-date-picker v-model="nodeForm.planEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  :picker-options="pickerOptions"/>                    
+                </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+                <el-form-item  label="实际开始时间" prop="actualStartTime">
+                  <el-date-picker v-model="nodeForm.actualStartTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />
+                </el-form-item>
+            </el-col>
+            <el-col :span="12">
+                <el-form-item  label="实际结束时间" prop="actualEndTime">
+                  <el-date-picker v-model="nodeForm.actualEndTime" align="right" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"  />
                 </el-form-item>
             </el-col>
           </el-row>
@@ -456,6 +468,13 @@
                     </el-select>
                   </el-form-item>
               </el-col>
+              <el-col :span="12">
+                  <el-form-item  label="延期类型" prop="classification">
+                    <el-select v-model="delayForm.classification" placeholder="请选择类型" clearable size="small" style="width: 240px">
+                      <el-option v-for="dict in statusOptions2" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    </el-select>
+                  </el-form-item>
+              </el-col>
              
           </el-row>
 
@@ -651,7 +670,9 @@ export default {
           state: '',
           explain: '',
           id: '',
-          nodeId: ''
+          nodeId: '',
+          siteId: '',
+          classification: ''
         },
         treeData4: [],
         treeData2: [],
@@ -772,6 +793,16 @@ export default {
           label: '正常延期'
         }
       ],
+      statusOptions2: [
+        {
+          value: 0,
+          label: '开工延期'
+        },
+        {
+          value: 1,
+          label: '完工延期'
+        }
+      ],
       
       constructionUnitList:["建设方", "监理方", "施工方"],
       // 性别状态字典
@@ -827,7 +858,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         label: '',
-        progress: '',
+        progressStr: '',
         state: '',
         siteId: ''
       },
@@ -871,6 +902,9 @@ export default {
         ],
         explain: [
           { required: true, message: "说明不能为空", trigger: "blur" },
+        ],
+        classification: [
+          { required: true, message: "类型不能为空", trigger: "blur" },
         ],
       },
     };
@@ -1217,7 +1251,9 @@ export default {
         nodeId: '',
         id: '',
         state: '',
-        explain: ''
+        explain: '',
+        siteId: '',
+        classification: ''
       }
     },
     
@@ -1240,7 +1276,7 @@ export default {
       console.log("重置")
       // this.dateRange = [];
       this.queryParams.label = ''
-      this.queryParams.progress = ''
+      this.queryParams.progressStr = ''
       this.queryParams.state = ''
       this.getNodeList();
     },
@@ -1339,6 +1375,7 @@ export default {
     },
     submitDelayForm() {
       this.delayForm.nodeId = this.delayId
+      this.delayForm.siteId = localStorage.getItem("deptId")
       console.log("新增延期", this.delayForm)
       this.$refs["delayForm"].validate((valid) => {
        
