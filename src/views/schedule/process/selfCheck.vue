@@ -19,14 +19,14 @@
               <el-option v-for="dict in progressList" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>
           </el-select> -->
          
-         <span style="font-size: 14px;margin-right: 10px">检查结果</span> 
+         <span style="font-size: 14px;margin-right: 10px">检查内容</span> 
          <!-- <el-select v-model="queryParams.result" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
               <el-option v-for="dict in stateList" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>
           </el-select> -->
            <el-input v-model="queryParams.result" placeholder="请输入关键字" clearable size="small" style="width: 200px;margin-right: 10px"/>
            <!-- <br /> -->
           <span style="font-size: 14px;margin-right: 10px">处理状态</span> <el-select v-model="queryParams.processResult" placeholder="请选择" clearable  style="width: 200px;margin-right: 10px">
-              <el-option v-for="dict in state2List" :key="dict.value" :label="dict.label" :value="dict.label" ></el-option>
+              <el-option v-for="dict in state2List" :key="dict.value" :label="dict.label" :value="dict.value" ></el-option>
           </el-select>
           <span style="font-size: 14px;margin-right: 10px">节点名称</span>
           <el-select v-model="selectValue" placeholder="请选择" clearable size="small" ref="selectTree">
@@ -191,8 +191,20 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="记录时间:" prop="startTime">
+              <el-form-item label="发送时间:" prop="startTime">
                  <el-input v-model="uploadInfo2.startTime"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="预计结束时间:" prop="endTime">
+                 <el-input v-model="uploadInfo2.endTime"  :readonly='true'/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="危险等级:" prop="riskLevel">
+                 <el-input v-model="uploadInfo2.riskLevel"  :readonly='true'/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -209,14 +221,20 @@
               </el-form-item>
             </el-col>
           </el-row>
-
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="事件详情:" prop="context">
+           <el-row>
+            <el-col :span="12">
+              <el-form-item label="单位工程" prop="singleSiteIds">
+                <treeselect v-model="uploadInfo2.singleSiteIds" :options="singleList" :multiple="true" placeholder="请选择单体"  />
+              </el-form-item>
+            </el-col>
+           <el-col :span="12">
+              <el-form-item label="事件详情:" prop="context" >
                  <el-input type="textarea" v-model="uploadInfo2.context"  :readonly='true'/>
               </el-form-item>
             </el-col>
           </el-row>
+
+        
 
           <el-row>
             <el-col :span="24">
@@ -224,6 +242,7 @@
                  
 
               <el-image
+                  class="faqiImg"
                   v-if="uploadInfo2.imageUrl !== null"
                 :src="uploadInfo2.imageUrl"
                 >
@@ -274,6 +293,7 @@
                 
 
               <el-image
+                class="faqiImg"
                  v-if="dealDatail.imageUrl !== null"
                 :src="dealDatail.imageUrl"
                 >
@@ -313,13 +333,14 @@
 
 
 import { getList, nodeList, nodeTemplate, getTeamTree, broadsideInfo, getPicInfo } from "@/api/system/selfCheck";
+import { listSingleProjectTree } from "@/api/singleProject/singleProject";
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import { getLeftColumn } from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { mapState } from 'vuex'
-import { unionTypeAnnotation } from '@babel/types';
+
 
 export default {
   name: "selfCheck",
@@ -342,6 +363,7 @@ export default {
     
   data() {
     return {
+      singleList: [],
       selectValue: undefined,
       optionValue: undefined,
       dealDatail : {
@@ -351,6 +373,7 @@ export default {
         videoUrl: null
       },
       uploadInfo2: {
+        singleSiteIds: [],
         ccPeople: '',
         checkType: '',
         checkTypeOffspring: '',
@@ -402,20 +425,16 @@ export default {
         ],
         state2List: [
          {
-            value: 1,
+            value: '未处理',
             label: '未处理'
           },
           {
-            value: 2,
-            label: '正在处理'
+            value: '正在处理',
+            label: '处理中'
           },
           {
-             value: 3,
-            label: '已处理'
-          },
-          {
-             value: 4,
-            label: '预警'
+             value: '已处理',
+            label: '已完成'
           }
         ],
         nodePlan: false,
@@ -610,9 +629,19 @@ export default {
 
     this.getSelfList();
     this.getBroadsideInfo()
+    this.getSingleList()
 
   },
   methods: {
+    getSingleList() {
+      var params = {
+        constructionSiteId: localStorage.getItem("deptId")
+      }
+      listSingleProjectTree(params).then((res) => {
+        console.log("121212121", res)
+        this.singleList = res.data
+      })
+    },
     getBroadsideInfo() {
       
       var id = this.$store.state.task.nodeStateId
@@ -976,6 +1005,10 @@ export default {
   overflow:auto;
   height: 400px;
   
+}
+.faqiImg {
+  width: 200px;
+  height: 200px;
 }
 </style>
 

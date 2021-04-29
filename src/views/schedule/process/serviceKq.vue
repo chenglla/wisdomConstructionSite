@@ -696,8 +696,8 @@ export default {
         deptName: this.currentUserSignCompanyName
       }
       exportDaka(params).then((res) => {
-        // console.log("导出的文件", res.data.msg)
-        window.open(res.data.msg)
+        console.log("导出的文件", res)
+        window.open(res.msg)
       })
      
     },
