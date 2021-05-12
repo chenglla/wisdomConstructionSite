@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
-    <div v-show="showSearch" style="margin-bottom: 20px">
+    <!-- <div v-show="showSearch" style="margin-bottom: 20px">
       <span style="margin-right: 10px">班组</span>
-        <treeselect v-model="queryParams.teamId" :options="treeData" placeholder="请选择" :clearable="true" :show-count="true"  style="width: 250px;display:inline-block;vertical-align:bottom;" @select="getSelectList" >
+        <treeselect v-model="searchTeamId" :options="treeData" placeholder="请选择" :clearable="true" :show-count="true"  style="width: 250px;display:inline-block;vertical-align:bottom;" @select="getSelectList" >
         </treeselect>
 
 
       <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
       <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-    </div>
+    </div> -->
    
 
     <el-row :gutter="10" class="mb8">
@@ -27,22 +27,36 @@
 
     <el-table 
         v-loading="loading" 
-        :data="roleList" 
-         row-key="id"
-        default-expand-all
-        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-    >
-      <el-table-column label="班组名称" prop="label"  align="center"/>
-      <!-- <el-table-column label="负责人名称" prop="userName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="身份证号" prop="userCode" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="手机号" prop="phone" width="100" />
-      <el-table-column label="状态" align="center" width="100">
-        <template slot-scope="scope">
-           <el-tag  v-if="scope.row.userStatus===0" type="danger">离职</el-tag>
-            <el-tag  v-if="scope.row.userStatus===1" type="success">在职</el-tag>
-        </template>
+        :data="roleList.slice((queryParams.pageNum-1)*queryParams.pageSize,queryParams.pageNum*queryParams.pageSize)" 
+         
        
-      </el-table-column> -->
+        
+    >
+      <!-- <el-table-column label="班组名称" prop="label"  align="center"/>
+      <el-table-column label="负责人名称" prop="userName" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="身份证号" prop="userCode" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="手机号" prop="phone" width="100" /> -->
+      <el-table-column label="班组名称" align="center" >
+        <template slot-scope="scope">
+          {{scope.row.teams.label}}
+        </template>
+      </el-table-column>
+       <el-table-column label="负责人名称" align="center" >
+        <template slot-scope="scope">
+          {{scope.row.siteUserInfo.userName}}
+        </template>
+      </el-table-column>
+      <el-table-column label="身份证号" align="center" >
+        <template slot-scope="scope">
+          {{scope.row.siteUserInfo.userCode}}
+        </template>
+      </el-table-column>
+      <el-table-column label="手机号" align="center" >
+        <template slot-scope="scope">
+          {{scope.row.siteUserInfo.phone}}
+        </template>
+      </el-table-column>
+      
       
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -161,18 +175,18 @@
                 <el-select v-model="banzuForm.userPost" placeholder="请选择" style="width: 50%">
                     <el-option
                         v-for="item in postList"
-                        :key="item.id"
-                        :label="item.professionName"
-                        :value="item.professionName">
+                        :key="item.postId"
+                        :label="item.postName"
+                        :value="item.postName">
                     </el-option>
                 </el-select>
              </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="状态" prop="userStatus">
-                <el-radio-group v-model="banzuForm.userStatus">
-                    <el-radio :label="1">在职</el-radio>
-                    <el-radio :label="0">离职</el-radio>
+              <el-form-item label="状态" prop="userStatusStr">
+                <el-radio-group v-model="banzuForm.userStatusStr">
+                    <el-radio :label="'1'">在职</el-radio>
+                    <el-radio :label="'0'">离职</el-radio>
                 </el-radio-group>
                </el-form-item>
             </el-col>
@@ -202,6 +216,7 @@
                 >
                   <el-button slot="trigger" type="text" icon="el-icon-upload" style="text-align: center; font-size: 14px; ">选取文件</el-button>
                 </el-upload>
+                <el-image class="imgStyle" :src="banzuForm.userImg"  v-if="banzuForm.userImg != ''"></el-image>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -215,19 +230,11 @@
                 >
                   <el-button slot="trigger" type="text" icon="el-icon-upload" style="text-align: center; font-size: 14px; ">选取文件</el-button>
                 </el-upload>
+                <el-image class="imgStyle"  :src="banzuForm.checkImg"  v-if="banzuForm.checkImg != ''"></el-image>
               </el-form-item>
             </el-col>
           </el-row>
-          <!-- <el-row>
-              <el-col :span="12">
-                   <el-form-item label="图片" prop="lookUrl" v-if="currentInfo.format === '图片'">
-                        <el-image  :src="currentInfo.lookUrl"></el-image>
-                    </el-form-item>
-              </el-col>
-              <el-col :span="12">
-
-              </el-col>
-          </el-row> -->
+          
           </el-form-item>
         </el-form>
          <div slot="footer" class="dialog-footer">
@@ -242,7 +249,7 @@
 </template>
 
 <script>
-
+import { getUser } from "@/api/system/user";
 import { listBanzu, addBanzu, updateBanzu, delBanzu, getBanzuTree, getGangwei, getDetail } from '@/api/system/banzu';
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -251,13 +258,16 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      searchTeamId: undefined,
+        userInfoId: undefined,
+      
         postList: [],
         treeData: [],
         treeData2: [],
         banzuForm: {
             userImg : '',
             constructionSiteId : '',
-            id : '',
+            id : undefined,
             userName : '',
             userClass : null,
             teamId : null,
@@ -296,7 +306,7 @@ export default {
         userVcode: [
           { required: true, message: "证书编号不能为空", trigger: "blur" },
         ],
-        userStatus: [
+        userStatusStr: [
           { required: true, message: "状态不能为空", trigger: "blur" },
         ],
 
@@ -388,7 +398,7 @@ export default {
         this.resetForm2('banzuForm')
     },
     resetForm2(formName) {
-      
+      this.userInfoId = undefined
       this.banzuForm.userImg = ''
       this.banzuForm.constructionSiteId = ''
       this.banzuForm.id = ''
@@ -427,10 +437,10 @@ export default {
       
         },
     getPofession() {
-        var id = localStorage.getItem('deptId')
-        getGangwei(id).then((res) => {
+        // var id = localStorage.getItem('deptId')
+        getUser().then((res) => {
             console.log("岗位", res)
-            this.postList = res.rows
+            this.postList = res.posts
         })
     },
     getSelectList2(node, instanceId) {
@@ -440,9 +450,10 @@ export default {
         this.banzuForm.teamId = node.id
     },
     getSelectList(node, instanceId) {
-      this.queryParamsUserclass = node.label
-      this.queryParams.userClass = node.label
-      this.queryParams.teamId = node.id
+        console.log("node", node)
+        console.log("instanceId", instanceId)
+        this.searchTeamId = node.id
+      
     },
     /** 查询角色列表 */
     getBanzu() {
@@ -460,56 +471,109 @@ export default {
       );
     },
     submitFormPeople: function () {
+      console.log("banzu", this.banzuForm.id)
       console.log("班组id",this.banzuForm.parentId)
       if(this.banzuForm.parentId === undefined) {
         this.banzuForm.parentId = 0
       }
       this.$refs["banzuForm"].validate((valid) => {
         if (valid) {
+          if(this.banzuForm.id === undefined || this.banzuForm.id === null || this.banzuForm.id === '') {
+             var obj = {
+              siteId: localStorage.getItem('deptId'),
+              label: this.banzuForm.label,
+              parentId: this.banzuForm.parentId
+            }
+             var obj2 = {
+              checkImg: this.banzuForm.checkImg,
+              constructionSiteId: localStorage.getItem('deptId'),
+              flag: this.banzuForm.flag,
+              leader: this.banzuForm.leader,
+              phone: this.banzuForm.phone,
+              userCode: this.banzuForm.userCode,
+              userEducation: this.banzuForm.userEducation,
+              userImg: this.banzuForm.userImg,
+              userName: this.banzuForm.userName,
+              userPost: this.banzuForm.userPost,
+              userSex: this.banzuForm.userSex,
+              userStatus: this.banzuForm.userStatus,
+              userVcode: this.banzuForm.userVcode,
+              userClass: this.banzuForm.label,
+              userNationality: this.banzuForm.userNationality,
+              userAge: this.banzuForm.userAge,
+              userSignCompanyName: this.currentUserSignCompanyName
+            }
+            var tijiaoForm = {
+              siteUserInfo: obj2,
+              teams: obj
+            }
+            addBanzu(tijiaoForm).then((response) => {
+              console.log("走的新增",response.data)
+              if (response.code === 200) {
+                this.$message({
+                  type: 'success',
+                  message: '添加成功！'
+                })
+                this.open = false;
+                this.getList()
+                this.getBanzu()
+                this.resetForm2('banzuForm')
+              }
+            });
+
+          } else {
+            var obj = {
+              id: this.banzuForm.id,
+              siteId: localStorage.getItem('deptId'),
+              label: this.banzuForm.label,
+              parentId: this.banzuForm.parentId
+            }
+             var obj2 = {
+              id: this.userInfoId,
+              checkImg: this.banzuForm.checkImg,
+              constructionSiteId: localStorage.getItem('deptId'),
+              flag: this.banzuForm.flag,
+              leader: this.banzuForm.leader,
+              phone: this.banzuForm.phone,
+              userCode: this.banzuForm.userCode,
+              userEducation: this.banzuForm.userEducation,
+              userImg: this.banzuForm.userImg,
+              userName: this.banzuForm.userName,
+              userPost: this.banzuForm.userPost,
+              userSex: this.banzuForm.userSex,
+              userStatus: this.banzuForm.userStatus,
+              userVcode: this.banzuForm.userVcode,
+              userClass: this.banzuForm.label,
+              userNationality: this.banzuForm.userNationality,
+              userAge: this.banzuForm.userAge,
+              userSignCompanyName: this.currentUserSignCompanyName
+            }
+            var tijiaoForm = {
+              siteUserInfo: obj2,
+              teams: obj
+            }
+            updateBanzu(tijiaoForm).then((response) => {
+              console.log("走的修改",response.data)
+              if (response.code === 200) {
+                this.$message({
+                  type: 'success',
+                  message: '修改成功！'
+                })
+                this.open = false;
+                this.getList()
+                this.getBanzu()
+                this.resetForm2('banzuForm')
+              }
+            });
+
+          }
           
-          var obj = {
-            siteId: localStorage.getItem('deptId'),
-            label: this.banzuForm.label,
-            parentId: this.banzuForm.parentId
-          }
-          var obj2 = {
-            checkImg: this.banzuForm.checkImg,
-            constructionSiteId: localStorage.getItem('deptId'),
-            flag: this.banzuForm.flag,
-            leader: this.banzuForm.leader,
-            phone: this.banzuForm.phone,
-            userCode: this.banzuForm.userCode,
-            userEducation: this.banzuForm.userEducation,
-            userImg: this.banzuForm.userImg,
-            userName: this.banzuForm.userName,
-            userPost: this.banzuForm.userPost,
-            userSex: this.banzuForm.userSex,
-            userStatus: this.banzuForm.userStatus,
-            userVcode: this.banzuForm.userVcode,
-            userClass: this.banzuForm.label,
-            userNationality: this.banzuForm.userNationality,
-            userAge: this.banzuForm.userAge,
-            userSignCompanyName: this.currentUserSignCompanyName
-          }
-          var tijiaoForm = {
-            siteUserInfo: obj2,
-            teams: obj
-          }
+         
+         
+          
           // console.log("班组提交的信息",tijiaoForm)
           
-          addBanzu(tijiaoForm).then((response) => {
-            // console.log("SASAS",response.data)
-            if (response.code === 200) {
-              this.$message({
-                type: 'success',
-                message: '添加成功！'
-              })
-              this.open = false;
-              this.getList()
-              this.getBanzu()
-              this.resetForm2('banzuForm')
-            }
-          });
+          
           
           
         }
@@ -519,14 +583,13 @@ export default {
     getList() {
         
       var params = {
-          label: '',
-          parentId: -1,
+         
           siteId: localStorage.getItem("deptId")
       }
       listBanzu(params).then(
         response => {
             console.log("获取班组", response)
-          this.roleList = this.handleTree(response.data, "id", "parentId");
+          this.roleList = response.data
           this.total = response.data.length;
           this.loading = false;
         }
@@ -563,29 +626,28 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-     
-      this.getList();
       var params = {
-          label: '',
-          parentId: -1,
+          id: this.searchTeamId,
           siteId: localStorage.getItem("deptId")
       }
       listBanzu(params).then(
         response => {
             console.log("获取班组", response)
-          this.roleList = this.handleTree(response.data, "id", "parentId");
+          this.roleList = response.data
           this.total = response.data.length;
           this.loading = false;
         }
       );
+     
+   
+     
+      
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
-      this.queryParams.roleName = ''
-      this.queryParams.roleKey = ''
-      this.queryParams.status = ''
-      this.handleQuery();
+      this.searchTeamId = undefined
+      this.getList()
+      
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -604,16 +666,17 @@ export default {
     handleUpdate(row) {
         console.log('row', row)
       this.title = "修改班组";
-    //   this.open = true
-      this.getInfo(row.id)
+      this.open = true
+      this.getInfo(row.teams.id)
     },
     getInfo(id) {
-        var params = {
-            siteId: localStorage.getItem("deptId"),
-            teamId: id
-        }
-        getDetail(params).then((res) => {
+        
+        getDetail(id).then((res) => {
             console.log("ASASA", res)
+            this.userInfoId = res.data.siteUserInfo.id
+            var obj = Object.assign({}, res.data.siteUserInfo, res.data.teams)
+            console.log("obj,", obj)
+            this.banzuForm = obj
         })
     },
     /** 分配数据权限操作 */
@@ -624,17 +687,27 @@ export default {
     
     /** 删除按钮操作 */
     handleDelete(row) {
-      const roleIds = row.roleId || this.ids;
-      this.$confirm('是否确认删除角色编号为"' + roleIds + '"的数据项?', "警告", {
+      
+      const name = row.teams.label;
+      this.$confirm('是否确认删除"' + name + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
-          return delRole(roleIds);
         }).then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        }).catch(function() {});
+          delBanzu(row.teams.id).then((res) => {
+            console.log("删除的数据", res)
+            if(res.code === 200) {
+              this.getList();
+              this.msgSuccess("删除成功");
+            }
+          })
+          
+        }).catch(function() {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -652,3 +725,10 @@ export default {
   }
 };
 </script>
+<style scoped>
+.imgStyle {
+  width: 200px;
+  height: 200px;
+}
+</style>
+

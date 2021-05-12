@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询部门列表
 export function listBanzu(query) {
   return request({
-    url: '/peopleback/teams/list',
+    url: '/peopleback/teams/listnew',
     method: 'get',
     params: query
   })
@@ -27,7 +27,7 @@ export function updateBanzu(data) {
 
 export function delBanzu(id) {
     return request({
-      url: '/peopleback/teams/' + devId,
+      url: '/peopleback/teams/' + id,
       method: 'delete'
     })
 }
@@ -49,10 +49,9 @@ export function getGangwei(data) {
 }
 
 
-export function getDetail(data) {
+export function getDetail(classId) {
     return request({
-      url: `/peopleback/teams/nameFromTeam`,
-      method: 'get',
-      params: data
+      url: `/peopleback/teams/info/${classId}`,
+      method: 'get'
     })
 }
