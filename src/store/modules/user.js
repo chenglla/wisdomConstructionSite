@@ -45,7 +45,7 @@ const user = {
           setToken(res.token)
           console.log("asa", res)
           console.log("登录的名字1", username)
-          localStorage.setItem("userName", username)
+          
           commit('SET_TOKEN', res.token)
           commit('SET_SITEID', res.site_id)
           localStorage.setItem("deptId", res.site_id)

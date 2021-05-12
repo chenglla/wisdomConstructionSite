@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <!--部门数据-->
       <el-col :span="4" :xs="24">
-        <div class="head-container">
+        <div class="head-container header_tree">
           <el-tree :data="deptOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" />
         </div>
       </el-col>
@@ -25,6 +25,7 @@
 import { getLeftTree } from "@/api/system/process";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { mapGetters, mapState } from "vuex";
+import { getUserProfile } from "@/api/system/user";
 import Task from './task';
 import Node from './tabs';
 import { setTimeout } from 'timers';
@@ -69,7 +70,7 @@ export default {
     
   },
   mounted() {
-    
+    this.getUser()
   },
   created() {
     
@@ -78,6 +79,11 @@ export default {
     
   },
   methods: {
+    getUser() {
+      getUserProfile().then(response => {
+        localStorage.setItem('userName', response.data.userName)
+      });
+    },
     
     getTree() {
       var id = localStorage.getItem("deptId")
@@ -133,3 +139,14 @@ export default {
   },
 };
 </script>
+
+<style lang="css" scoped>
+.header_tree {
+  overflow:auto;
+  /* max-height: 600px; */
+}
+.header_tree .el-tree {
+  min-width: 100%;
+  display: inline-block;
+}
+</style>
