@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
-    <div v-show="showSearch" style="margin-bottom: 20px">
+    <!-- <div v-show="showSearch" style="margin-bottom: 20px">
       <span style="margin-right: 10px">班组</span>
-        <treeselect v-model="queryParams.teamId" :options="treeData" placeholder="请选择" :clearable="true" :show-count="true"  style="width: 250px;display:inline-block;vertical-align:bottom;" @select="getSelectList" >
+        <treeselect v-model="searchTeamId" :options="treeData" placeholder="请选择" :clearable="true" :show-count="true"  style="width: 250px;display:inline-block;vertical-align:bottom;" @select="getSelectList" >
         </treeselect>
 
 
       <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
       <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-    </div>
+    </div> -->
    
 
     <el-row :gutter="10" class="mb8">
@@ -175,9 +175,9 @@
                 <el-select v-model="banzuForm.userPost" placeholder="请选择" style="width: 50%">
                     <el-option
                         v-for="item in postList"
-                        :key="item.id"
-                        :label="item.professionName"
-                        :value="item.professionName">
+                        :key="item.postId"
+                        :label="item.postName"
+                        :value="item.postName">
                     </el-option>
                 </el-select>
              </el-form-item>
@@ -249,7 +249,7 @@
 </template>
 
 <script>
-
+import { getUser } from "@/api/system/user";
 import { listBanzu, addBanzu, updateBanzu, delBanzu, getBanzuTree, getGangwei, getDetail } from '@/api/system/banzu';
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -258,6 +258,7 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      searchTeamId: undefined,
         userInfoId: undefined,
       
         postList: [],
@@ -266,7 +267,7 @@ export default {
         banzuForm: {
             userImg : '',
             constructionSiteId : '',
-            id : '',
+            id : undefined,
             userName : '',
             userClass : null,
             teamId : null,
@@ -436,10 +437,10 @@ export default {
       
         },
     getPofession() {
-        var id = localStorage.getItem('deptId')
-        getGangwei(id).then((res) => {
+        // var id = localStorage.getItem('deptId')
+        getUser().then((res) => {
             console.log("岗位", res)
-            this.postList = res.rows
+            this.postList = res.posts
         })
     },
     getSelectList2(node, instanceId) {
@@ -449,9 +450,10 @@ export default {
         this.banzuForm.teamId = node.id
     },
     getSelectList(node, instanceId) {
-      this.queryParamsUserclass = node.label
-      this.queryParams.userClass = node.label
-      this.queryParams.teamId = node.id
+        console.log("node", node)
+        console.log("instanceId", instanceId)
+        this.searchTeamId = node.id
+      
     },
     /** 查询角色列表 */
     getBanzu() {
@@ -469,13 +471,14 @@ export default {
       );
     },
     submitFormPeople: function () {
+      console.log("banzu", this.banzuForm.id)
       console.log("班组id",this.banzuForm.parentId)
       if(this.banzuForm.parentId === undefined) {
         this.banzuForm.parentId = 0
       }
       this.$refs["banzuForm"].validate((valid) => {
         if (valid) {
-          if(this.banzuForm.id === undefined || this.banzuForm.id === null) {
+          if(this.banzuForm.id === undefined || this.banzuForm.id === null || this.banzuForm.id === '') {
              var obj = {
               siteId: localStorage.getItem('deptId'),
               label: this.banzuForm.label,
@@ -505,7 +508,7 @@ export default {
               teams: obj
             }
             addBanzu(tijiaoForm).then((response) => {
-              // console.log("SASAS",response.data)
+              console.log("走的新增",response.data)
               if (response.code === 200) {
                 this.$message({
                   type: 'success',
@@ -550,7 +553,7 @@ export default {
               teams: obj
             }
             updateBanzu(tijiaoForm).then((response) => {
-              // console.log("SASAS",response.data)
+              console.log("走的修改",response.data)
               if (response.code === 200) {
                 this.$message({
                   type: 'success',
@@ -623,29 +626,28 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-     
-      this.getList();
       var params = {
-          label: '',
-          parentId: -1,
+          id: this.searchTeamId,
           siteId: localStorage.getItem("deptId")
       }
       listBanzu(params).then(
         response => {
             console.log("获取班组", response)
-          this.roleList = this.handleTree(response.data, "id", "parentId");
+          this.roleList = response.data
           this.total = response.data.length;
           this.loading = false;
         }
       );
+     
+   
+     
+      
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
-      this.queryParams.roleName = ''
-      this.queryParams.roleKey = ''
-      this.queryParams.status = ''
-      this.handleQuery();
+      this.searchTeamId = undefined
+      this.getList()
+      
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
