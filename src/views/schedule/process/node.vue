@@ -1432,7 +1432,8 @@ export default {
     handleDel(row) {
 
       console.log("row", row)
-      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+      if(row.leadingCadre === null) {
+        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
@@ -1460,6 +1461,13 @@ export default {
             message: '已取消删除'
           });
         });
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '已该节点已分派任务，不允许删除，若有必要删除，请切换项目负责人账号进行删除!'
+        })
+      }
+      
 
 
       
