@@ -5,11 +5,11 @@
         <el-tab-pane label="文件管理" name="first" class="label_top">
           <file-manager v-if="fileFlag"></file-manager>
         </el-tab-pane>
-        <el-tab-pane label="图纸管理(PDF)" name="second" class="label_top">
+        <el-tab-pane label="图纸管理" name="second" class="label_top">
           <pdf-manager v-if="pdfFlag"></pdf-manager>
         </el-tab-pane>
        
-        <el-tab-pane label="模型管理(CAD+BIM)" name="third" class="label_top">
+        <el-tab-pane label="模型管理(CAD)" name="third" class="label_top">
           <cad-manager v-if="cadFlag"></cad-manager>
         </el-tab-pane>
        

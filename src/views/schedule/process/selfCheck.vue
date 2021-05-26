@@ -223,15 +223,22 @@
           </el-row>
            <el-row>
             <el-col :span="12">
-              <el-form-item label="单位工程" prop="singleSiteIds">
-                <treeselect v-model="uploadInfo2.singleSiteIds" :options="singleList" :multiple="true" placeholder="请选择单体"  />
+              <el-form-item label="单位工程" prop="singleSiteIds" >
+                <treeselect v-model="uploadInfo2.singleSiteIds" :options="singleList" :multiple="true" placeholder="请选择单体"  :disabled="treeDis" />
               </el-form-item>
             </el-col>
-           <el-col :span="12">
+           <!-- <el-col :span="12">
               <el-form-item label="事件详情:" prop="context" >
                  <el-input type="textarea" v-model="uploadInfo2.context"  :readonly='true'/>
               </el-form-item>
-            </el-col>
+            </el-col> -->
+          </el-row>
+          <el-row>
+             <el-col :span="24">
+              <el-form-item label="事件详情:" prop="context" >
+                  <el-input type="textarea" v-model="uploadInfo2.context"  :readonly='true'/>
+                </el-form-item>
+             </el-col>
           </el-row>
 
         
@@ -242,6 +249,7 @@
                  
 
               <el-image
+                  @click="viewBig(uploadInfo2.imageUrl)"
                   class="faqiImg"
                   v-if="uploadInfo2.imageUrl !== null"
                 :src="uploadInfo2.imageUrl"
@@ -363,6 +371,7 @@ export default {
     
   data() {
     return {
+      treeDis: true,
       singleList: [],
       selectValue: undefined,
       optionValue: undefined,
@@ -633,6 +642,10 @@ export default {
 
   },
   methods: {
+    viewBig(url) {
+      
+      window.open(url)
+    },
     getSingleList() {
       var params = {
         constructionSiteId: localStorage.getItem("deptId")
@@ -1009,6 +1022,10 @@ export default {
 .faqiImg {
   width: 200px;
   height: 200px;
+}
+.divDialog >>> textarea {
+  min-height: 33px;
+  width: 500px;
 }
 </style>
 
